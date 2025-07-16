@@ -11,6 +11,7 @@ process STAR_ALIGN {
     tuple val(meta), path(reads, stageAs: "input*/*")
     tuple val(meta2), path(index)
     tuple val(meta3), path(gtf)
+    path additional_junctions
     val star_ignore_sjdbgtf
     val seq_platform
     val seq_center
@@ -49,6 +50,7 @@ process STAR_ALIGN {
     def seq_center_arg    = seq_center ? "'CN:$seq_center'" : ""
     attrRG          = args.contains("--outSAMattrRGline") ? "" : "--outSAMattrRGline 'ID:$prefix' $seq_center_arg 'SM:$prefix' $seq_platform_arg"
     def out_sam_type    = (args.contains('--outSAMtype')) ? '' : '--outSAMtype BAM Unsorted'
+    def additional_junctions_arg = additional_junctions.name != 'NO_FILE' ? "--sjdbFileChrStartEnd $additional_junctions" : ''
     mv_unsorted_bam = (args.contains('--outSAMtype BAM Unsorted SortedByCoordinate')) ? "mv ${prefix}.Aligned.out.bam ${prefix}.Aligned.unsort.out.bam" : ''
     """
     STAR \\
@@ -58,6 +60,7 @@ process STAR_ALIGN {
         --outFileNamePrefix $prefix. \\
         $out_sam_type \\
         $ignore_gtf \\
+        $additional_junctions_arg \\
         $attrRG \\
         $args
 

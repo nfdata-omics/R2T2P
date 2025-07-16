@@ -3,12 +3,14 @@
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-include { MULTIQC                 } from '../modules/nf-core/multiqc/main'
-include { STAR_ALIGN              } from '../modules/nf-core/star/align/main'
+include { MULTIQC                             } from '../modules/nf-core/multiqc/main'
+include { STAR_ALIGN as STAR_FIRST_ALIGN      } from '../modules/nf-core/star/align/main'
+include { STAR_ALIGN as STAR_WITH_NOVEL_JUNCT } from '../modules/nf-core/star/align/main'
 
-include { PREPARE_REF             } from '../subworkflows/local/prepare_ref'
-include { PREPARE_FASTQ           } from '../subworkflows/local/prepare_fastq'
-include { BAM_SORT_STATS_SAMTOOLS } from '../subworkflows/nf-core/bam_sort_stats_samtools'
+include { PREPARE_REF                                      } from '../subworkflows/local/prepare_ref'
+include { PREPARE_FASTQ                                    } from '../subworkflows/local/prepare_fastq'
+include { BAM_SORT_STATS_SAMTOOLS as FIRST_BAM_SORT_STATS  } from '../subworkflows/nf-core/bam_sort_stats_samtools'
+include { BAM_SORT_STATS_SAMTOOLS as SECOND_BAM_SORT_STATS } from '../subworkflows/nf-core/bam_sort_stats_samtools'
 
 include { paramsSummaryMap        } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc    } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -60,41 +62,54 @@ workflow R2T2P {
     //
     // Map reads with STAR
     //
-    STAR_ALIGN (
+    STAR_FIRST_ALIGN (
         ch_reads,
         PREPARE_REF.out.star_index.map { [ [:], it ] },
         PREPARE_REF.out.gtf.map { [ [:], it ] },
+        "$projectDir/assets/NO_FILE", // empty arguments for additional_junctions
         false, // star_ignore_sjdbgtf
         "", // seq_platform
         "" // seq_center
     )
-    ch_versions = ch_versions.mix(STAR_ALIGN.out.versions.first())
+    ch_versions = ch_versions.mix(STAR_FIRST_ALIGN.out.versions.first())
 
     //
     // Sort, index BAM file and run samtools stats, flagstat and idxstats
     //
-    BAM_SORT_STATS_SAMTOOLS ( STAR_ALIGN.out.bam, ch_fasta )
-    ch_versions = ch_versions.mix(BAM_SORT_STATS_SAMTOOLS.out.versions)
-    ch_multiqc_files  = ch_multiqc_files.mix(BAM_SORT_STATS_SAMTOOLS.out.stats)
-        .mix(BAM_SORT_STATS_SAMTOOLS.out.flagstat)
-        .mix(BAM_SORT_STATS_SAMTOOLS.out.idxstats)
+    FIRST_BAM_SORT_STATS ( STAR_FIRST_ALIGN.out.bam, ch_fasta )
+    ch_versions = ch_versions.mix(FIRST_BAM_SORT_STATS.out.versions)
+    ch_multiqc_files  = ch_multiqc_files.mix(FIRST_BAM_SORT_STATS.out.stats)
+        .mix(FIRST_BAM_SORT_STATS.out.flagstat)
+        .mix(FIRST_BAM_SORT_STATS.out.idxstats)
 
+    //
+    // TODO: add step c_create_firstpass_junctions
+    //
 
+    additional_junctions_ch = Channel.empty() // empty channel for additional junctions, to be used in the next STAR alignment
 
-    orig_bam            = STAR_ALIGN.out.bam                                 // channel: [ val(meta), path(bam)            ]
-    log_final           = STAR_ALIGN.out.log_final                           // channel: [ val(meta), path(log_final)      ]
-    log_out             = STAR_ALIGN.out.log_out                             // channel: [ val(meta), path(log_out)        ]
-    log_progress        = STAR_ALIGN.out.log_progress                        // channel: [ val(meta), path(log_progress)   ]
-    bam_sorted          = STAR_ALIGN.out.bam_sorted                          // channel: [ val(meta), path(bam)            ]
-    fastq               = STAR_ALIGN.out.fastq                               // channel: [ val(meta), path(fastq)          ]
-    tab                 = STAR_ALIGN.out.tab                                 // channel: [ val(meta), path(tab)            ]
-    orig_bam_transcript = STAR_ALIGN.out.bam_transcript                      // channel: [ val(meta), path(bam)            ]
+    //
+    // Second STAR alignment using novel junctions
+    //
+    STAR_WITH_NOVEL_JUNCT (
+        ch_reads,
+        PREPARE_REF.out.star_index.map { [ [:], it ] },
+        PREPARE_REF.out.gtf.map { [ [:], it ] },
+        additional_junctions_ch, // channel for additional junctions
+        false, // star_ignore_sjdbgtf
+        "", // seq_platform
+        "" // seq_center
+    )
+    ch_versions = ch_versions.mix(STAR_WITH_NOVEL_JUNCT.out.versions.first())
 
-    bam                 = BAM_SORT_STATS_SAMTOOLS.out.bam             // channel: [ val(meta), path(bam) ]
-    bai                 = BAM_SORT_STATS_SAMTOOLS.out.bai             // channel: [ val(meta), path(bai) ]
-    stats               = BAM_SORT_STATS_SAMTOOLS.out.stats           // channel: [ val(meta), path(stats) ]
-    flagstat            = BAM_SORT_STATS_SAMTOOLS.out.flagstat        // channel: [ val(meta), path(flagstat) ]
-    idxstats            = BAM_SORT_STATS_SAMTOOLS.out.idxstats        // channel: [ val(meta), path(idxstats) ]
+    //
+    // Sort, index BAM file and run samtools stats, flagstat and idxstats
+    //
+    SECOND_BAM_SORT_STATS ( STAR_WITH_NOVEL_JUNCT.out.bam, ch_fasta )
+    ch_versions = ch_versions.mix(SECOND_BAM_SORT_STATS.out.versions)
+    ch_multiqc_files  = ch_multiqc_files.mix(SECOND_BAM_SORT_STATS.out.stats)
+        .mix(SECOND_BAM_SORT_STATS.out.flagstat)
+        .mix(SECOND_BAM_SORT_STATS.out.idxstats)
 
 
     //
