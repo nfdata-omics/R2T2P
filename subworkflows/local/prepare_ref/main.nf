@@ -20,7 +20,7 @@ workflow PREPARE_REF {
     star_index               // directory: /path/to/star/index/
 
     main:
-    
+
     // Versions collector
     ch_versions = Channel.empty()
 

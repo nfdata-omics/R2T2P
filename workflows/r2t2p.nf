@@ -38,7 +38,7 @@ workflow R2T2P {
     ch_versions = Channel.empty()
     ch_multiqc_files = Channel.empty()
 
-    // 
+    //
     // SUBWORKFLOW: Prepare reference genome
     //
     PREPARE_REF (

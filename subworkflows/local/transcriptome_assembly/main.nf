@@ -18,7 +18,7 @@ workflow TRANSCRIPTOME_ASSEMBLY {
 
     ch_versions = Channel.empty()
 
-    SAMTOOLS_MERGE ( 
+    SAMTOOLS_MERGE (
         ch_bam,
         ch_fasta,
         ch_fai,
