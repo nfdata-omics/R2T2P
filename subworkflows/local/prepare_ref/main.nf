@@ -26,20 +26,21 @@ workflow PREPARE_REF {
 
     // Uncompress GTF or GFF, and convert GFF to GTF
     ch_gtf = Channel.empty()
-    if (gtf) {
-        if (gtf.endsWith('.gz')) {
-            ch_gtf      = GUNZIP_GTF ([ [:], file(gtf, checkIfExists: true) ]).gunzip.map { it[1] }
+    if (params.gtf) {
+        if (params.gtf.endsWith('.gz')) {
+            GUNZIP_GTF( gtf.map { [ [:], it ] } )
+            ch_gtf      = GUNZIP_GTF.out.gunzip.map { it[1] }
             ch_versions = ch_versions.mix(GUNZIP_GTF.out.versions)
         } else {
             ch_gtf = Channel.value(file(gtf, checkIfExists: true))
         }
-    } else if (gff) {
-        def ch_gff
-        if (gff.endsWith('.gz')) {
-            ch_gff      = GUNZIP_GFF ([ [:], file(gff, checkIfExists: true) ]).gunzip
+    } else if (params.gff) {
+        if (params.gff.endsWith('.gz')) {
+            GUNZIP_GFF( gff.map { [ [:], it ] } )
+            ch_gff      = GUNZIP_GFF.out.gunzip
             ch_versions = ch_versions.mix(GUNZIP_GFF.out.versions)
         } else {
-            ch_gff = Channel.value(file(gff, checkIfExists: true)).map { [ [:], it ] }
+            ch_gff = gff.map { [ [:], it ] }
         }
         ch_gtf      = GFFREAD(ch_gff, []).gtf.map { it[1] }
         ch_versions = ch_versions.mix(GFFREAD.out.versions)
@@ -47,36 +48,38 @@ workflow PREPARE_REF {
 
     // Uncompress FASTA if needed
     ch_fasta = Channel.of([])
-    if (fasta.endsWith('.gz')) {
-        ch_fasta    = GUNZIP_FASTA ([ [:], file(fasta, checkIfExists: true) ]).gunzip.map { it[1] }
+    if (params.fasta.endsWith('.gz')) {
+        GUNZIP_FASTA( fasta.map { [ [:], it ] } )
+        ch_fasta    = GUNZIP_FASTA.out.gunzip.map { it[1] }
         ch_versions = ch_versions.mix(GUNZIP_FASTA.out.versions)
     } else {
-        ch_fasta = Channel.value(file(fasta, checkIfExists: true))
+        ch_fasta = fasta
     }
 
     // get FASTA index and sizes of the chromosomes
     ch_fai         = Channel.empty()
     ch_chrom_sizes = Channel.empty()
 
-    CUSTOM_GETCHROMSIZES(ch_fasta.map { [ [:], it ] })
+    CUSTOM_GETCHROMSIZES( ch_fasta.map { [ [:], it ] } )
     ch_fai         = CUSTOM_GETCHROMSIZES.out.fai.map { it[1] }
     ch_chrom_sizes = CUSTOM_GETCHROMSIZES.out.sizes.map { it[1] }
     ch_versions    = ch_versions.mix(CUSTOM_GETCHROMSIZES.out.versions)
 
     // Build a channel with the STAR index
     ch_star_index = Channel.empty()
-    if (star_index) {    // If a STAR index is provided, use it
-        if (star_index.endsWith('.tar.gz')) {
-            ch_star_index = UNTAR_STAR_INDEX ([ [:], file(star_index, checkIfExists: true) ]).untar.map { it[1] }
+    if (params.star_index) {    // If a STAR index is provided, use it
+        if (params.star_index.endsWith('.tar.gz')) {
+            UNTAR_STAR_INDEX( star_index.map { [ [:], it ] } )
+            ch_star_index = UNTAR_STAR_INDEX.out.untar.map { it[1] }
             ch_versions   = ch_versions.mix(UNTAR_STAR_INDEX.out.versions)
         } else {
-            ch_star_index = Channel.value(file(star_index, checkIfExists: true))
+            ch_star_index = star_index
         }
     } else  {         // Otherwise build new STAR index
-        ch_star_index = STAR_GENOMEGENERATE(
-            ch_fasta.map { [ [:], it ] },
-            ch_gtf.map   { [ [:], it ] }
-        ).index.map { it[1] }
+        STAR_GENOMEGENERATE(
+            ch_fasta.map { [ [:], it ] }
+        )
+        ch_star_index = STAR_GENOMEGENERATE.out.index.map { it[1] }
         ch_versions   = ch_versions.mix(STAR_GENOMEGENERATE.out.versions)
     }
 

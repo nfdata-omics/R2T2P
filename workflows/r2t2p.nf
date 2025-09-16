@@ -76,7 +76,7 @@ workflow R2T2P {
     //
     // Sort, index BAM file and run samtools stats, flagstat and idxstats
     //
-    FIRST_BAM_SORT_STATS ( STAR_FIRST_ALIGN.out.bam, ch_fasta )
+    FIRST_BAM_SORT_STATS ( STAR_FIRST_ALIGN.out.bam, PREPARE_REF.out.fasta )
     ch_versions = ch_versions.mix(FIRST_BAM_SORT_STATS.out.versions)
     ch_multiqc_files  = ch_multiqc_files.mix(FIRST_BAM_SORT_STATS.out.stats)
         .mix(FIRST_BAM_SORT_STATS.out.flagstat)
@@ -105,7 +105,7 @@ workflow R2T2P {
     //
     // Sort, index BAM file and run samtools stats, flagstat and idxstats
     //
-    SECOND_BAM_SORT_STATS ( STAR_WITH_NOVEL_JUNCT.out.bam, ch_fasta )
+    SECOND_BAM_SORT_STATS ( STAR_WITH_NOVEL_JUNCT.out.bam, PREPARE_REF.out.fasta )
     ch_versions = ch_versions.mix(SECOND_BAM_SORT_STATS.out.versions)
     ch_multiqc_files  = ch_multiqc_files.mix(SECOND_BAM_SORT_STATS.out.stats)
         .mix(SECOND_BAM_SORT_STATS.out.flagstat)

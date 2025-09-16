@@ -46,10 +46,10 @@ workflow NFDATAOMICS_R2T2P {
     main:
 
     // Define channels for reference files
-    ch_fasta       = params.fasta      ? Channel.value(file(params.fasta))      : Channel.empty()
-    ch_gtf         = params.gtf        ? Channel.value(file(params.gtf))        : Channel.empty()
-    ch_gff         = params.gff        ? Channel.value(file(params.gff))        : Channel.empty()
-    ch_star_index  = params.star_index ? Channel.value(file(params.star_index)) : Channel.empty()
+    ch_fasta       = params.fasta      ? Channel.value(file(params.fasta, checkIfExists: true))      : Channel.empty()
+    ch_gtf         = params.gtf        ? Channel.value(file(params.gtf, checkIfExists: true))        : Channel.empty()
+    ch_gff         = params.gff        ? Channel.value(file(params.gff, checkIfExists: true))        : Channel.empty()
+    ch_star_index  = params.star_index ? Channel.value(file(params.star_index, checkIfExists: true)) : Channel.empty()
 
     //
     // WORKFLOW: Run pipeline
