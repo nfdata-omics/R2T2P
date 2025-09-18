@@ -12,3 +12,27 @@ report_section_order:
 export_plots: true
 
 disable_version_detection: true
+
+# Run only these modules
+run_modules:
+  - custom_content
+  - fastqc
+  - star
+  - samtools
+
+module_order:
+  - star:
+      anchor: "star_firstpass"
+      name: "STAR (first pass)"
+      path_filters:
+        - "*.first_pass.*"
+  - samtools:
+      anchor: "samtools_firstpass"
+      name: "Samtools (first pass)"
+      path_filters:
+        - "*.first_pass.*"
+  - samtools:
+      anchor: "samtools_firstpass"
+      name: "Samtools (second pass)"
+      path_filters:
+        - "*.second_pass.*"

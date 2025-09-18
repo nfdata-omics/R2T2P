@@ -13,19 +13,19 @@
                 "errorMessage": "Sample name must be provided and cannot contain spaces",
                 "meta": ["id"]
             },
-            "fasta_1": {
+            "fastq_1": {
                 "type": "string",
                 "format": "file-path",
                 "exists": true,
-                "pattern": "^\\S+\\.f(ast)?a\\.gz$",
-                "errorMessage": "Fasta file for reads 1 must be provided, cannot contain spaces and must have extension '.fa.gz' or '.fasta.gz'"
+                "pattern": "^\\S+\\.f(ast)?[aq]\\.gz$",
+                "errorMessage": "Fastq/Fasta file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' / '.fa.gz' or '.fastq.gz' / '.fasta.gz'"
             },
-            "fasta_2": {
+            "fastq_2": {
                 "type": "string",
                 "format": "file-path",
                 "exists": true,
-                "pattern": "^\\S+\\.f(ast)?a\\.gz$",
-                "errorMessage": "Fasta file for reads 2 cannot contain spaces and must have extension '.fa.gz' or '.fasta.gz'"
+                "pattern": "^\\S+\\.f(ast)?[aq]\\.gz$",
+                "errorMessage": "Fastq/Fasta file for reads 2 cannot contain spaces and must have extension '.fq.gz' / '.fa.gz' or '.fastq.gz' / '.fasta.gz'"
             }
         },
         "required": ["sample", "fastq_1"]

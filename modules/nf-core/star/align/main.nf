@@ -30,6 +30,7 @@ process STAR_ALIGN {
     tuple val(meta), path('*fastq.gz')                               , optional:true, emit: fastq
     tuple val(meta), path('*.tab')                                   , optional:true, emit: tab
     tuple val(meta), path('*.SJ.out.tab')                            , optional:true, emit: spl_junc_tab
+    tuple val(meta), path('*STARpass1/SJ.out.tab')                   , optional:true, emit: pass1_spl_juc_tab
     tuple val(meta), path('*.ReadsPerGene.out.tab')                  , optional:true, emit: read_per_gene_tab
     tuple val(meta), path('*.out.junction')                          , optional:true, emit: junction
     tuple val(meta), path('*.out.sam')                               , optional:true, emit: sam

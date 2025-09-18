@@ -34,11 +34,18 @@ workflow PREPARE_FASTQ {
 
     ch_versions = ch_versions.mix(CAT_FASTQ.out.versions.first())
 
+    ch_reads
+        .branch { _meta, fastq ->
+            fasta: fastq[0].endsWith('.fasta.gz') || fastq[0].endsWith('.fa.gz')
+            fastq: fastq[0].endsWith('.fastq.gz') || fastq[0].endsWith('.fq.gz')
+        }
+        .set { ch_reads_by_type }
+
     //
     // MODULE: Lint FastQ files
     //
     FQ_LINT(
-        ch_reads
+        ch_reads_by_type.fastq
     )
     ch_versions = ch_versions.mix(FQ_LINT.out.versions.first())
     ch_lint_log = ch_lint_log.mix(FQ_LINT.out.lint)
@@ -47,7 +54,7 @@ workflow PREPARE_FASTQ {
     // MODULE: Run FastQC
     //
     FASTQC (
-        ch_reads
+        ch_reads_by_type.fastq
     )
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]})
     ch_versions = ch_versions.mix(FASTQC.out.versions.first())
