@@ -6,7 +6,8 @@ process CREATE_FIRSTPASS_JUNCTIONS {
 
     input:
     tuple val(meta), path(pass1_splice_junctions)
-    path riboseQC_annotation
+    path "R-user-lib/*"
+    path gtf_Rannotation
 
     output:
     tuple val(meta), path("firstpass_junctions.txt"), emit: pass1_junctions
@@ -17,11 +18,13 @@ process CREATE_FIRSTPASS_JUNCTIONS {
 
     script:
     """
-    Rscript -e "
+    export R_LIBS_USER=\$PWD/R-user-lib
+
+    Rscript --vanilla -e '
         library(RiboseQC)
 
         # Loading RiboseQC annotation
-        GTF_annotation <- load_annotation("${riboseQC_annotation}")
+        load_annotation("${gtf_Rannotation}")
 
         # Getting paths of "SJ.out.tab" files
         sj_out_files_firstpass <- list("${pass1_splice_junctions}")
@@ -66,14 +69,16 @@ process CREATE_FIRSTPASS_JUNCTIONS {
         }
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
-    "
+    '
     """
 
     stub:
     """
     touch firstpass_junctions.txt
 
-    Rscript -e "
+    Rscript -e '
+        library(RiboseQC)
+
         # Writing package versions to versions.yml
         x = sessionInfo()
         versions <- list(
@@ -85,7 +90,7 @@ process CREATE_FIRSTPASS_JUNCTIONS {
         }
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
-    "
+    '
     """
 
 }

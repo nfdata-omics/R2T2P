@@ -50,6 +50,7 @@ workflow NFDATAOMICS_R2T2P {
     ch_gtf         = params.gtf        ? Channel.value(file(params.gtf, checkIfExists: true))        : Channel.empty()
     ch_gff         = params.gff        ? Channel.value(file(params.gff, checkIfExists: true))        : Channel.empty()
     ch_star_index  = params.star_index ? Channel.value(file(params.star_index, checkIfExists: true)) : Channel.empty()
+    ch_gtf_Rannot  = params.gtf_Rannot ? Channel.value(file(params.gtf_Rannot, checkIfExists: true)) : Channel.empty()
 
     //
     // WORKFLOW: Run pipeline

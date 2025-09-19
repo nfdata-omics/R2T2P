@@ -31,8 +31,13 @@ module_order:
       name: "Samtools (first pass)"
       path_filters:
         - "*.first_pass.*"
+  - star:
+      anchor: "star_secondpass"
+      name: "STAR (second pass)"
+      path_filters:
+        - "*.second_pass.*"
   - samtools:
-      anchor: "samtools_firstpass"
+      anchor: "samtools_secondpass"
       name: "Samtools (second pass)"
       path_filters:
         - "*.second_pass.*"

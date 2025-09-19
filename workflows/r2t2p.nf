@@ -46,7 +46,7 @@ workflow R2T2P {
         ch_fasta,
         ch_gtf,
         ch_gff,
-        ch_star_index
+        ch_star_index,
     )
     ch_versions = ch_versions.mix(PREPARE_REF.out.versions)
 
@@ -75,11 +75,6 @@ workflow R2T2P {
     ch_versions = ch_versions.mix(STAR_FIRST_ALIGN.out.versions.first())
     ch_multiqc_files = ch_multiqc_files.mix(STAR_FIRST_ALIGN.out.log_final.collect{it[1]})
 
-    CREATE_FIRSTPASS_JUNCTIONS(
-        STAR_FIRST_ALIGN.out.pass1_spl_juc_tab,
-        PREPARE_REF.out.gtf
-    )
-
     //
     // Sort, index BAM file and run samtools stats, flagstat and idxstats
     //
@@ -90,33 +85,43 @@ workflow R2T2P {
         .mix( FIRST_BAM_SORT_STATS.out.idxstats.collect{it[1]} )
 
     //
-    // TODO: add step c_create_firstpass_junctions
+    // Get the table of novel junctions from the first STAR alignment
     //
+    CREATE_FIRSTPASS_JUNCTIONS(
+        STAR_FIRST_ALIGN.out.pass1_spl_juc_tab,
+        PREPARE_REF.out.bsgenome,
+        PREPARE_REF.out.gtf_Rannot
+    )
 
-    // additional_junctions_ch = Channel.empty() // empty channel for additional junctions, to be used in the next STAR alignment
+    // Match the reads wit the corresponding junction table
+    ch_reads_with_junctions = ch_reads.join(CREATE_FIRSTPASS_JUNCTIONS.out.pass1_junctions, by: 0)
+    // Split into two channels:
+    ch_reads_ordered = ch_reads_with_junctions.map { it[0..1] }
+    ch_junctions_ordered = ch_reads_with_junctions.map { it[2] }
 
     //
     // Second STAR alignment using novel junctions
     //
-    // STAR_WITH_NOVEL_JUNCT (
-    //     ch_reads,
-    //     PREPARE_REF.out.star_index.map { [ [:], it ] },
-    //     PREPARE_REF.out.gtf.map { [ [:], it ] },
-    //     additional_junctions_ch, // channel for additional junctions
-    //     false, // star_ignore_sjdbgtf
-    //     "", // seq_platform
-    //     "" // seq_center
-    // )
-    // ch_versions = ch_versions.mix(STAR_WITH_NOVEL_JUNCT.out.versions.first())
+    STAR_WITH_NOVEL_JUNCT (
+        ch_reads_ordered,
+        PREPARE_REF.out.star_index.map { [ [:], it ] },
+        PREPARE_REF.out.gtf.map { [ [:], it ] },
+        ch_junctions_ordered, // channel for additional junctions
+        false, // star_ignore_sjdbgtf
+        "", // seq_platform
+        "" // seq_center
+    )
+    ch_versions = ch_versions.mix(STAR_WITH_NOVEL_JUNCT.out.versions.first())
+    ch_multiqc_files = ch_multiqc_files.mix(STAR_WITH_NOVEL_JUNCT.out.log_final.collect{it[1]})
 
     //
     // Sort, index BAM file and run samtools stats, flagstat and idxstats
     //
-    // SECOND_BAM_SORT_STATS ( STAR_WITH_NOVEL_JUNCT.out.bam, PREPARE_REF.out.fasta )
-    // ch_versions = ch_versions.mix(SECOND_BAM_SORT_STATS.out.versions)
-    // ch_multiqc_files  = ch_multiqc_files.mix(SECOND_BAM_SORT_STATS.out.stats)
-    //     .mix(SECOND_BAM_SORT_STATS.out.flagstat)
-    //     .mix(SECOND_BAM_SORT_STATS.out.idxstats)
+    SECOND_BAM_SORT_STATS ( STAR_WITH_NOVEL_JUNCT.out.bam, PREPARE_REF.out.fasta.map { [ [:], it ] } )
+    ch_versions = ch_versions.mix(SECOND_BAM_SORT_STATS.out.versions)
+    ch_multiqc_files  = ch_multiqc_files.mix(SECOND_BAM_SORT_STATS.out.stats.collect{it[1]} )
+        .mix(SECOND_BAM_SORT_STATS.out.flagstat.collect{it[1]} )
+        .mix(SECOND_BAM_SORT_STATS.out.idxstats.collect{it[1]} )
 
     //
     // Collate and save software versions

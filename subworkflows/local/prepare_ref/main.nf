@@ -10,6 +10,8 @@ include { UNTAR as UNTAR_STAR_INDEX         } from '../../../modules/nf-core/unt
 include { CUSTOM_GETCHROMSIZES              } from '../../../modules/nf-core/custom/getchromsizes'
 include { GFFREAD                           } from '../../../modules/nf-core/gffread'
 include { STAR_GENOMEGENERATE               } from '../../../modules/nf-core/star/genomegenerate'
+include { FASTATOTWOBIT                     } from '../../../modules/local/fatotwobit'
+include { PREPARE_ANNOTATION_FILES          } from '../../../modules/local/prepare_annotation_files'
 
 workflow PREPARE_REF {
 
@@ -17,7 +19,7 @@ workflow PREPARE_REF {
     fasta                    // file: /path/to/genome.fasta (optional!)
     gtf                      // file: /path/to/genome.gtf
     gff                      // file: /path/to/genome.gff
-    star_index               // directory: /path/to/star/index/
+    star_index               // directory: /path/to/star/index/ (optional!)
 
     main:
 
@@ -83,12 +85,26 @@ workflow PREPARE_REF {
         ch_versions   = ch_versions.mix(STAR_GENOMEGENERATE.out.versions)
     }
 
+    // Build a 2bit version of the genome fasta file
+    FASTATOTWOBIT( ch_fasta.map { [ [id: it.name], it ] } )
+    ch_versions = ch_versions.mix(FASTATOTWOBIT.out.versions)
+
+    // Create annotation files with RiboseQC prepare_annotation_files function
+    PREPARE_ANNOTATION_FILES(
+        FASTATOTWOBIT.out.genome2bit,
+        ch_gtf.map { [ [id: it.name], it ] }
+    )
+    ch_gtf_Rannot = PREPARE_ANNOTATION_FILES.out.gtf_Rannot.map { it[1] }
+    ch_bsgenome = PREPARE_ANNOTATION_FILES.out.bsgenome.map { it[1] }
+
     emit:
     fasta            = ch_fasta                  // channel: path(genome.fasta)
     gtf              = ch_gtf                    // channel: path(genome.gtf)
     fai              = ch_fai                    // channel: path(genome.fai)
     chrom_sizes      = ch_chrom_sizes            // channel: path(genome.sizes)
     star_index       = ch_star_index             // channel: path(star/index/)
+    gtf_Rannot       = ch_gtf_Rannot             // channel: path(genome.gtf_Rannot)
+    bsgenome         = ch_bsgenome               // channel: path(BSgenome.species.assembly/)
     versions         = ch_versions               // channel: [ versions.yml ]
 
 }
