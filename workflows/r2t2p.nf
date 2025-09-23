@@ -12,6 +12,7 @@ include { PREPARE_REF                                      } from '../subworkflo
 include { PREPARE_FASTQ                                    } from '../subworkflows/local/prepare_fastq'
 include { BAM_SORT_STATS_SAMTOOLS as FIRST_BAM_SORT_STATS  } from '../subworkflows/nf-core/bam_sort_stats_samtools'
 include { BAM_SORT_STATS_SAMTOOLS as SECOND_BAM_SORT_STATS } from '../subworkflows/nf-core/bam_sort_stats_samtools'
+include { TRANSCRIPTOME_ASSEMBLY                           } from '../subworkflows/local/transcriptome_assembly/main'
 
 include { paramsSummaryMap        } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc    } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -33,6 +34,7 @@ workflow R2T2P {
     ch_gtf         // value channel: path(gtf)
     ch_gff         // value channel: path(gff)
     ch_star_index  // value channel: path(star_index)
+    ch_user_gtf    // value channel: path(user_gtf)
 
     main:
 
@@ -122,6 +124,19 @@ workflow R2T2P {
     ch_multiqc_files  = ch_multiqc_files.mix(SECOND_BAM_SORT_STATS.out.stats.collect{it[1]} )
         .mix(SECOND_BAM_SORT_STATS.out.flagstat.collect{it[1]} )
         .mix(SECOND_BAM_SORT_STATS.out.idxstats.collect{it[1]} )
+
+    //
+    // Transcriptome assembly from aligned reads
+    //
+    TRANSCRIPTOME_ASSEMBLY (
+        SECOND_BAM_SORT_STATS.out.bam,
+        PREPARE_REF.out.fasta,
+        PREPARE_REF.out.fai,
+        PREPARE_REF.out.gtf,
+        PREPARE_REF.out.bsgenome,
+        PREPARE_REF.out.gtf_Rannot,
+        ch_user_gtf
+    )
 
     //
     // Collate and save software versions

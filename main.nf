@@ -50,7 +50,7 @@ workflow NFDATAOMICS_R2T2P {
     ch_gtf         = params.gtf        ? Channel.value(file(params.gtf, checkIfExists: true))        : Channel.empty()
     ch_gff         = params.gff        ? Channel.value(file(params.gff, checkIfExists: true))        : Channel.empty()
     ch_star_index  = params.star_index ? Channel.value(file(params.star_index, checkIfExists: true)) : Channel.empty()
-    ch_gtf_Rannot  = params.gtf_Rannot ? Channel.value(file(params.gtf_Rannot, checkIfExists: true)) : Channel.empty()
+    ch_user_gtf    = params.user_provided_annotation ? Channel.value(file(params.user_provided_annotation, checkIfExists: true)) : Channel.empty()
 
     //
     // WORKFLOW: Run pipeline
@@ -60,7 +60,8 @@ workflow NFDATAOMICS_R2T2P {
         ch_fasta,
         ch_gtf,
         ch_gff,
-        ch_star_index
+        ch_star_index,
+        ch_user_gtf
     )
     emit:
     multiqc_report = R2T2P.out.multiqc_report // channel: /path/to/multiqc_report.html
