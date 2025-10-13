@@ -26,6 +26,16 @@
                 "exists": true,
                 "pattern": "^\\S+\\.f(ast)?[aq]\\.gz$",
                 "errorMessage": "Fastq/Fasta file for reads 2 cannot contain spaces and must have extension '.fq.gz' / '.fa.gz' or '.fastq.gz' / '.fasta.gz'"
+            },
+            "library_type": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "meta": ["library_type"]
+            },
+            "condition": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "meta": ["condition"]
             }
         },
         "required": ["sample", "fastq_1"]
