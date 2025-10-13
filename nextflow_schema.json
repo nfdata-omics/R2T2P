@@ -88,6 +88,9 @@
                 },
                 "star_index": {
                     "type": "string"
+                },
+                "user_provided_annotation": {
+                    "type": "string"
                 }
             }
         },
