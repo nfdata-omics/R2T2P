@@ -2,6 +2,7 @@
 
 # Load required package
 suppressPackageStartupMessages(library("RiboseQC"))
+suppressMessages(library("igraph"))
 
 # Parse command line arguments
 args <- commandArgs(trailingOnly = TRUE)
@@ -59,13 +60,35 @@ trann <- unique(mcols(import.gff2(
 trann <- trann[!is.na(trann$class_code), ]
 trann <- data.frame(unique(trann), stringsAsFactors = FALSE)
 
-# Handle missing annotation fields and set defaults
-# (series of if statements for missing values)
-
-colnames(trann) <- c(
-  "gene_id", "gene_biotype", "gene_name",
-  "transcript_id", "transcript_biotype", "nearest_ref", "class_code"
-)
+# Fill missing annotation columns with default values
+if (sum(!is.na(trann$transcript_biotype)) == 0 & sum(!is.na(trann$transcript_type)) == 0) {
+  trann$transcript_biotype <- "no_type"
+}
+if (sum(!is.na(trann$transcript_biotype)) == 0) {
+  trann$transcript_biotype <- NULL
+}
+if (sum(!is.na(trann$transcript_type)) == 0) {
+  trann$transcript_type <- NULL
+}
+if (sum(!is.na(trann$gene_biotype)) == 0 & sum(!is.na(trann$gene_type)) == 0) {
+  trann$gene_type <- "no_type"
+}
+if (sum(!is.na(trann$gene_name)) == 0 & sum(!is.na(trann$gene_symbol)) == 0) {
+  trann$gene_name <- "no_name"
+}
+if (sum(!is.na(trann$gene_biotype)) == 0) {
+  trann$gene_biotype <- NULL
+}
+if (sum(!is.na(trann$gene_type)) == 0) {
+  trann$gene_type <- NULL
+}
+if (sum(!is.na(trann$gene_name)) == 0) {
+  trann$gene_name <- NULL
+}
+if (sum(!is.na(trann$gene_symbol)) == 0) {
+  trann$gene_symbol <- NULL
+}
+colnames(trann) <- c("gene_id", "gene_biotype", "gene_name", "transcript_id", "transcript_biotype", "nearest_ref", "class_code")
 str_ann <- DataFrame(trann)
 trann <- txs_gene_map
 
@@ -77,9 +100,9 @@ diffstrand <- names(rnvintri[rnvintri != rnvintrihost])
 str_ann[str_ann$transcript_id %in% diffstrand, "class_code"] <- "xi"
 
 # Split user annotation by transcript classification
-str_ann_dupl <- str_ann[str_ann[, "class_code"] %in% c("=", "c"), ]
-str_ann_new <- str_ann[str_ann[, "class_code"] %in% c("r", "u", "x", "s"), ]
-str_ann_isof <- str_ann[str_ann[, "class_code"] %in% c("e", "i", "j", "o", "p", "y", "k"), ]
+str_ann_dupl <- str_ann[str_ann[,"class_code"] %in% c("=", "c"), ]
+str_ann_new <- str_ann[str_ann[,"class_code"] %in% c("r", "u", "x", "s"), ]
+str_ann_isof <- str_ann[str_ann[,"class_code"] %in% c("e", "i", "j", "o", "p", "y", "k"), ]
 
 # Map class codes to descriptive labels
 code_annot <- cbind(
@@ -90,12 +113,12 @@ code_annot <- cbind(
     "retain_intr", "retain_partintr", "antisense_intr"
   )
 )
-code_annot[, 2] <- paste("novel", code_annot[, 2], sep = "_")
-str_trann <- data.frame(unique(str_ann[, c("transcript_id", "class_code")]), stringsAsFactors = FALSE)
-str_trann[, 2] <- code_annot[match(str_trann[, 2], code_annot[, 1]), 2]
+code_annot[,2] <- paste("novel", code_annot[,2], sep = "_")
+str_trann <- data.frame(unique(str_ann[,c("transcript_id", "class_code")]), stringsAsFactors = FALSE)
+str_trann[,2] <- code_annot[match(str_trann[,2], code_annot[,1]),2]
 
 # Set biotype and gene fields for user annotation
-str_ann[, "transcript_biotype"] <- "novel"
+str_ann[,"transcript_biotype"] <- "novel"
 str_ann$nearest_ref[str_ann$class_code %in% c("r", "u", "x", "s", "xi")] <- NA
 mtc <- match(str_ann$nearest_ref, trann$transcript_id)
 str_ann[!is.na(mtc), "gene_id"] <- trann$gene_id[mtc[!is.na(mtc)]]
@@ -123,7 +146,7 @@ exs_gtf$gene_name <- trann[match(x = exs_gtf$gene_id, table = trann$gene_id), "g
 exs_gtf$transcript_biotype <- trann[match(exs_gtf$transcript_id, trann$transcript_id), "transcript_biotype"]
 exs_gtf$type <- "exon"
 
-# Sort and filter exons, ensure strand consistency per gene
+# Sort and filter merged annotation by gene strand consistency
 all <- sort(exs_gtf)
 all$source <- paste0(args[2], "_merged_with_strg")
 names(all) <- NULL
@@ -154,52 +177,39 @@ merged_gtf_user$user_gene_id <-
   names(unlist_txs_by_gene)[match(merged_gtf_user$transcript_id, unlist_txs_by_gene$tx_name)]
 merged_gtf_user$user_gene_id <- paste0("R2.", merged_gtf_user$user_gene_id)
 
-# Build mapping between STRG and USER gene IDs for merged genes
+# Identify gene pairs for merging (USER assigned to STRG genes)
 df <- as.data.frame(cbind(merged_gtf_user$gene_id, merged_gtf_user$user_gene_id))
 df <- df[!duplicated(df), ]
 colnames(df) <- c("gene_id", "user_gene_id")
 filt_df <- df[grepl(df$gene_id, pattern = "^R1"), ]
 
-# Group gene ID pairs that share values
-share_val <- function(row1, row2) {
-  any(row1 %in% row2)
-}
-shares_val <- c(
-  FALSE,
-  sapply(2:nrow(filt_df), function(i) {
-    share_val(filt_df[i, ], filt_df[i - 1, ])
-  })
-)
-filt_df$shares_val <- shares_val
-filt_df$group <- cumsum(filt_df$shares_val == FALSE)
-split_filt_df <- split(filt_df, filt_df$group)
-
-# Assign new merged gene IDs and write mapping to file
-old_gene_ids <- sapply(split_filt_df, function(x) {
-  gene_ids <- unique(c(x$gene_id, x$user_gene_id))
-  gene_ids <- gene_ids[order(gene_ids)]
-  paste(gene_ids, collapse = "-")
-})
-old_gene_ids <- rep(old_gene_ids, elementNROWS(split_filt_df))
-filt_df <- do.call(rbind, split_filt_df)
-filt_df$old_gene_ids <- old_gene_ids
-filt_df$new_gene_ids <- paste0("R1_R2_merged_", filt_df$group)
-
-gene_id_pairs <- filt_df[, c("old_gene_ids", "new_gene_ids")]
-gene_id_pairs <- gene_id_pairs[!duplicated(gene_id_pairs$new_gene_ids), ]
+# Build gene ID graph and assign new merged gene IDs
+g <- graph_from_data_frame(filt_df, directed = FALSE)
+old_gene_ids <- sapply(split(names(components(g)$membership), components(g)$membership), function(ids) { paste(ids[order(ids)], collapse = "-") })
+new_gene_ids <- paste0("R1R2merged", names(old_gene_ids))
+old_gene_ids <- unname(old_gene_ids)
+gene_id_pairs <- data.frame(old_gene_ids, new_gene_ids)
 write.table(gene_id_pairs, "gene_ID_pairs.tsv", sep = "\t", quote = FALSE, row.names = FALSE, col.names = TRUE)
 
-# Update gene IDs in merged user annotation
-new_gene_ids <- filt_df$new_gene_ids
-names(new_gene_ids) <- filt_df$gene_id
+# Update USER transcript gene IDs with merged IDs
+old_gene_ids_split <- strsplit(gene_id_pairs$old_gene_ids, split = "-")
+exp_old_gene_ids <- unlist(old_gene_ids_split)
+exp_new_gene_ids <- rep(gene_id_pairs$new_gene_ids, times = elementNROWS(old_gene_ids_split))
 merged_gtf_user_bckp <- merged_gtf_user
-merged_gtf_user$gene_id <- new_gene_ids[merged_gtf_user$gene_id]
+merged_gtf_user$gene_id <- exp_new_gene_ids[match(merged_gtf_user$gene_id, exp_old_gene_ids)]
 merged_gtf_user$gene_id[which(is.na(merged_gtf_user$gene_id))] <- merged_gtf_user_bckp$gene_id[which(is.na(merged_gtf_user$gene_id))]
 merged_gtf_user$gene_name <- merged_gtf_user$gene_id
 
-# Combine STRG and USER annotations and export merged GTF
+# Update StringTie transcript gene IDs with merged IDs
+merged_gtf_strg_bckp <- merged_gtf_strg
+merged_gtf_strg$gene_id <- exp_new_gene_ids[match(merged_gtf_strg$gene_id, exp_old_gene_ids)]
+merged_gtf_strg$gene_id[which(is.na(merged_gtf_strg$gene_id))] <- merged_gtf_strg_bckp$gene_id[which(is.na(merged_gtf_strg$gene_id))]
+merged_gtf_strg$gene_name <- merged_gtf_strg$gene_id
+
+# Combine updated StringTie and USER transcript GTFs
 merged_gtf <- c(merged_gtf_strg, merged_gtf_user)
 merged_gtf <- sort(merged_gtf)
 
+# Export final merged GTF file
 gtf_file <- paste0(args[2], "_merged_with_strg.gtf")
 export.gff2(object = merged_gtf, con = gtf_file)
