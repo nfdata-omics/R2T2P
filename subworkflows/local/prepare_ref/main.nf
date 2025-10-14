@@ -34,7 +34,7 @@ workflow PREPARE_REF {
             ch_gtf      = GUNZIP_GTF.out.gunzip.map { it[1] }
             ch_versions = ch_versions.mix(GUNZIP_GTF.out.versions)
         } else {
-            ch_gtf = Channel.value(file(gtf, checkIfExists: true))
+            ch_gtf = gtf
         }
     } else if (params.gff) {
         if (params.gff.endsWith('.gz')) {
