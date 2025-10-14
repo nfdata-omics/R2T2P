@@ -34,7 +34,7 @@ workflow MERGE_WITH_USER_PROVIDED {
     // Merge StringTie GTF and user annotation GTF via an R script
     R_MERGE_DENOVO_WITH_USER (
         FILTER_UNDEFINED_STRAND.out.output,
-        ch_merged_gtf,
+        ch_merged_gtf.map { [ it[1] ] },
         ch_user_gtf
     )
     ch_versions = ch_versions.mix(R_MERGE_DENOVO_WITH_USER.out.versions)
