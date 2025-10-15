@@ -26,10 +26,10 @@ workflow TRANSCRIPTOME_ASSEMBLY {
 
     // Merge all those BAM files
     SAMTOOLS_MERGE (
-        ch_bam.collect { it[1] }.map { [ ["id": "merged_bams"], it[0] ] }, // get list of bam files
+        ch_bam.collect { it[1] }.map { [ ["id": "merged_bams"], it ] }, // get list of bam files
         ch_fasta.map { [ [:], it ] },
         ch_fai.map { [ [:], it ] },
-        [[], file("$projectDir/assets/NO_FILE")]
+        [[], []]
     )
     ch_versions = ch_versions.mix(SAMTOOLS_MERGE.out.versions)
 
@@ -42,6 +42,7 @@ workflow TRANSCRIPTOME_ASSEMBLY {
         ch_merged_bam,
         ch_gtf
     )
+    ch_versions = ch_versions.mix(STRINGTIE.out.versions)
 
     // Keep only transcripts with strand defined (column 7 ≠ “.”) from StringTie GTF
     FILTER_UNDEFINED_STRAND (
@@ -49,6 +50,7 @@ workflow TRANSCRIPTOME_ASSEMBLY {
         [],
         false
     )
+    ch_versions = ch_versions.mix(FILTER_UNDEFINED_STRAND.out.versions)
 
     if ( params.user_provided_annotation ) {
         // If the user provided an annotation GTF, merge StringTie GTF with it
