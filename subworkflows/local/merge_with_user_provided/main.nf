@@ -15,11 +15,11 @@ workflow MERGE_WITH_USER_PROVIDED {
 
     ch_versions = Channel.empty()
 
-    // Compare the de novo−only GTF with the user provided annotation
+    // Compare the user provided annotation with de novo−only GTF
     GFFCOMPARE (
-        ch_merged_gtf.map { [ ["id": "comp_strg_user"], it[1] ] },
+        ch_user_gtf.map { [ ["id": "comp_strg_user"], it ] },
         [[], [], []], // no fasta
-        ch_user_gtf.map { [ [:], it ] }
+        ch_merged_gtf.map { [ [:], it[1] ] }
     )
     ch_versions = ch_versions.mix(GFFCOMPARE.out.versions)
 
@@ -40,7 +40,6 @@ workflow MERGE_WITH_USER_PROVIDED {
     ch_versions = ch_versions.mix(R_MERGE_DENOVO_WITH_USER.out.versions)
 
     emit:
-    // bam      = SAMTOOLS_SORT.out.bam           // channel: [ val(meta), [ bam ] ]
-
-    versions = ch_versions                     // channel: [ versions.yml ]
+    gtf      = R_MERGE_DENOVO_WITH_USER.out.gtf   // channel: [ gft ]
+    versions = ch_versions                        // channel: [ versions.yml ]
 }

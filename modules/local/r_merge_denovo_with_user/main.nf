@@ -5,11 +5,13 @@ process R_MERGE_DENOVO_WITH_USER {
     container "docker.io/nfdata/riboseqc:v1.2.0-patched"
 
     input:
-    tuple val(meta), path(comp_strg_user_gft)
+    tuple val(meta), path("comp_strg_user.gtf")
     path merged_gtf
     path user_gft
 
     output:
+    path "comp_strg_user.merged_with_strg.gtf", emit: gtf
+    path "gene_ID_pairs.tsv", emit: gene_id_pairs
     path "versions.yml", emit: versions
 
     when:
@@ -19,7 +21,7 @@ process R_MERGE_DENOVO_WITH_USER {
     """
     export R_LIBS_USER=\$PWD/R-user-lib
 
-    Rscript --vanilla ${projectDir}/bin/merge_strg_user_gtfs.R ${merged_gtf} ${comp_strg_user_gft} ${user_gft} TRUE
+    Rscript --vanilla ${projectDir}/bin/merge_strg_user_gtfs.R ${merged_gtf} comp_strg_user.gtf ${user_gft} TRUE
 
     Rscript --vanilla -e '
         library(RiboseQC)
@@ -40,7 +42,8 @@ process R_MERGE_DENOVO_WITH_USER {
 
     stub:
     """
-    touch pippo
+    touch comp_strg_user.merged_with_strg.gtf
+    touch gene_ID_pairs.tsv
 
     Rscript -e '
         library(RiboseQC)

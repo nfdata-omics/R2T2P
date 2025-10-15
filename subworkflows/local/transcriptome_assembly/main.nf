@@ -57,10 +57,13 @@ workflow TRANSCRIPTOME_ASSEMBLY {
             ch_user_gtf
         )
         ch_versions = ch_versions.mix(MERGE_WITH_USER_PROVIDED.out.versions)
+        ch_gtf_to_use = MERGE_WITH_USER_PROVIDED.out.gtf
+    } else {
+        ch_gtf_to_use = FILTER_UNDEFINED_STRAND.out.output
     }
 
     // MERGE_WITH_REF_ANNOTATION (
-    //     FILTER_UNDEFINED_STRAND.out.output,
+    //     ch_gtf_to_use,
     //     ch_gtf,
     //     ch_bsgenome_dir,
     //     ch_gtf_Rannotation

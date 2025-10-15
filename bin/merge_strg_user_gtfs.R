@@ -211,5 +211,5 @@ merged_gtf <- c(merged_gtf_strg, merged_gtf_user)
 merged_gtf <- sort(merged_gtf)
 
 # Export final merged GTF file
-gtf_file <- paste0(args[2], "_merged_with_strg.gtf")
+gtf_file <- paste0(sub("\\.gtf$", "", args[2]), ".merged_with_strg.gtf")
 export.gff2(object = merged_gtf, con = gtf_file)
