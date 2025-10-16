@@ -1,8 +1,12 @@
-repository_type: pipeline
-
-nf_core_version: 3.3.1
-
 lint:
+  files_exist:
+    - CODE_OF_CONDUCT.md
+    - assets/nf-core-r2t2p_logo_light.png
+    - docs/images/nf-core-r2t2p_logo_light.png
+    - docs/images/nf-core-r2t2p_logo_dark.png
+    - .github/ISSUE_TEMPLATE/config.yml
+    - .github/workflows/awstest.yml
+    - .github/workflows/awsfulltest.yml
   files_unchanged:
     - .github/CONTRIBUTING.md
     - .prettierignore
@@ -17,6 +21,8 @@ lint:
     - .github/PULL_REQUEST_TEMPLATE.md
     - assets/email_template.txt
     - docs/README.md
+  multiqc_config:
+    - report_comment
   nextflow_config:
     - manifest.name
     - manifest.homePage
@@ -24,27 +30,18 @@ lint:
     - validation.help.afterText
     - validation.summary.beforeText
     - validation.summary.afterText
-  multiqc_config:
-    - report_comment
-  files_exist:
-    - CODE_OF_CONDUCT.md
-    - assets/nf-core-r2t2p_logo_light.png
-    - docs/images/nf-core-r2t2p_logo_light.png
-    - docs/images/nf-core-r2t2p_logo_dark.png
-    - .github/ISSUE_TEMPLATE/config.yml
-    - .github/workflows/awstest.yml
-    - .github/workflows/awsfulltest.yml
-
+nf_core_version: 3.4.0
+repository_type: pipeline
 template:
-  org: nfdata-omics
-  name: R2T2P
-  description: A de novo computational discovery pipeline from RNA to protein
   author: R. Albanese, M. Bonfanti
-  version: 0.1.0dev
-  force: true
+  description: A de novo computational discovery pipeline from RNA to protein
+  force: false
+  is_nfcore: false
+  name: R2T2P
+  org: nfdata-omics
   outdir: .
   skip_features:
     - gitpod
     - codespaces
     - rocrate
-  is_nfcore: false
+  version: 0.1.0dev
