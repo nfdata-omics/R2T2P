@@ -64,12 +64,12 @@ workflow TRANSCRIPTOME_ASSEMBLY {
         ch_gtf_to_use = FILTER_UNDEFINED_STRAND.out.output
     }
 
-    // MERGE_WITH_REF_ANNOTATION (
-    //     ch_gtf_to_use,
-    //     ch_gtf,
-    //     ch_bsgenome_dir,
-    //     ch_gtf_Rannotation
-    // )
+    MERGE_WITH_REF_ANNOTATION (
+        ch_gtf_to_use,
+        ch_gtf,
+        ch_bsgenome_dir,
+        ch_gtf_Rannotation
+    )
 
     emit:
     // bam      = SAMTOOLS_SORT.out.bam           // channel: [ val(meta), [ bam ] ]
