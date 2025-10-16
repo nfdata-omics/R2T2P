@@ -12,7 +12,15 @@ Changes in 'star/align/main.nf':
      val star_ignore_sjdbgtf
      val seq_platform
      val seq_center
-@@ -49,6 +50,7 @@
+@@ -29,6 +30,7 @@
+     tuple val(meta), path('*fastq.gz')                               , optional:true, emit: fastq
+     tuple val(meta), path('*.tab')                                   , optional:true, emit: tab
+     tuple val(meta), path('*.SJ.out.tab')                            , optional:true, emit: spl_junc_tab
++    tuple val(meta), path('*STARpass1/SJ.out.tab')                   , optional:true, emit: pass1_spl_juc_tab
+     tuple val(meta), path('*.ReadsPerGene.out.tab')                  , optional:true, emit: read_per_gene_tab
+     tuple val(meta), path('*.out.junction')                          , optional:true, emit: junction
+     tuple val(meta), path('*.out.sam')                               , optional:true, emit: sam
+@@ -49,6 +51,7 @@
      def seq_center_arg    = seq_center ? "'CN:$seq_center'" : ""
      attrRG          = args.contains("--outSAMattrRGline") ? "" : "--outSAMattrRGline 'ID:$prefix' $seq_center_arg 'SM:$prefix' $seq_platform_arg"
      def out_sam_type    = (args.contains('--outSAMtype')) ? '' : '--outSAMtype BAM Unsorted'
@@ -20,7 +28,7 @@ Changes in 'star/align/main.nf':
      mv_unsorted_bam = (args.contains('--outSAMtype BAM Unsorted SortedByCoordinate')) ? "mv ${prefix}.Aligned.out.bam ${prefix}.Aligned.unsort.out.bam" : ''
      """
      STAR \\
-@@ -58,6 +60,7 @@
+@@ -58,6 +61,7 @@
          --outFileNamePrefix $prefix. \\
          $out_sam_type \\
          $ignore_gtf \\

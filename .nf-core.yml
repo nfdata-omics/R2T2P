@@ -21,8 +21,7 @@ lint:
     - .github/PULL_REQUEST_TEMPLATE.md
     - assets/email_template.txt
     - docs/README.md
-  multiqc_config:
-    - report_comment
+  multiqc_config: False
   nextflow_config:
     - manifest.name
     - manifest.homePage
@@ -30,6 +29,9 @@ lint:
     - validation.help.afterText
     - validation.summary.beforeText
     - validation.summary.afterText
+  correct_meta_inputs:
+    - modules/nf-core/star/align/meta.yml
+    - modules/nf-core/cat/fastq/main.nf
 nf_core_version: 3.4.0
 repository_type: pipeline
 template:
