@@ -40,6 +40,7 @@ workflow MERGE_WITH_USER_PROVIDED {
     ch_versions = ch_versions.mix(R_MERGE_DENOVO_WITH_USER.out.versions)
 
     emit:
-    gtf      = R_MERGE_DENOVO_WITH_USER.out.gtf   // channel: [ gft ]
-    versions = ch_versions                        // channel: [ versions.yml ]
+    gtf              = R_MERGE_DENOVO_WITH_USER.out.gtf        // channel: [ gft ]
+    gffcompare_stats = GFFCOMPARE.out.stats.map { [ it[1] ] }  // channel: [ stats ]
+    versions         = ch_versions                             // channel: [ versions.yml ]
 }

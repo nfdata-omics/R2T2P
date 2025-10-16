@@ -19,6 +19,7 @@ run_modules:
   - fastqc
   - star
   - samtools
+  - gffcompare
 
 module_order:
   - star:
@@ -41,3 +42,13 @@ module_order:
       name: "Samtools (second pass)"
       path_filters:
         - "*.second_pass.*"
+  - gffcompare:
+      anchor: "gffcompare_user_provided"
+      name: "GffCompare - user annotation vs de novo GTF"
+      path_filters:
+        - "*comp_strg_user.stats"
+  - gffcompare:
+      anchor: "gffcompare_reference"
+      name: "GffCompare - de novo GTF vs reference annotation"
+      path_filters:
+        - "*comp_denovo.stats"

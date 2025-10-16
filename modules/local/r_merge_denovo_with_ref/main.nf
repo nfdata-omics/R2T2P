@@ -10,6 +10,8 @@ process R_MERGE_DENOVO_WITH_REF {
     path ref_gtf_Rannotation
 
     output:
+    path "comp_denovo.transcripts_with_strand.gtf_stringtie.gtf", emit: gtf
+    path "comp_denovo.transcripts_with_strand.gtf_stringtie_Rannot", emit: gtf_Rannot
     path "versions.yml", emit: versions
 
     when:

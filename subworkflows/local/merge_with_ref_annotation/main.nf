@@ -41,13 +41,12 @@ workflow MERGE_WITH_REF_ANNOTATION {
     )
     ch_versions = ch_versions.mix(R_MERGE_DENOVO_WITH_REF.out.versions)
 
-//   Rscript $1"/e_merge_gtfs.R" $6 comp_denovo.annotated_ok.gtf FALSE $1
-
     // Concatenate the newly annotated transcripts to the reference GTF
-//   cat comp_denovo.annotated_ok.gtf $4 > combined_new_annotated.gtf
+    // TODO: add here the concatenation step, cat comp_denovo.annotated_ok.gtf $4 > combined_new_annotated.gtf
 
     emit:
     // bam      = SAMTOOLS_SORT.out.bam           // channel: [ val(meta), [ bam ] ]
+    gffcompare_stats = GFFCOMPARE.out.stats.map { [ it[1] ] }  // channel: [ stats ]
 
     versions = ch_versions                     // channel: [ versions.yml ]
 }

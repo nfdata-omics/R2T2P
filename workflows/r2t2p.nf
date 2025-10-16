@@ -137,6 +137,7 @@ workflow R2T2P {
         PREPARE_REF.out.gtf_Rannot,
         ch_user_gtf
     )
+    ch_multiqc_files = ch_multiqc_files.mix(TRANSCRIPTOME_ASSEMBLY.out.gff_stats)
 
     //
     // Collate and save software versions

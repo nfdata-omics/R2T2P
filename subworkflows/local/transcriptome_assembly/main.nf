@@ -23,6 +23,7 @@ workflow TRANSCRIPTOME_ASSEMBLY {
     main:
 
     ch_versions = Channel.empty()
+    ch_gff_stats = Channel.empty()
 
     // Merge all those BAM files
     SAMTOOLS_MERGE (
@@ -60,6 +61,7 @@ workflow TRANSCRIPTOME_ASSEMBLY {
         )
         ch_versions = ch_versions.mix(MERGE_WITH_USER_PROVIDED.out.versions)
         ch_gtf_to_use = MERGE_WITH_USER_PROVIDED.out.gtf
+        ch_gff_stats = ch_gff_stats.mix(MERGE_WITH_USER_PROVIDED.out.gffcompare_stats)
     } else {
         ch_gtf_to_use = FILTER_UNDEFINED_STRAND.out.output
     }
@@ -70,9 +72,11 @@ workflow TRANSCRIPTOME_ASSEMBLY {
         ch_bsgenome_dir,
         ch_gtf_Rannotation
     )
+    ch_gff_stats = ch_gff_stats.mix(MERGE_WITH_REF_ANNOTATION.out.gffcompare_stats)
 
     emit:
     // bam      = SAMTOOLS_SORT.out.bam           // channel: [ val(meta), [ bam ] ]
+    gff_stats = ch_gff_stats                               // channel: [ stats ]
 
     versions = ch_versions                     // channel: [ versions.yml ]
 }
