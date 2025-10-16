@@ -19,7 +19,7 @@ workflow MERGE_WITH_REF_ANNOTATION {
 
     // Compare (denovo vs ) the merged GTF with user annotation
     GFFCOMPARE (
-        ch_merged_gtf.map { [ ["id": "comp_denovo"], it[1] ] },
+        ch_merged_gtf.map { [ ["id": "comp_denovo"], it ] },
         [[], [], []], // no fasta
         ch_ref_gtf.map { [ [:], it ] }
     )
