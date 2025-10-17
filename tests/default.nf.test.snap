@@ -353,12 +353,12 @@
                 "comp_denovo.stats:md5,df02f540dddafa20857f0b44ab27b87e",
                 "comp_denovo.tracking:md5,80aa2dcc23cc5054c7ef89d001683e04",
                 "comp_denovo.transcripts_with_strand.gtf:md5,dbb8acdf912733b0bf70daa3d91b6809",
-                "comp_denovo.transcripts_with_strand.gtf_stringtie.gtf:md5,a47c41b42bcc665d19313b000618afc0",
+                "comp_denovo.transcripts_with_strand.gtf_stringtie.gtf:md5,484502b88dd6dcca68674602633e3e22",
                 "comp_strg_user.additional_annotation_chr19.gtf.refmap:md5,bf902d340e299b0953e92ec303274fee",
                 "comp_strg_user.additional_annotation_chr19.gtf.tmap:md5,37277a87b7aa43da941ab2a31b35fd84",
                 "comp_strg_user.annotated.gtf:md5,1ddf8a7fc5bb07942450339cad7a8a9b",
                 "comp_strg_user.loci:md5,89886213bb894ac4648feddcfc9fd550",
-                "comp_strg_user.merged_with_strg.gtf:md5,f84d04921c5b28335022dae3bd6d5fb6",
+                "comp_strg_user.merged_with_strg.gtf:md5,af9f1920b1d19fbe06fb575f4150fb20",
                 "comp_strg_user.stats:md5,117d005fd63bc9fdea2794c41df914b2",
                 "comp_strg_user.tracking:md5,16a7f1ee16ecf678bd7ac639ad58e33a",
                 "comp_strg_user.transcripts_with_strand.gtf:md5,1ddf8a7fc5bb07942450339cad7a8a9b",
@@ -378,6 +378,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-10-16T22:19:40.275263443"
+        "timestamp": "2025-10-17T17:20:00.52280834"
     }
 }
