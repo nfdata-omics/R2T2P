@@ -59,7 +59,7 @@ workflow R2T2P {
         ch_samplesheet
     )
     ch_reads = PREPARE_FASTQ.out.reads
-    ch_versions = ch_versions.mix(PREPARE_REF.out.versions)
+    ch_versions = ch_versions.mix(PREPARE_FASTQ.out.versions)
     ch_multiqc_files = ch_multiqc_files.mix(PREPARE_FASTQ.out.multiqc_files)
 
     //
