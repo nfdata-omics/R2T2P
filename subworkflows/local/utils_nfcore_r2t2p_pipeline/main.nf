@@ -167,6 +167,14 @@ workflow PIPELINE_COMPLETION {
 //
 def validateInputParameters() {
     genomeExistsError()
+
+    // either gff or gtf should be provided, not both
+    if (!params.gff && !params.gtf) {
+        error("Please check input parameters -> Neither GFF nor GTF files were provided. Please provide one of them.")
+    }
+    if (params.gff && params.gtf) {
+        error("Please check input parameters -> Both GFF and GTF files were provided. Please provide only one of them.")
+    }
 }
 
 //

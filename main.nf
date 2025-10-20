@@ -24,10 +24,10 @@ include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_r2t2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// TODO nf-core: Remove this line if you don't need a FASTA file
-//   This is an example of how to use getGenomeAttribute() to fetch parameters
-//   from igenomes.config using `--genome`
-params.fasta = getGenomeAttribute('fasta')
+params.fasta            = getGenomeAttribute('fasta')
+params.gff              = getGenomeAttribute('gff')
+params.gtf              = getGenomeAttribute('gtf')
+params.star_index       = getGenomeAttribute('star')
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -45,11 +45,23 @@ workflow NFDATAOMICS_R2T2P {
 
     main:
 
+    // Define channels for reference files
+    ch_fasta       = params.fasta      ? Channel.value(file(params.fasta, checkIfExists: true))      : Channel.empty()
+    ch_gtf         = params.gtf        ? Channel.value(file(params.gtf, checkIfExists: true))        : Channel.empty()
+    ch_gff         = params.gff        ? Channel.value(file(params.gff, checkIfExists: true))        : Channel.empty()
+    ch_star_index  = params.star_index ? Channel.value(file(params.star_index, checkIfExists: true)) : Channel.empty()
+    ch_user_gtf    = params.user_provided_annotation ? Channel.value(file(params.user_provided_annotation, checkIfExists: true)) : Channel.empty()
+
     //
     // WORKFLOW: Run pipeline
     //
     R2T2P (
-        samplesheet
+        samplesheet,
+        ch_fasta,
+        ch_gtf,
+        ch_gff,
+        ch_star_index,
+        ch_user_gtf
     )
     emit:
     multiqc_report = R2T2P.out.multiqc_report // channel: /path/to/multiqc_report.html

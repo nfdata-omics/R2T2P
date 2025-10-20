@@ -29,6 +29,11 @@
                     "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
                     "fa_icon": "fas fa-folder-open"
                 },
+                "save_unaligned": {
+                    "type": "boolean",
+                    "description": "Save FASTQ files with unaligned reads from STAR alignment to the output folder.",
+                    "fa_icon": "fas fa-align-left"
+                },
                 "email": {
                     "type": "string",
                     "description": "Email address for completion summary.",
@@ -79,6 +84,18 @@
                     "fa_icon": "fas fa-ban",
                     "hidden": true,
                     "default": "s3://ngi-igenomes/igenomes/"
+                },
+                "gtf": {
+                    "type": "string"
+                },
+                "gff": {
+                    "type": "string"
+                },
+                "star_index": {
+                    "type": "string"
+                },
+                "user_provided_annotation": {
+                    "type": "string"
                 }
             }
         },
@@ -216,7 +233,7 @@
                     "type": "string",
                     "fa_icon": "far fa-check-circle",
                     "description": "Base URL or local path to location of pipeline test dataset files",
-                    "default": "https://raw.githubusercontent.com/nf-core/test-datasets/",
+                    "default": "https://raw.githubusercontent.com/nfdata-omics/test-datasets/",
                     "hidden": true
                 },
                 "trace_report_suffix": {

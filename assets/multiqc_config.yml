@@ -9,6 +9,46 @@ report_section_order:
   "nfdata-omics-r2t2p-summary":
     order: -1002
 
-export_plots: true
+export_plots: false
 
 disable_version_detection: true
+
+# Run only these modules
+run_modules:
+  - custom_content
+  - fastqc
+  - star
+  - samtools
+  - gffcompare
+
+module_order:
+  - star:
+      anchor: "star_firstpass"
+      name: "STAR (first pass)"
+      path_filters:
+        - "*.first_pass.Log.final.out"
+  - samtools:
+      anchor: "samtools_firstpass"
+      name: "Samtools (first pass)"
+      path_filters:
+        - "*.first_pass.*"
+  - star:
+      anchor: "star_secondpass"
+      name: "STAR (second pass)"
+      path_filters:
+        - "*.second_pass.Log.final.out"
+  - samtools:
+      anchor: "samtools_secondpass"
+      name: "Samtools (second pass)"
+      path_filters:
+        - "*.second_pass.*"
+  - gffcompare:
+      anchor: "gffcompare_user_provided"
+      name: "GffCompare - user annotation vs de novo GTF"
+      path_filters:
+        - "*comp_strg_user.stats"
+  - gffcompare:
+      anchor: "gffcompare_reference"
+      name: "GffCompare - de novo GTF vs reference annotation"
+      path_filters:
+        - "*comp_denovo.stats"

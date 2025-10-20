@@ -1,0 +1,45 @@
+Changes in component 'nf-core/star/align'
+'modules/nf-core/star/align/environment.yml' is unchanged
+'modules/nf-core/star/align/meta.yml' is unchanged
+Changes in 'star/align/main.nf':
+--- modules/nf-core/star/align/main.nf
++++ modules/nf-core/star/align/main.nf
+@@ -11,6 +11,7 @@
+     tuple val(meta), path(reads, stageAs: "input*/*")
+     tuple val(meta2), path(index)
+     tuple val(meta3), path(gtf)
++    path additional_junctions
+     val star_ignore_sjdbgtf
+     val seq_platform
+     val seq_center
+@@ -29,6 +30,7 @@
+     tuple val(meta), path('*fastq.gz')                               , optional:true, emit: fastq
+     tuple val(meta), path('*.tab')                                   , optional:true, emit: tab
+     tuple val(meta), path('*.SJ.out.tab')                            , optional:true, emit: spl_junc_tab
++    tuple val(meta), path('*STARpass1/SJ.out.tab')                   , optional:true, emit: pass1_spl_juc_tab
+     tuple val(meta), path('*.ReadsPerGene.out.tab')                  , optional:true, emit: read_per_gene_tab
+     tuple val(meta), path('*.out.junction')                          , optional:true, emit: junction
+     tuple val(meta), path('*.out.sam')                               , optional:true, emit: sam
+@@ -49,6 +51,7 @@
+     def seq_center_arg    = seq_center ? "'CN:$seq_center'" : ""
+     attrRG          = args.contains("--outSAMattrRGline") ? "" : "--outSAMattrRGline 'ID:$prefix' $seq_center_arg 'SM:$prefix' $seq_platform_arg"
+     def out_sam_type    = (args.contains('--outSAMtype')) ? '' : '--outSAMtype BAM Unsorted'
++    def additional_junctions_arg = additional_junctions.name != 'NO_FILE' ? "--sjdbFileChrStartEnd $additional_junctions" : ''
+     mv_unsorted_bam = (args.contains('--outSAMtype BAM Unsorted SortedByCoordinate')) ? "mv ${prefix}.Aligned.out.bam ${prefix}.Aligned.unsort.out.bam" : ''
+     """
+     STAR \\
+@@ -58,6 +61,7 @@
+         --outFileNamePrefix $prefix. \\
+         $out_sam_type \\
+         $ignore_gtf \\
++        $additional_junctions_arg \\
+         $attrRG \\
+         $args
+ 
+
+'modules/nf-core/star/align/tests/nextflow.starfusion.config' is unchanged
+'modules/nf-core/star/align/tests/nextflow.config' is unchanged
+'modules/nf-core/star/align/tests/nextflow.arriba.config' is unchanged
+'modules/nf-core/star/align/tests/main.nf.test.snap' is unchanged
+'modules/nf-core/star/align/tests/main.nf.test' is unchanged
+************************************************************

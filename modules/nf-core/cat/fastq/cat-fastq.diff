@@ -1,0 +1,61 @@
+Changes in component 'nf-core/cat/fastq'
+'modules/nf-core/cat/fastq/environment.yml' is unchanged
+'modules/nf-core/cat/fastq/meta.yml' is unchanged
+Changes in 'cat/fastq/main.nf':
+--- modules/nf-core/cat/fastq/main.nf
++++ modules/nf-core/cat/fastq/main.nf
+@@ -11,7 +11,7 @@
+     tuple val(meta), path(reads, stageAs: "input*/*")
+ 
+     output:
+-    tuple val(meta), path("*.merged.fastq.gz"), emit: reads
++    tuple val(meta), path("*.merged.*.gz"), emit: reads
+     path "versions.yml", emit: versions
+ 
+     when:
+@@ -20,10 +20,11 @@
+     script:
+     def prefix = task.ext.prefix ?: "${meta.id}"
+     def readList = reads instanceof List ? reads.collect { it.toString() } : [reads.toString()]
++    def fileExt = readList[0].endsWith('.fasta.gz') || readList[0].endsWith('.fa.gz') ? 'fasta' : 'fastq'
+     if (meta.single_end) {
+         if (readList.size >= 1) {
+             """
+-            cat ${readList.join(' ')} > ${prefix}.merged.fastq.gz
++            cat ${readList.join(' ')} > ${prefix}.merged.${fileExt}.gz
+ 
+             cat <<-END_VERSIONS > versions.yml
+             "${task.process}":
+@@ -31,7 +32,7 @@
+             END_VERSIONS
+             """
+         } else {
+-            error("Could not find any FASTQ files to concatenate in the process input")
++            error("Could not find any FASTA/FASTQ files to concatenate in the process input")
+         }
+     }
+     else {
+@@ -40,8 +41,8 @@
+             def read2 = []
+             readList.eachWithIndex { v, ix -> (ix & 1 ? read2 : read1) << v }
+             """
+-            cat ${read1.join(' ')} > ${prefix}_1.merged.fastq.gz
+-            cat ${read2.join(' ')} > ${prefix}_2.merged.fastq.gz
++            cat ${read1.join(' ')} > ${prefix}_1.merged.${fileExt}.gz
++            cat ${read2.join(' ')} > ${prefix}_2.merged.${fileExt}.gz
+ 
+             cat <<-END_VERSIONS > versions.yml
+             "${task.process}":
+@@ -49,7 +50,7 @@
+             END_VERSIONS
+             """
+         } else {
+-            error("Could not find any FASTQ file pairs to concatenate in the process input")
++            error("Could not find any FASTA/FASTQ file pairs to concatenate in the process input")
+         }
+     }
+ 
+
+'modules/nf-core/cat/fastq/tests/main.nf.test.snap' is unchanged
+'modules/nf-core/cat/fastq/tests/main.nf.test' is unchanged
+************************************************************

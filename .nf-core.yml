@@ -29,6 +29,9 @@ lint:
     - validation.help.afterText
     - validation.summary.beforeText
     - validation.summary.afterText
+  correct_meta_inputs:
+    - modules/nf-core/star/align/meta.yml
+    - modules/nf-core/cat/fastq/main.nf
 nf_core_version: 3.4.1
 repository_type: pipeline
 template:
