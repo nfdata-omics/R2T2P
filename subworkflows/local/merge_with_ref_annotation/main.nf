@@ -8,7 +8,7 @@ include { R_MERGE_DENOVO_WITH_REF          } from '../../../modules/local/r_merg
 
 workflow MERGE_WITH_REF_ANNOTATION {
     take:
-    ch_merged_gtf  // channel: [ val(meta), [ gtf ] ]
+    ch_merged_gtf  // channel: gtf
     ch_ref_gtf     // channel: gtf
     ch_bsgenome_dir // channel: path(bsgenome_dir)
     ch_gtf_Rannotation // channel: path(gtf_Rannotation)

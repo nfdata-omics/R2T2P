@@ -63,7 +63,7 @@ workflow TRANSCRIPTOME_ASSEMBLY {
         ch_gtf_to_use = MERGE_WITH_USER_PROVIDED.out.gtf
         ch_gff_stats = ch_gff_stats.mix(MERGE_WITH_USER_PROVIDED.out.gffcompare_stats)
     } else {
-        ch_gtf_to_use = FILTER_UNDEFINED_STRAND.out.output
+        ch_gtf_to_use = FILTER_UNDEFINED_STRAND.out.output.map { [ it[1] ] }
     }
 
     MERGE_WITH_REF_ANNOTATION (
