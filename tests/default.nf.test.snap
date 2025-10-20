@@ -364,20 +364,15 @@
                 "comp_strg_user.transcripts_with_strand.gtf:md5,1ddf8a7fc5bb07942450339cad7a8a9b",
                 "gene_ID_pairs.tsv:md5,7cb85b60e723360be0278876a1ee9e91",
                 "e2t.ctab:md5,b48f6b8424fe5adbab388e096fd3b635",
-                "e_data.ctab:md5,a7f4bebbc69cda9b19a5d2ef80cfb281",
                 "i2t.ctab:md5,54feb120633241de590bd7c1d1ac3769",
                 "i_data.ctab:md5,696d2226b583e18e110815d5d5e8b2a9",
-                "t_data.ctab:md5,cc3a04cff09e7084705a87a2ff47736d",
-                "merged_bams.coverage.gtf:md5,fa92145a03703d18a44a25cf63365c7a",
-                "merged_bams.gene.abundance.txt:md5,54658adbdfa1a37f2e967143436bd62e",
-                "merged_bams.transcripts.gtf:md5,1c49bf9ece7b60cdbf5753d5d14a57af",
-                "merged_bams.transcripts_with_strand.gtf:md5,18fb4614fdd1900899d594573893b023"
+                "merged_bams.coverage.gtf:md5,fa92145a03703d18a44a25cf63365c7a"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-10-17T17:20:00.52280834"
+        "timestamp": "2025-10-17T18:04:20.668655506"
     }
 }
