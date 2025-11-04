@@ -90,7 +90,7 @@ workflow R2T2P {
     // Merge all the novel junction tables into a single file
     //
     STAR_FIRST_ALIGN.out.pass1_spl_juc_tab
-        .collect { _meta, junction_file -> junction_file }
+        .collect( { _meta, junction_file -> junction_file }, sort: true )
         .map { junction_files -> [ ["id": "merged_junctions"], junction_files ] }
         .set { ch_merged_junctions }
 

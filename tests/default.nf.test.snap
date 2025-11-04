@@ -274,7 +274,7 @@
                 "transcriptome_assembly/merged_bams/merged_bams.transcripts_with_strand.gtf"
             ],
             [
-                "firstpass_junctions.txt:md5,2c56508bcad2a624f500e0f05fdc0624",
+                "firstpass_junctions.txt:md5,a487c40987d253d5887bbc760f61bc14",
                 "rep1_0h.bam:md5,91f282ef644241ec9b1f5da6b9ab00c7",
                 "rep1_0h.bam.bai:md5,d58dbcd09c0c4a5a3ed14cfc9ff04292",
                 "rep1_0h.first_pass.SJ.out.tab:md5,4ae07694b2c31bb4f7f659e3ce56d5b5",
@@ -406,6 +406,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-04T17:47:41.789335065"
+        "timestamp": "2025-11-04T18:33:12.255772816"
     }
 }
