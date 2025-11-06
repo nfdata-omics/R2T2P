@@ -274,7 +274,7 @@
                 "transcriptome_assembly/merged_bams/merged_bams.transcripts_with_strand.gtf"
             ],
             [
-                "firstpass_junctions.txt:md5,a487c40987d253d5887bbc760f61bc14",
+                "firstpass_junctions.txt:md5,db37daec5f9c9178384682a559065add",
                 "rep1_0h.bam:md5,91f282ef644241ec9b1f5da6b9ab00c7",
                 "rep1_0h.bam.bai:md5,d58dbcd09c0c4a5a3ed14cfc9ff04292",
                 "rep1_0h.first_pass.SJ.out.tab:md5,4ae07694b2c31bb4f7f659e3ce56d5b5",
@@ -386,12 +386,12 @@
                 "comp_denovo.stats:md5,f066761325c5c7e3b027d303db23b2a3",
                 "comp_denovo.tracking:md5,d3adb7aedb43f07e45ffe83f351b935d",
                 "comp_denovo.transcripts_with_strand.gtf:md5,43da5f1e51d6b7e32a8be3d61a667036",
-                "comp_denovo.transcripts_with_strand.gtf_stringtie.gtf:md5,297be38c904cdf85ee254c552c86a438",
+                "comp_denovo.transcripts_with_strand.gtf_stringtie.gtf:md5,1f543f7e0f8b4fcea8b3368e7b92be7c",
                 "comp_strg_user.additional_annotation_chr19.gtf.refmap:md5,f9f2c9848ae53fa7ca17ec88ddeed7b7",
                 "comp_strg_user.additional_annotation_chr19.gtf.tmap:md5,cd2401d43754540a387b5e7d983aee3b",
                 "comp_strg_user.annotated.gtf:md5,b436793b702cc701fa96ed3feed388de",
                 "comp_strg_user.loci:md5,7802f7092df1f9e211cd66e386be7897",
-                "comp_strg_user.merged_with_strg.gtf:md5,d0ffafbfda7537fd9ff500062f7d91fc",
+                "comp_strg_user.merged_with_strg.gtf:md5,c5f705de75018188e57254a08274cfc0",
                 "comp_strg_user.stats:md5,8fcbc78d4d69014ca29c1af45ae73492",
                 "comp_strg_user.tracking:md5,23016861036de94cc183f94f2728eac9",
                 "comp_strg_user.transcripts_with_strand.gtf:md5,b436793b702cc701fa96ed3feed388de",
@@ -406,6 +406,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-04T18:33:12.255772816"
+        "timestamp": "2025-11-06T14:21:50.882518472"
     }
 }

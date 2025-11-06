@@ -89,9 +89,16 @@ workflow R2T2P {
     //
     // Merge all the novel junction tables into a single file
     //
-    STAR_FIRST_ALIGN.out.pass1_spl_juc_tab
-        .collect( { _meta, junction_file -> junction_file }, sort: true )
-        .map { junction_files -> [ ["id": "merged_junctions"], junction_files ] }
+    ch_samplesheet
+        .toList()
+        .flatMap { list ->
+            list.withIndex().collect { item, index ->
+                [item[0], index]  // [meta, position]
+            }
+        }
+        .join(STAR_FIRST_ALIGN.out.pass1_spl_juc_tab)
+        .toSortedList { a, b -> a[1] <=> b[1] }
+        .map { list -> [["id": "merged_junctions"], list.collect { it[2] }] }
         .set { ch_merged_junctions }
 
     //
