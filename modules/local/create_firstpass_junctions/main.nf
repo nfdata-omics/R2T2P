@@ -5,7 +5,7 @@ process CREATE_FIRSTPASS_JUNCTIONS {
     container "docker.io/nfdata/riboseqc:v1.2.0-patched"
 
     input:
-    tuple val(meta), path(pass1_splice_junctions)
+    tuple val(meta), path("dir??/SJ.out.tab")
     path "R-user-lib/*"
     path gtf_Rannotation
 
@@ -27,7 +27,7 @@ process CREATE_FIRSTPASS_JUNCTIONS {
         load_annotation("${gtf_Rannotation}")
 
         # Getting paths of "SJ.out.tab" files
-        sj_out_files_firstpass <- list("${pass1_splice_junctions}")
+        sj_out_files_firstpass <- list.files(".", pattern="SJ.out.tab\$", full.names=T, recursive=T)
 
         # Reading files and storing the junctions (as GRanges objects) inside a list
         firstpass_junctions <- lapply(sj_out_files_firstpass, readSTARJunctions)
@@ -67,6 +67,7 @@ process CREATE_FIRSTPASS_JUNCTIONS {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg\$Package]] <- pkg\$Version
         }
+        versions <- list(CREATE_FIRSTPASS_JUNCTIONS = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '
@@ -88,6 +89,7 @@ process CREATE_FIRSTPASS_JUNCTIONS {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg$Package]] <- pkg\$Version
         }
+        versions <- list(CREATE_FIRSTPASS_JUNCTIONS = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '

@@ -87,16 +87,34 @@ workflow R2T2P {
         .mix( FIRST_BAM_SORT_STATS.out.idxstats.collect{it[1]} )
 
     //
+    // Merge all the novel junction tables into a single file
+    //
+    ch_samplesheet
+        .toList()
+        .flatMap { list ->
+            list.withIndex().collect { item, index ->
+                [item[0], index]  // [meta, position]
+            }
+        }
+        .join(STAR_FIRST_ALIGN.out.pass1_spl_juc_tab)
+        .toSortedList { a, b -> a[1] <=> b[1] }
+        .map { list -> [["id": "merged_junctions"], list.collect { it[2] }] }
+        .set { ch_merged_junctions }
+
+    //
     // Get the table of novel junctions from the first STAR alignment
     //
     CREATE_FIRSTPASS_JUNCTIONS(
-        STAR_FIRST_ALIGN.out.pass1_spl_juc_tab,
+        ch_merged_junctions,
         PREPARE_REF.out.bsgenome,
         PREPARE_REF.out.gtf_Rannot
     )
+    ch_versions = ch_versions.mix(CREATE_FIRSTPASS_JUNCTIONS.out.versions)
 
     // Match the reads wit the corresponding junction table
-    ch_reads_with_junctions = ch_reads.join(CREATE_FIRSTPASS_JUNCTIONS.out.pass1_junctions, by: 0)
+    ch_reads
+        .combine( CREATE_FIRSTPASS_JUNCTIONS.out.pass1_junctions.map { _meta, file -> file } )
+        .set { ch_reads_with_junctions }
     // Split into two channels:
     ch_reads_ordered = ch_reads_with_junctions.map { it[0..1] }
     ch_junctions_ordered = ch_reads_with_junctions.map { it[2] }
