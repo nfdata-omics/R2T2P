@@ -119,7 +119,7 @@ workflow R2T2P {
     ch_versions = ch_versions.mix(CREATE_FIRSTPASS_JUNCTIONS.out.versions)
 
     // Match the reads wit the corresponding junction table
-    ch_reads
+    ch_reads_by_type.rna
         .combine( CREATE_FIRSTPASS_JUNCTIONS.out.pass1_junctions.map { _meta, file -> file } )
         .set { ch_reads_with_junctions }
     // Split into two channels:
