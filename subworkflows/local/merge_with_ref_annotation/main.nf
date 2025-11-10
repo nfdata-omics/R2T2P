@@ -50,8 +50,7 @@ workflow MERGE_WITH_REF_ANNOTATION {
     ch_versions = ch_versions.mix(CAT_GTF.out.versions)
 
     emit:
-    gtf              = CAT_GTF.out.gtf                         // channel: [ val(meta), [ bam ] ]
+    gtf              = CAT_GTF.out.gtf                         // channel: [ val(meta), [ gtf ] ]
     gffcompare_stats = GFFCOMPARE.out.stats.map { [ it[1] ] }  // channel: [ stats ]
-
-    versions = ch_versions                     // channel: [ versions.yml ]
+    versions         = ch_versions                             // channel: [ versions.yml ]
 }
