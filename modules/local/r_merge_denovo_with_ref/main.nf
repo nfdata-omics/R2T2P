@@ -35,6 +35,7 @@ process R_MERGE_DENOVO_WITH_REF {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg\$Package]] <- pkg\$Version
         }
+        versions <- list(R_MERGE_DENOVO_WITH_REF = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '
@@ -56,6 +57,7 @@ process R_MERGE_DENOVO_WITH_REF {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg$Package]] <- pkg\$Version
         }
+        versions <- list(R_MERGE_DENOVO_WITH_REF = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '
