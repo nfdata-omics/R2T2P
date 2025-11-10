@@ -13,6 +13,7 @@ include { PREPARE_FASTQ                                    } from '../subworkflo
 include { BAM_SORT_STATS_SAMTOOLS as FIRST_BAM_SORT_STATS  } from '../subworkflows/nf-core/bam_sort_stats_samtools'
 include { BAM_SORT_STATS_SAMTOOLS as SECOND_BAM_SORT_STATS } from '../subworkflows/nf-core/bam_sort_stats_samtools'
 include { TRANSCRIPTOME_ASSEMBLY                           } from '../subworkflows/local/transcriptome_assembly/main'
+include { FINAL_ALIGNMENT                                  } from '../subworkflows/local/final_alignment/main'
 
 include { paramsSummaryMap        } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc    } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -164,6 +165,16 @@ workflow R2T2P {
     )
     ch_versions = ch_versions.mix(TRANSCRIPTOME_ASSEMBLY.out.versions)
     ch_multiqc_files = ch_multiqc_files.mix(TRANSCRIPTOME_ASSEMBLY.out.gff_stats)
+
+    //
+    // Final alignment
+    //
+    FINAL_ALIGNMENT (
+        ch_reads,
+        PREPARE_REF.out.star_index,              // genome_index
+        TRANSCRIPTOME_ASSEMBLY.out.gtf.first(),  // new gtf after assembly
+        PREPARE_REF.out.fasta                    // genome fasta
+    )
 
     //
     // Collate and save software versions
