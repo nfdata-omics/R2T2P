@@ -73,10 +73,10 @@ workflow TRANSCRIPTOME_ASSEMBLY {
         ch_gtf_Rannotation
     )
     ch_gff_stats = ch_gff_stats.mix(MERGE_WITH_REF_ANNOTATION.out.gffcompare_stats)
+    ch_versions = ch_versions.mix(MERGE_WITH_REF_ANNOTATION.out.versions)
 
     emit:
-    // bam      = SAMTOOLS_SORT.out.bam           // channel: [ val(meta), [ bam ] ]
-    gff_stats = ch_gff_stats                               // channel: [ stats ]
-
-    versions = ch_versions                     // channel: [ versions.yml ]
+    gtf       = MERGE_WITH_REF_ANNOTATION.out.gtf   // channel: [ val(meta), [ gtf ] ]
+    gff_stats = ch_gff_stats                        // channel: [ stats ]
+    versions  = ch_versions                         // channel: [ versions.yml ]
 }
