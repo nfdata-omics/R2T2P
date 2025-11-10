@@ -162,6 +162,7 @@ workflow R2T2P {
         PREPARE_REF.out.gtf_Rannot,
         ch_user_gtf
     )
+    ch_versions = ch_versions.mix(TRANSCRIPTOME_ASSEMBLY.out.versions)
     ch_multiqc_files = ch_multiqc_files.mix(TRANSCRIPTOME_ASSEMBLY.out.gff_stats)
 
     //
@@ -174,7 +175,6 @@ workflow R2T2P {
             sort: true,
             newLine: true
         ).set { ch_collated_versions }
-
 
     //
     // MODULE: MultiQC

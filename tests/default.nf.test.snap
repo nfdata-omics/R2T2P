@@ -5,6 +5,9 @@
                 "CAT_FASTQ": {
                     "cat": 9.5
                 },
+                "CAT_GTF": {
+                    "cat": 9.5
+                },
                 "CREATE_FIRSTPASS_JUNCTIONS": {
                     "R": "4.4.3",
                     "BSgenome.any.species.GRCh38": "1.0",
@@ -47,11 +50,87 @@
                 "FASTATOTWOBIT": {
                     "FaToTwoBit": "v2025-09-10"
                 },
+                "FILTER_UNDEFINED_STRAND": {
+                    "gawk": "5.3.0"
+                },
+                "GFFCOMPARE": {
+                    "gffcompare": "0.12.6"
+                },
                 "GUNZIP_FASTA": {
                     "gunzip": 1.13
                 },
                 "GUNZIP_GTF": {
                     "gunzip": 1.13
+                },
+                "R_MERGE_DENOVO_WITH_REF": {
+                    "R": "4.4.3",
+                    "RiboseQC": "0.99.0",
+                    "GenomicFeatures": "1.58.0",
+                    "AnnotationDbi": "1.68.0",
+                    "viridis": "0.6.5",
+                    "viridisLite": "0.4.2",
+                    "ggpubr": "0.6.1",
+                    "gridExtra": "2.3",
+                    "DT": "0.34.0",
+                    "knitr": "1.50",
+                    "ggplot2": "4.0.0",
+                    "reshape2": "1.4.4",
+                    "devtools": "2.4.5",
+                    "usethis": "3.2.1",
+                    "GenomicFiles": "1.42.0",
+                    "BiocParallel": "1.40.2",
+                    "BSgenome": "1.74.0",
+                    "BiocIO": "1.16.0",
+                    "GenomicAlignments": "1.42.0",
+                    "Rsamtools": "2.22.0",
+                    "Biostrings": "2.74.1",
+                    "XVector": "0.46.0",
+                    "SummarizedExperiment": "1.36.0",
+                    "Biobase": "2.66.0",
+                    "MatrixGenerics": "1.18.1",
+                    "matrixStats": "1.5.0",
+                    "rtracklayer": "1.66.0",
+                    "GenomicRanges": "1.58.0",
+                    "GenomeInfoDb": "1.42.3",
+                    "IRanges": "2.40.1",
+                    "S4Vectors": "0.44.0",
+                    "BiocGenerics": "0.52.0",
+                    "rmarkdown": "2.29"
+                },
+                "R_MERGE_DENOVO_WITH_USER": {
+                    "R": "4.4.3",
+                    "RiboseQC": "0.99.0",
+                    "GenomicFeatures": "1.58.0",
+                    "AnnotationDbi": "1.68.0",
+                    "viridis": "0.6.5",
+                    "viridisLite": "0.4.2",
+                    "ggpubr": "0.6.1",
+                    "gridExtra": "2.3",
+                    "DT": "0.34.0",
+                    "knitr": "1.50",
+                    "ggplot2": "4.0.0",
+                    "reshape2": "1.4.4",
+                    "devtools": "2.4.5",
+                    "usethis": "3.2.1",
+                    "GenomicFiles": "1.42.0",
+                    "BiocParallel": "1.40.2",
+                    "BSgenome": "1.74.0",
+                    "BiocIO": "1.16.0",
+                    "GenomicAlignments": "1.42.0",
+                    "Rsamtools": "2.22.0",
+                    "Biostrings": "2.74.1",
+                    "XVector": "0.46.0",
+                    "SummarizedExperiment": "1.36.0",
+                    "Biobase": "2.66.0",
+                    "MatrixGenerics": "1.18.1",
+                    "matrixStats": "1.5.0",
+                    "rtracklayer": "1.66.0",
+                    "GenomicRanges": "1.58.0",
+                    "GenomeInfoDb": "1.42.3",
+                    "IRanges": "2.40.1",
+                    "S4Vectors": "0.44.0",
+                    "BiocGenerics": "0.52.0",
+                    "rmarkdown": "2.29"
                 },
                 "SAMTOOLS_FLAGSTAT": {
                     "samtools": 1.21
@@ -60,6 +139,9 @@
                     "samtools": 1.21
                 },
                 "SAMTOOLS_INDEX": {
+                    "samtools": 1.21
+                },
+                "SAMTOOLS_MERGE": {
                     "samtools": 1.21
                 },
                 "SAMTOOLS_SORT": {
@@ -82,6 +164,9 @@
                     "star": "2.7.11b",
                     "samtools": 1.21,
                     "gawk": "5.1.0"
+                },
+                "STRINGTIE": {
+                    "stringtie": "2.2.3"
                 },
                 "Workflow": {
                     "nfdata-omics/r2t2p": "v0.1.0dev"
@@ -242,6 +327,7 @@
                 "second_pass/rep2_14h/rep2_14h.second_pass.idxstats",
                 "second_pass/rep2_14h/rep2_14h.second_pass.stats",
                 "transcriptome_assembly",
+                "transcriptome_assembly/combined_new_annotated.gtf",
                 "transcriptome_assembly/comp_denovo.annotated.gtf",
                 "transcriptome_assembly/comp_denovo.comp_strg_user.merged_with_strg.gtf.refmap",
                 "transcriptome_assembly/comp_denovo.comp_strg_user.merged_with_strg.gtf.tmap",
@@ -379,6 +465,7 @@
                 "rep2_14h.second_pass.flagstat:md5,ffb1dfd25252a30339b79b6da3240133",
                 "rep2_14h.second_pass.idxstats:md5,dcd7a5db829be09bb508b17ac03e8d42",
                 "rep2_14h.second_pass.stats:md5,4072cbc1f93c2e2a50c1a36895bb6343",
+                "combined_new_annotated.gtf:md5,37c68ec19632830602d29e9aa766a932",
                 "comp_denovo.annotated.gtf:md5,43da5f1e51d6b7e32a8be3d61a667036",
                 "comp_denovo.comp_strg_user.merged_with_strg.gtf.refmap:md5,3595ae225fd91d6b2f72a91b272058ee",
                 "comp_denovo.comp_strg_user.merged_with_strg.gtf.tmap:md5,f22432af54eeb4873a4e5820e307c27e",
@@ -386,12 +473,12 @@
                 "comp_denovo.stats:md5,f066761325c5c7e3b027d303db23b2a3",
                 "comp_denovo.tracking:md5,d3adb7aedb43f07e45ffe83f351b935d",
                 "comp_denovo.transcripts_with_strand.gtf:md5,43da5f1e51d6b7e32a8be3d61a667036",
-                "comp_denovo.transcripts_with_strand.gtf_stringtie.gtf:md5,1f543f7e0f8b4fcea8b3368e7b92be7c",
+                "comp_denovo.transcripts_with_strand.gtf_stringtie.gtf:md5,90e3e02bf8c24930c9f79e0d362f60cc",
                 "comp_strg_user.additional_annotation_chr19.gtf.refmap:md5,f9f2c9848ae53fa7ca17ec88ddeed7b7",
                 "comp_strg_user.additional_annotation_chr19.gtf.tmap:md5,cd2401d43754540a387b5e7d983aee3b",
                 "comp_strg_user.annotated.gtf:md5,b436793b702cc701fa96ed3feed388de",
                 "comp_strg_user.loci:md5,7802f7092df1f9e211cd66e386be7897",
-                "comp_strg_user.merged_with_strg.gtf:md5,c5f705de75018188e57254a08274cfc0",
+                "comp_strg_user.merged_with_strg.gtf:md5,84cf35f1159b4401b743a38c9dfda0d4",
                 "comp_strg_user.stats:md5,8fcbc78d4d69014ca29c1af45ae73492",
                 "comp_strg_user.tracking:md5,23016861036de94cc183f94f2728eac9",
                 "comp_strg_user.transcripts_with_strand.gtf:md5,b436793b702cc701fa96ed3feed388de",
@@ -406,6 +493,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-06T14:21:50.882518472"
+        "timestamp": "2025-11-10T16:37:18.580393084"
     }
 }
