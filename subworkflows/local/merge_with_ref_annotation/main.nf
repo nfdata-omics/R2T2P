@@ -5,6 +5,7 @@
 include { GAWK as FILTER_UNDEFINED_STRAND  } from '../../../modules/nf-core/gawk'
 include { GFFCOMPARE                       } from '../../../modules/nf-core/gffcompare'
 include { R_MERGE_DENOVO_WITH_REF          } from '../../../modules/local/r_merge_denovo_with_ref'
+include { CAT_GTF                          } from '../../../modules/local/cat_gtf'
 
 workflow MERGE_WITH_REF_ANNOTATION {
     take:
@@ -42,10 +43,14 @@ workflow MERGE_WITH_REF_ANNOTATION {
     ch_versions = ch_versions.mix(R_MERGE_DENOVO_WITH_REF.out.versions)
 
     // Concatenate the newly annotated transcripts to the reference GTF
-    // TODO: add here the concatenation step, cat comp_denovo.annotated_ok.gtf $4 > combined_new_annotated.gtf
+    CAT_GTF (
+        R_MERGE_DENOVO_WITH_REF.out.gtf,
+        ch_ref_gtf
+    )
+    ch_versions = ch_versions.mix(CAT_GTF.out.versions)
 
     emit:
-    // bam      = SAMTOOLS_SORT.out.bam           // channel: [ val(meta), [ bam ] ]
+    gtf              = CAT_GTF.out.gtf                         // channel: [ val(meta), [ bam ] ]
     gffcompare_stats = GFFCOMPARE.out.stats.map { [ it[1] ] }  // channel: [ stats ]
 
     versions = ch_versions                     // channel: [ versions.yml ]
