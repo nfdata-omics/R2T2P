@@ -62,11 +62,18 @@ workflow R2T2P {
     ch_versions = ch_versions.mix(PREPARE_FASTQ.out.versions)
     ch_multiqc_files = ch_multiqc_files.mix(PREPARE_FASTQ.out.multiqc_files)
 
+    ch_reads
+        .branch { meta, _fastq ->
+            rna:  meta.library_type == "RNA"
+            ribo: meta.library_type == "Ribo"
+        }
+    .set { ch_reads_by_type }
+
     //
     // Map reads with STAR
     //
     STAR_FIRST_ALIGN (
-        ch_reads,
+        ch_reads_by_type.rna,
         PREPARE_REF.out.star_index.map { [ [:], it ] },
         PREPARE_REF.out.gtf.map { [ [:], it ] },
         "$projectDir/assets/NO_FILE", // empty arguments for additional_junctions
@@ -112,7 +119,7 @@ workflow R2T2P {
     ch_versions = ch_versions.mix(CREATE_FIRSTPASS_JUNCTIONS.out.versions)
 
     // Match the reads wit the corresponding junction table
-    ch_reads
+    ch_reads_by_type.rna
         .combine( CREATE_FIRSTPASS_JUNCTIONS.out.pass1_junctions.map { _meta, file -> file } )
         .set { ch_reads_with_junctions }
     // Split into two channels:
