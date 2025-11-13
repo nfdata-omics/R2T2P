@@ -171,9 +171,12 @@ workflow R2T2P {
     //
     FINAL_ALIGNMENT (
         ch_reads,
-        PREPARE_REF.out.star_index,              // genome_index
-        TRANSCRIPTOME_ASSEMBLY.out.gtf.first(),  // new gtf after assembly
-        PREPARE_REF.out.fasta                    // genome fasta
+        PREPARE_REF.out.star_index,                                     // genome_index
+        TRANSCRIPTOME_ASSEMBLY.out.gtf.collect{ _meta, file -> file },  // new gtf after assembly
+        PREPARE_REF.out.fasta,                                          // genome fasta
+        PREPARE_REF.out.chrom_sizes,                                    // chrom sizes for bigWig conversion
+        PREPARE_REF.out.bsgenome,                                       // bsgenome for Ribo-seQC
+        TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot                           // gtf R-object for Ribo-seQC
     )
 
     //

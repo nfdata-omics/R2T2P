@@ -1,30 +1,42 @@
-process R_MERGE_DENOVO_WITH_REF {
+process RIBOSEQC {
     tag "${meta.id}"
     label 'process_single'
 
     container "docker.io/nfdata/riboseqc:v1.3.0-patched"
 
     input:
-    tuple val(meta), path(comp_denovo_gtf)
+    tuple val(meta), path(bam)
     path "R-user-lib/*"
-    path ref_gtf_Rannotation
+    path gtf_Rannot
 
     output:
-    tuple val(meta), path("*.gtf_stringtie.gtf"), emit: gtf
-    path "*.gtf_stringtie_Rannot", emit: gtf_Rannot
+    path "*.RData", emit: riboseqc_rdata
+    path "*.bedgraph", emit: bedgraph
+    path "*_strandedness", emit: strandedness
+    path "*_counts_regions", emit: counts_regions
     path "versions.yml", emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
+    def args = task.ext.args ?: ''
     """
     export R_LIBS_USER=\$PWD/R-user-lib
 
-    Rscript --vanilla ${projectDir}/bin/merge_gtfs.R ${ref_gtf_Rannotation} ${comp_denovo_gtf} FALSE
-
     Rscript --vanilla -e '
         library(RiboseQC)
+        library(msa)
+
+        # Loading RiboseQC annotation
+        load_annotation("${gtf_Rannot}")
+
+        # Running RiboseQC analysis
+        RiboseQC_analysis(
+            annotation_file = "${gtf_Rannot}",
+            bam_file = "${bam}",
+            ${args}
+        )
 
         # Writing package versions to versions.yml
         x = sessionInfo()
@@ -35,7 +47,7 @@ process R_MERGE_DENOVO_WITH_REF {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg\$Package]] <- pkg\$Version
         }
-        versions <- list(R_MERGE_DENOVO_WITH_REF = versions)
+        versions <- list(RIBOSEQC = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '
@@ -43,7 +55,10 @@ process R_MERGE_DENOVO_WITH_REF {
 
     stub:
     """
-    touch pippo
+    touch ${meta.id}_strandedness
+    touch ${meta.id}_counts_regions
+    touch ${meta.id}.RData
+    touch ${meta.id}.bedgraph
 
     Rscript -e '
         library(RiboseQC)
@@ -57,7 +72,7 @@ process R_MERGE_DENOVO_WITH_REF {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg$Package]] <- pkg\$Version
         }
-        versions <- list(R_MERGE_DENOVO_WITH_REF = versions)
+        versions <- list(RIBOSEQC = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '

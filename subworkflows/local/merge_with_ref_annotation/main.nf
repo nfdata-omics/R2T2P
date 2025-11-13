@@ -51,6 +51,7 @@ workflow MERGE_WITH_REF_ANNOTATION {
 
     emit:
     gtf              = CAT_GTF.out.gtf                         // channel: [ val(meta), [ gtf ] ]
+    gtf_Rannot       = R_MERGE_DENOVO_WITH_REF.out.gtf_Rannot  // channel: [ gtf_Rannot ]
     gffcompare_stats = GFFCOMPARE.out.stats.map { [ it[1] ] }  // channel: [ stats ]
     versions         = ch_versions                             // channel: [ versions.yml ]
 }
