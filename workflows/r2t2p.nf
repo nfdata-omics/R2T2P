@@ -14,6 +14,7 @@ include { BAM_SORT_STATS_SAMTOOLS as FIRST_BAM_SORT_STATS  } from '../subworkflo
 include { BAM_SORT_STATS_SAMTOOLS as SECOND_BAM_SORT_STATS } from '../subworkflows/nf-core/bam_sort_stats_samtools'
 include { TRANSCRIPTOME_ASSEMBLY                           } from '../subworkflows/local/transcriptome_assembly/main'
 include { FINAL_ALIGNMENT                                  } from '../subworkflows/local/final_alignment/main'
+include { DIFFERENTIAL_ANALYSIS                            } from '../subworkflows/local/differential_analysis/main'
 
 include { paramsSummaryMap        } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc    } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -178,6 +179,18 @@ workflow R2T2P {
         PREPARE_REF.out.bsgenome,                                       // bsgenome for Ribo-seQC
         TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot                           // gtf R-object for Ribo-seQC
     )
+    ch_versions = ch_versions.mix(FINAL_ALIGNMENT.out.versions)
+    ch_multiqc_files = ch_multiqc_files.mix(FINAL_ALIGNMENT.out.multiqc_files)
+
+    //
+    // Differential expression analysis
+    //
+    DIFFERENTIAL_ANALYSIS (
+        FINAL_ALIGNMENT.out.counts_regions,                             // Ribo-seQC-processed alignment files
+        PREPARE_REF.out.bsgenome,                                       // bsgenome for Ribo-seQC
+        TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot                           // gtf R-object for Ribo-seQC
+    )
+    ch_versions = ch_versions.mix(DIFFERENTIAL_ANALYSIS.out.versions)
 
     //
     // Collate and save software versions

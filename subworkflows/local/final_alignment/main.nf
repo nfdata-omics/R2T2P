@@ -61,7 +61,9 @@ workflow FINAL_ALIGNMENT {
     // Convert bedGraph to bigWig
     //
     UCSC_BEDGRAPHTOBIGWIG (
-        RIBOSEQC_RNA.out.bedgraph.flatten()
+        RIBOSEQC_RNA.out.bedgraph
+            .map { _meta, files -> files}
+            .flatten()
             .map { file -> [ [ id: file.name.replaceFirst(/\.bedgraph$/, '') ], file ] },
         ch_chrom_sizes
     )
@@ -104,10 +106,14 @@ workflow FINAL_ALIGNMENT {
         .mix( RNA_BAM_SORT_STATS.out.flagstat.collect{ _meta, log -> log } )
         .mix( RNA_BAM_SORT_STATS.out.idxstats.collect{ _meta, log -> log } )
 
-
-    // (Final alignment steps would go here)
+    //
+    // Merge counts regions files from Ribo-seQC for RNA and Ribo libraries
+    //
+    counts_regions = RIBOSEQC_RNA.out.counts_regions
+        .mix( RIBOSEQC_RIBO.out.counts_regions )
 
     emit:
-    gff_stats = ch_multiqc_files                    // channel: [ stats ]
-    versions  = ch_versions                         // channel: [ versions.yml ]
+    counts_regions = counts_regions                     // channel: [ val(meta), path(counts_regions) ]
+    multiqc_files = ch_multiqc_files                    // channel: [ logs ]
+    versions      = ch_versions                         // channel: [ versions.yml ]
 }

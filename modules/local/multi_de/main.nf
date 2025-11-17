@@ -1,19 +1,18 @@
-process RIBOSEQC {
+process MULTI_DE {
     tag "${meta.id}"
-    label 'process_single'
+    label 'process_low'
 
     container "docker.io/nfdata/riboseqc:v1.3.0-patched"
 
     input:
-    tuple val(meta), path(bam)
+    tuple val(meta), path(counts_regions), path(table)
     path "R-user-lib/*"
     path gtf_Rannot
+    val org_db_name
+    path "R-user-lib/*"
 
     output:
-    tuple val(meta), path("*.RData"), emit: riboseqc_rdata
-    tuple val(meta), path("*.bedgraph"), emit: bedgraph
-    tuple val(meta), path("*_strandedness"), emit: strandedness
-    tuple val(meta), path("*_counts_regions"), emit: counts_regions
+    path "*", emit: results
     path "versions.yml", emit: versions
 
     when:
@@ -21,21 +20,37 @@ process RIBOSEQC {
 
     script:
     def args = task.ext.args ?: ''
+    def args2 = task.ext.args2 ?: ''
+    def run_go = org_db_name ? 'T' : 'F'
+    def go_package = org_db_name ? "gopckg = ${org_db_name}, " : ''
+    def library_import = org_db_name ? "library(${org_db_name})" : ''
     """
     export R_LIBS_USER=\$PWD/R-user-lib
 
     Rscript --vanilla -e '
         library(RiboseQC)
-        library(msa)
+        library(DESeq2)
+        library(DEXSeq)
+        ${library_import}
 
-        # Loading RiboseQC annotation
-        load_annotation("${gtf_Rannot}")
-
-        # Running RiboseQC analysis
-        RiboseQC_analysis(
+        RiboseQC:::prepare_multiDE(
+            file_matrix = "${table}",
             annotation_file = "${gtf_Rannot}",
-            bam_file = "${bam}",
+            dest_suffix = "${meta.id}",
             ${args}
+        )
+
+        RiboseQC:::run_multiDE(
+            DEobj = "${meta.id}_multiDE_input.RData",
+            annotation_file = "${gtf_Rannot}",
+            cores = ${task.cpus},
+            runGO= ${run_go},
+            ${go_package}
+            ${args2}
+        )
+
+        RiboseQC:::run_RF_regression(
+            summary_multiDE = "${meta.id}_multiDE_results_summary.RData"
         )
 
         # Writing package versions to versions.yml
@@ -47,7 +62,7 @@ process RIBOSEQC {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg\$Package]] <- pkg\$Version
         }
-        versions <- list(RIBOSEQC = versions)
+        versions <- list(MULTI_DE = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '
@@ -55,13 +70,11 @@ process RIBOSEQC {
 
     stub:
     """
-    touch ${meta.id}_strandedness
-    touch ${meta.id}_counts_regions
-    touch ${meta.id}.RData
-    touch ${meta.id}.bedgraph
 
     Rscript -e '
         library(RiboseQC)
+        library(DESeq2)
+        library(DEXSeq)
 
         # Writing package versions to versions.yml
         x = sessionInfo()
@@ -72,7 +85,7 @@ process RIBOSEQC {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg$Package]] <- pkg\$Version
         }
-        versions <- list(RIBOSEQC = versions)
+        versions <- list(MULTI_DE = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '

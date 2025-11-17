@@ -1,42 +1,25 @@
-process RIBOSEQC {
-    tag "${meta.id}"
+process GET_GO_PACKAGE {
+    tag "${org_db}"
     label 'process_single'
 
     container "docker.io/nfdata/riboseqc:v1.3.0-patched"
 
     input:
-    tuple val(meta), path(bam)
-    path "R-user-lib/*"
-    path gtf_Rannot
+    val org_db
 
     output:
-    tuple val(meta), path("*.RData"), emit: riboseqc_rdata
-    tuple val(meta), path("*.bedgraph"), emit: bedgraph
-    tuple val(meta), path("*_strandedness"), emit: strandedness
-    tuple val(meta), path("*_counts_regions"), emit: counts_regions
+    path "${org_db}", emit: org_db_package
     path "versions.yml", emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
     """
-    export R_LIBS_USER=\$PWD/R-user-lib
+    export R_LIBS_USER=\$PWD
 
     Rscript --vanilla -e '
-        library(RiboseQC)
-        library(msa)
-
-        # Loading RiboseQC annotation
-        load_annotation("${gtf_Rannot}")
-
-        # Running RiboseQC analysis
-        RiboseQC_analysis(
-            annotation_file = "${gtf_Rannot}",
-            bam_file = "${bam}",
-            ${args}
-        )
+        BiocManager::install("org.Hs.eg.db", force=TRUE, ask=FALSE)
 
         # Writing package versions to versions.yml
         x = sessionInfo()
@@ -47,7 +30,7 @@ process RIBOSEQC {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg\$Package]] <- pkg\$Version
         }
-        versions <- list(RIBOSEQC = versions)
+        versions <- list(GET_GO_PACKAGE = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '
@@ -55,14 +38,7 @@ process RIBOSEQC {
 
     stub:
     """
-    touch ${meta.id}_strandedness
-    touch ${meta.id}_counts_regions
-    touch ${meta.id}.RData
-    touch ${meta.id}.bedgraph
-
     Rscript -e '
-        library(RiboseQC)
-
         # Writing package versions to versions.yml
         x = sessionInfo()
         versions <- list(
@@ -72,7 +48,7 @@ process RIBOSEQC {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg$Package]] <- pkg\$Version
         }
-        versions <- list(RIBOSEQC = versions)
+        versions <- list(GET_GO_PACKAGE = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '
