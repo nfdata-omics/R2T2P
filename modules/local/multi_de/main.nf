@@ -12,7 +12,7 @@ process MULTI_DE {
     path "R-user-lib/*"
 
     output:
-    path "*", emit: results
+    path "*.RData", emit: results
     path "versions.yml", emit: versions
 
     when:
@@ -22,7 +22,7 @@ process MULTI_DE {
     def args = task.ext.args ?: ''
     def args2 = task.ext.args2 ?: ''
     def run_go = org_db_name ? 'T' : 'F'
-    def go_package = org_db_name ? "gopckg = ${org_db_name}, " : ''
+    def go_package = org_db_name ? "gopckg = \"${org_db_name}\"" : ''
     def library_import = org_db_name ? "library(${org_db_name})" : ''
     """
     export R_LIBS_USER=\$PWD/R-user-lib
@@ -31,6 +31,12 @@ process MULTI_DE {
         library(RiboseQC)
         library(DESeq2)
         library(DEXSeq)
+        library(topGO)
+        library(randomForest)
+        library(glmnet)
+        library(ggrepel)
+        library(GenomicFeatures)
+        library(ORFik)
         ${library_import}
 
         RiboseQC:::prepare_multiDE(
