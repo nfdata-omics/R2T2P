@@ -92,7 +92,7 @@ workflow FINAL_ALIGNMENT {
 
     UCSC_BEDGRAPHTOBIGWIG (
         RIBOSEQC_RNA.out.bedgraph
-            .join( RIBOSEQC_RIBO.out.bedgraph )
+            .mix( RIBOSEQC_RIBO.out.bedgraph )
             .map { _meta, files -> files }
             .flatten()
             .map { file -> [ [ id: file.name.replaceFirst(/\.bedgraph$/, '') ], file ] },

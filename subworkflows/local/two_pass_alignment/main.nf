@@ -135,7 +135,7 @@ workflow TWO_PASS_ALIGNMENT {
         }
         .set { ch_bam_bai }
 
-    SECOND_BAM_STATS_SAMTOOLS ( ch_bam_bai, ch_fasta )
+    SECOND_BAM_STATS_SAMTOOLS ( ch_bam_bai, ch_fasta.map { file -> [ [:], file ] } )
     ch_versions = ch_versions.mix( SECOND_BAM_STATS_SAMTOOLS.out.versions )
 
     ch_multiqc_files  = ch_multiqc_files.mix( SECOND_BAM_STATS_SAMTOOLS.out.stats.collect{ _meta, file -> file } )
