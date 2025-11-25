@@ -138,7 +138,8 @@ workflow FINAL_ALIGNMENT {
         .mix( RIBOSEQC_RIBO.out.counts_regions )
 
     emit:
-    counts_regions = counts_regions                     // channel: [ val(meta), path(counts_regions) ]
-    multiqc_files  = ch_multiqc_files                   // channel: [ logs ]
-    versions       = ch_versions                        // channel: [ versions.yml ]
+    counts_regions   = counts_regions                      // channel: [ val(meta), path(counts_regions) ]
+    bam_for_orfquant = RIBOSEQC_RIBO.out.bam_for_orfquant  // channel: [ val(meta), path(bam_for_orfquant) ]
+    multiqc_files    = ch_multiqc_files                    // channel: [ logs ]
+    versions         = ch_versions                         // channel: [ versions.yml ]
 }
