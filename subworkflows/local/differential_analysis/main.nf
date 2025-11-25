@@ -43,12 +43,10 @@ workflow DIFFERENTIAL_ANALYSIS {
             // Combine and sort the data
             [meta_files, files].transpose()
                 .sort { a, b ->
-                    // Sort by library_type: RNA before Ribo
-                    def typeA = a[0].library_type
-                    def typeB = b[0].library_type
-                    if (typeA == "RNA" && typeB == "Ribo") return -1
-                    if (typeA == "Ribo" && typeB == "RNA") return 1
-                    return 0
+                    def order = [ "RNA": 0, "Ribo": 1 ]
+                    def cmp = order.get(a[0].library_type, 99) <=> order.get(b[0].library_type, 99)
+                    if (cmp != 0) return cmp
+                    return a[0].id <=> b[0].id
                 }
                 .collect { meta_file, file -> [meta_contrast, meta_file, file] }
         }
