@@ -15,8 +15,17 @@ genome/star/Log.out
 */*/*.Log.out
 */*/*.Log.progress.out
 transcriptome_assembly/comp_denovo.transcripts_with_strand.gtf_stringtie_Rannot
+transcriptome_assembly/comp_denovo.annotated_ok.gtf_stringtie_Rannot
 transcriptome_assembly/merged_bams/merged_bams.ballgown/t_data.ctab
 transcriptome_assembly/merged_bams/merged_bams.ballgown/e_data.ctab
 transcriptome_assembly/merged_bams/merged_bams.gene.abundance.txt
 transcriptome_assembly/merged_bams/merged_bams.transcripts.gtf
 transcriptome_assembly/merged_bams/merged_bams.transcripts_with_strand.gtf
+differential_expression/*/*_multiDE_input.RData
+differential_expression/*/*_multiDE_results.RData
+differential_expression/*/*_multiDE_results_RF.RData
+differential_expression/*/*_multiDE_results_summary.RData
+differential_expression/*/*_multiDE_results_summary_allgenes.RData
+differential_expression/*/*_multiDE_results_summary_bins.RData
+final_alignment/*/*.Aligned.sortedByCoord.out.bam_results_RiboseQC
+final_alignment/*/*.Aligned.sortedByCoord.out.bam_results_RiboseQC_all
