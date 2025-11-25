@@ -2,7 +2,7 @@ process PREPARE_ANNOTATION_FILES {
     tag "${meta2.id}"
     label 'process_single'
 
-    container "docker.io/nfdata/riboseqc:v1.2.0-patched"
+    container "docker.io/nfdata/riboseqc:v1.3.0-patched"
 
     input:
     tuple val(meta), path(genome_2bit)
@@ -39,6 +39,7 @@ process PREPARE_ANNOTATION_FILES {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg\$Package]] <- pkg\$Version
         }
+        versions <- list(PREPARE_ANNOTATION_FILES = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '
@@ -61,6 +62,7 @@ process PREPARE_ANNOTATION_FILES {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg$Package]] <- pkg\$Version
         }
+        versions <- list(PREPARE_ANNOTATION_FILES = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '

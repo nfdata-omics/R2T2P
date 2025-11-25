@@ -3,16 +3,14 @@
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-include { MULTIQC                             } from '../modules/nf-core/multiqc/main'
-include { STAR_ALIGN as STAR_FIRST_ALIGN      } from '../modules/nf-core/star/align/main'
-include { STAR_ALIGN as STAR_WITH_NOVEL_JUNCT } from '../modules/nf-core/star/align/main'
-include { CREATE_FIRSTPASS_JUNCTIONS          } from '../modules/local/create_firstpass_junctions/main'
 
-include { PREPARE_REF                                      } from '../subworkflows/local/prepare_ref'
-include { PREPARE_FASTQ                                    } from '../subworkflows/local/prepare_fastq'
-include { BAM_SORT_STATS_SAMTOOLS as FIRST_BAM_SORT_STATS  } from '../subworkflows/nf-core/bam_sort_stats_samtools'
-include { BAM_SORT_STATS_SAMTOOLS as SECOND_BAM_SORT_STATS } from '../subworkflows/nf-core/bam_sort_stats_samtools'
-include { TRANSCRIPTOME_ASSEMBLY                           } from '../subworkflows/local/transcriptome_assembly/main'
+include { MULTIQC                } from '../modules/nf-core/multiqc/main'
+include { PREPARE_REF            } from '../subworkflows/local/prepare_ref'
+include { PREPARE_FASTQ          } from '../subworkflows/local/prepare_fastq'
+include { TWO_PASS_ALIGNMENT     } from '../subworkflows/local/two_pass_alignment/main'
+include { TRANSCRIPTOME_ASSEMBLY } from '../subworkflows/local/transcriptome_assembly/main'
+include { FINAL_ALIGNMENT        } from '../subworkflows/local/final_alignment/main'
+include { DIFFERENTIAL_ANALYSIS  } from '../subworkflows/local/differential_analysis/main'
 
 include { paramsSummaryMap        } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc    } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -69,91 +67,23 @@ workflow R2T2P {
     .set { ch_reads_by_type }
 
     //
-    // Map reads with STAR
+    // SUBWORKFLOW: Two-pass alignment with STAR
     //
-    STAR_FIRST_ALIGN (
+    TWO_PASS_ALIGNMENT (
         ch_reads_by_type.rna,
-        PREPARE_REF.out.star_index.map { [ [:], it ] },
-        PREPARE_REF.out.gtf.map { [ [:], it ] },
-        "$projectDir/assets/NO_FILE", // empty arguments for additional_junctions
-        false, // star_ignore_sjdbgtf
-        "", // seq_platform
-        "" // seq_center
-    )
-    ch_versions = ch_versions.mix(STAR_FIRST_ALIGN.out.versions.first())
-    ch_multiqc_files = ch_multiqc_files.mix(STAR_FIRST_ALIGN.out.log_final.collect{it[1]})
-
-    //
-    // Sort, index BAM file and run samtools stats, flagstat and idxstats
-    //
-    FIRST_BAM_SORT_STATS ( STAR_FIRST_ALIGN.out.bam, PREPARE_REF.out.fasta.map { [ [:], it ] } )
-    ch_versions = ch_versions.mix(FIRST_BAM_SORT_STATS.out.versions)
-    ch_multiqc_files  = ch_multiqc_files.mix( FIRST_BAM_SORT_STATS.out.stats.collect{it[1]} )
-        .mix( FIRST_BAM_SORT_STATS.out.flagstat.collect{it[1]} )
-        .mix( FIRST_BAM_SORT_STATS.out.idxstats.collect{it[1]} )
-
-    //
-    // Merge all the novel junction tables into a single file
-    //
-    ch_samplesheet
-        .toList()
-        .flatMap { list ->
-            list.withIndex().collect { item, index ->
-                [item[0], index]  // [meta, position]
-            }
-        }
-        .join(STAR_FIRST_ALIGN.out.pass1_spl_juc_tab)
-        .toSortedList { a, b -> a[1] <=> b[1] }
-        .map { list -> [["id": "merged_junctions"], list.collect { it[2] }] }
-        .set { ch_merged_junctions }
-
-    //
-    // Get the table of novel junctions from the first STAR alignment
-    //
-    CREATE_FIRSTPASS_JUNCTIONS(
-        ch_merged_junctions,
+        PREPARE_REF.out.star_index,
+        PREPARE_REF.out.gtf,
+        PREPARE_REF.out.fasta,
+        ch_samplesheet,
         PREPARE_REF.out.bsgenome,
         PREPARE_REF.out.gtf_Rannot
     )
-    ch_versions = ch_versions.mix(CREATE_FIRSTPASS_JUNCTIONS.out.versions)
-
-    // Match the reads wit the corresponding junction table
-    ch_reads_by_type.rna
-        .combine( CREATE_FIRSTPASS_JUNCTIONS.out.pass1_junctions.map { _meta, file -> file } )
-        .set { ch_reads_with_junctions }
-    // Split into two channels:
-    ch_reads_ordered = ch_reads_with_junctions.map { it[0..1] }
-    ch_junctions_ordered = ch_reads_with_junctions.map { it[2] }
-
-    //
-    // Second STAR alignment using novel junctions
-    //
-    STAR_WITH_NOVEL_JUNCT (
-        ch_reads_ordered,
-        PREPARE_REF.out.star_index.map { [ [:], it ] },
-        PREPARE_REF.out.gtf.map { [ [:], it ] },
-        ch_junctions_ordered, // channel for additional junctions
-        false, // star_ignore_sjdbgtf
-        "", // seq_platform
-        "" // seq_center
-    )
-    ch_versions = ch_versions.mix(STAR_WITH_NOVEL_JUNCT.out.versions.first())
-    ch_multiqc_files = ch_multiqc_files.mix(STAR_WITH_NOVEL_JUNCT.out.log_final.collect{it[1]})
-
-    //
-    // Sort, index BAM file and run samtools stats, flagstat and idxstats
-    //
-    SECOND_BAM_SORT_STATS ( STAR_WITH_NOVEL_JUNCT.out.bam, PREPARE_REF.out.fasta.map { [ [:], it ] } )
-    ch_versions = ch_versions.mix(SECOND_BAM_SORT_STATS.out.versions)
-    ch_multiqc_files  = ch_multiqc_files.mix(SECOND_BAM_SORT_STATS.out.stats.collect{it[1]} )
-        .mix(SECOND_BAM_SORT_STATS.out.flagstat.collect{it[1]} )
-        .mix(SECOND_BAM_SORT_STATS.out.idxstats.collect{it[1]} )
 
     //
     // Transcriptome assembly from aligned reads
     //
     TRANSCRIPTOME_ASSEMBLY (
-        SECOND_BAM_SORT_STATS.out.bam,
+        TWO_PASS_ALIGNMENT.out.bam,
         PREPARE_REF.out.fasta,
         PREPARE_REF.out.fai,
         PREPARE_REF.out.gtf,
@@ -163,6 +93,31 @@ workflow R2T2P {
     )
     ch_versions = ch_versions.mix(TRANSCRIPTOME_ASSEMBLY.out.versions)
     ch_multiqc_files = ch_multiqc_files.mix(TRANSCRIPTOME_ASSEMBLY.out.gff_stats)
+
+    //
+    // Final alignment
+    //
+    FINAL_ALIGNMENT (
+        ch_reads,
+        PREPARE_REF.out.star_index,                                     // genome_index
+        TRANSCRIPTOME_ASSEMBLY.out.gtf.collect{ _meta, file -> file },  // new gtf after assembly
+        PREPARE_REF.out.fasta,                                          // genome fasta
+        PREPARE_REF.out.chrom_sizes,                                    // chrom sizes for bigWig conversion
+        PREPARE_REF.out.bsgenome,                                       // bsgenome for Ribo-seQC
+        TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot                           // gtf R-object for Ribo-seQC
+    )
+    ch_versions = ch_versions.mix(FINAL_ALIGNMENT.out.versions)
+    ch_multiqc_files = ch_multiqc_files.mix(FINAL_ALIGNMENT.out.multiqc_files)
+
+    //
+    // Differential expression analysis
+    //
+    DIFFERENTIAL_ANALYSIS (
+        FINAL_ALIGNMENT.out.counts_regions,                             // Ribo-seQC-processed alignment files
+        PREPARE_REF.out.bsgenome,                                       // bsgenome for Ribo-seQC
+        TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot                           // gtf R-object for Ribo-seQC
+    )
+    ch_versions = ch_versions.mix(DIFFERENTIAL_ANALYSIS.out.versions)
 
     //
     // Collate and save software versions

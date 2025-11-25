@@ -1,17 +1,14 @@
-process R_MERGE_DENOVO_WITH_REF {
-    tag "${meta.id}"
+process GET_GO_PACKAGE {
+    tag "${org_db}"
     label 'process_single'
 
     container "docker.io/nfdata/riboseqc:v1.3.0-patched"
 
     input:
-    tuple val(meta), path(comp_denovo_gtf)
-    path "R-user-lib/*"
-    path ref_gtf_Rannotation
+    val org_db
 
     output:
-    tuple val(meta), path("*.gtf_stringtie.gtf"), emit: gtf
-    path "*.gtf_stringtie_Rannot", emit: gtf_Rannot
+    path "${org_db}", emit: org_db_package
     path "versions.yml", emit: versions
 
     when:
@@ -19,12 +16,10 @@ process R_MERGE_DENOVO_WITH_REF {
 
     script:
     """
-    export R_LIBS_USER=\$PWD/R-user-lib
-
-    Rscript --vanilla ${projectDir}/bin/merge_gtfs.R ${ref_gtf_Rannotation} ${comp_denovo_gtf} FALSE
+    export R_LIBS_USER=\$PWD
 
     Rscript --vanilla -e '
-        library(RiboseQC)
+        BiocManager::install("org.Hs.eg.db", force=TRUE, ask=FALSE)
 
         # Writing package versions to versions.yml
         x = sessionInfo()
@@ -35,7 +30,7 @@ process R_MERGE_DENOVO_WITH_REF {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg\$Package]] <- pkg\$Version
         }
-        versions <- list(R_MERGE_DENOVO_WITH_REF = versions)
+        versions <- list(GET_GO_PACKAGE = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '
@@ -43,11 +38,7 @@ process R_MERGE_DENOVO_WITH_REF {
 
     stub:
     """
-    touch pippo
-
     Rscript -e '
-        library(RiboseQC)
-
         # Writing package versions to versions.yml
         x = sessionInfo()
         versions <- list(
@@ -57,7 +48,7 @@ process R_MERGE_DENOVO_WITH_REF {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg$Package]] <- pkg\$Version
         }
-        versions <- list(R_MERGE_DENOVO_WITH_REF = versions)
+        versions <- list(GET_GO_PACKAGE = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '
