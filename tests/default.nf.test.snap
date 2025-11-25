@@ -614,13 +614,7 @@
             ],
             [
                 "14h_vs_0h_countmats.RData:md5,175afaa10f7da9edb865327e76b98d04",
-                "14h_vs_0h_multiDE_input.RData:md5,aee4724c22ab9886d982e31e21727891",
-                "14h_vs_0h_multiDE_results.RData:md5,de2efbe13f3f622eaa8aa09cab4a1465",
-                "14h_vs_0h_multiDE_results_RF.RData:md5,1ad3dca1f9ae98c5e483afcaa818b3d6",
-                "14h_vs_0h_multiDE_results_summary.RData:md5,bc7902c07d80aa9f5f6d7bd146c26c7a",
                 "14h_vs_0h_multiDE_results_summary_GO.RData:md5,1082f8a03e88c8e7a0993a7405e0130f",
-                "14h_vs_0h_multiDE_results_summary_allgenes.RData:md5,a0e6b0073071a8e5a28a035a345a1185",
-                "14h_vs_0h_multiDE_results_summary_bins.RData:md5,72435756cf0901321503cc7d6c0ac4b3",
                 "rep1_0h_RNA.Aligned.sortedByCoord.out.bam:md5,ec25fa81e3170e376d12a28b3f640cf4",
                 "rep1_0h_RNA.Aligned.sortedByCoord.out.bam.bai:md5,5deffb962a9e59ad7f7d84c093e2b893",
                 "rep1_0h_RNA.Aligned.sortedByCoord.out.bam_counts_regions:md5,79afe3ef158a80f1035a5a6039c0f30c",
@@ -660,8 +654,6 @@
                 "rep1_0h_Ribo.Aligned.sortedByCoord.out.bam_coverage_uniq_plus.bigWig:md5,3e3dfbf9fddc0ff2fb61a9859d5954a8",
                 "rep1_0h_Ribo.Aligned.sortedByCoord.out.bam_for_ORFquant:md5,249ccf26551988b3bf0e403f4b266637",
                 "rep1_0h_Ribo.Aligned.sortedByCoord.out.bam_readsRle.RData:md5,2f4dc9b7b0df81d7a99eeab81210114d",
-                "rep1_0h_Ribo.Aligned.sortedByCoord.out.bam_results_RiboseQC:md5,b4dbf383bbd615b2bbd176ca77239ecd",
-                "rep1_0h_Ribo.Aligned.sortedByCoord.out.bam_results_RiboseQC_all:md5,e852706bcfd2aaa8cd5239a7389227b8",
                 "rep1_0h_Ribo.Aligned.sortedByCoord.out.bam_strandedness:md5,cde5c840fa0fdab29ab913aee2dad90b",
                 "rep1_0h_Ribo.ReadsPerGene.out.tab:md5,381dc71c23c9b2f6450c024d3533d197",
                 "rep1_0h_Ribo.SJ.out.tab:md5,8832dc5426a8be7190eb5d0fe7316fd9",
@@ -707,8 +699,6 @@
                 "rep1_14h_Ribo.Aligned.sortedByCoord.out.bam_coverage_uniq_plus.bigWig:md5,b65db8bd1160973bc48824538560a22b",
                 "rep1_14h_Ribo.Aligned.sortedByCoord.out.bam_for_ORFquant:md5,da4299766c5e8856b8aa58f7d7269972",
                 "rep1_14h_Ribo.Aligned.sortedByCoord.out.bam_readsRle.RData:md5,b158d49f6344e7f8fd267c16771e1107",
-                "rep1_14h_Ribo.Aligned.sortedByCoord.out.bam_results_RiboseQC:md5,195cdffdb554ab5eb50569e8f0c0d5a9",
-                "rep1_14h_Ribo.Aligned.sortedByCoord.out.bam_results_RiboseQC_all:md5,669c493515ace96f48ab535554d9ec61",
                 "rep1_14h_Ribo.Aligned.sortedByCoord.out.bam_strandedness:md5,3f58c0eee2719d72a7190daae79ffdfa",
                 "rep1_14h_Ribo.ReadsPerGene.out.tab:md5,5ae10e1e854c7efe39f94744d4c84037",
                 "rep1_14h_Ribo.SJ.out.tab:md5,907512078fe72ffe6443c6c579ec43ae",
@@ -754,8 +744,6 @@
                 "rep2_0h_Ribo.Aligned.sortedByCoord.out.bam_coverage_uniq_plus.bigWig:md5,9ecf69f0518067215c6f25d21bfc3066",
                 "rep2_0h_Ribo.Aligned.sortedByCoord.out.bam_for_ORFquant:md5,2c9e5e1b798c2eef37d4df67873f5d67",
                 "rep2_0h_Ribo.Aligned.sortedByCoord.out.bam_readsRle.RData:md5,8dd82513cf6e984c39796a38f4bc2fbf",
-                "rep2_0h_Ribo.Aligned.sortedByCoord.out.bam_results_RiboseQC:md5,ae003a8d9fa5f439d5acc57016ad704d",
-                "rep2_0h_Ribo.Aligned.sortedByCoord.out.bam_results_RiboseQC_all:md5,71992568598dadf11d5f5dcb52c6536f",
                 "rep2_0h_Ribo.Aligned.sortedByCoord.out.bam_strandedness:md5,5da9f6f1db80680201cb2feb553b28b5",
                 "rep2_0h_Ribo.ReadsPerGene.out.tab:md5,66a1b24c1f5f588bca68418062669d42",
                 "rep2_0h_Ribo.SJ.out.tab:md5,f84779883a64db61f3c6464b3408cce0",
@@ -801,8 +789,6 @@
                 "rep2_14h_Ribo.Aligned.sortedByCoord.out.bam_coverage_uniq_plus.bigWig:md5,4b37def3154874ee53ede76420437ac0",
                 "rep2_14h_Ribo.Aligned.sortedByCoord.out.bam_for_ORFquant:md5,06b6f277e292fe2749d35e781370b553",
                 "rep2_14h_Ribo.Aligned.sortedByCoord.out.bam_readsRle.RData:md5,fc45383bc81fb444d7a49e4d3624b34b",
-                "rep2_14h_Ribo.Aligned.sortedByCoord.out.bam_results_RiboseQC:md5,885aeb9996dbd17290c24194208aa9be",
-                "rep2_14h_Ribo.Aligned.sortedByCoord.out.bam_results_RiboseQC_all:md5,daf4844dacdc9e51ed68b126fd21235b",
                 "rep2_14h_Ribo.Aligned.sortedByCoord.out.bam_strandedness:md5,89d231482cba8c7f5c83b31e0471f0a3",
                 "rep2_14h_Ribo.ReadsPerGene.out.tab:md5,95dcce95f804f621bce6c01fd741a343",
                 "rep2_14h_Ribo.SJ.out.tab:md5,f94588e89b538a743d34e307ff37280c",
@@ -897,7 +883,6 @@
                 "comp_denovo.annotated.gtf:md5,c59f81feb526ef8a608b9ea26ffede2c",
                 "comp_denovo.annotated_ok.gtf:md5,c59f81feb526ef8a608b9ea26ffede2c",
                 "comp_denovo.annotated_ok.gtf_stringtie.gtf:md5,5f80c24a9009c98a24562e9d3bcfd711",
-                "comp_denovo.annotated_ok.gtf_stringtie_Rannot:md5,38d1426a122a6625779eb43c70b0cdd1",
                 "comp_denovo.comp_strg_user.merged_with_strg.gtf.refmap:md5,af052df2396740cc0d3ffd3e68006df6",
                 "comp_denovo.comp_strg_user.merged_with_strg.gtf.tmap:md5,6912ac55fdeed1ec5569ea0025e10ce4",
                 "comp_denovo.loci:md5,7f40c133617cd9517e3e3ff0e5bd1aae",
@@ -923,6 +908,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.0"
         },
-        "timestamp": "2025-11-25T15:16:43.008417555"
+        "timestamp": "2025-11-25T16:12:20.265531244"
     }
 }
