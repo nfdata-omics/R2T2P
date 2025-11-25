@@ -45,6 +45,16 @@
                     "type": "string",
                     "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
+                },
+                "go_package": {
+                    "type": "string",
+                    "description": "Label of the GO package for the functional analysis.",
+                    "fa_icon": "fas fa-university"
+                },
+                "control_label": {
+                    "type": "string",
+                    "description": "Label of the condition that will be used as control in the differential analysis.",
+                    "fa_icon": "fas fa-retweet"
                 }
             }
         },
