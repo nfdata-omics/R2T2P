@@ -14,6 +14,10 @@ process RIBOSEQC {
     tuple val(meta), path("*.bedgraph"), emit: bedgraph
     tuple val(meta), path("*_strandedness"), emit: strandedness
     tuple val(meta), path("*_counts_regions"), emit: counts_regions
+    tuple val(meta), path("*.bam_for_ORFquant"), emit: bam_for_orfquant, optional: true
+    tuple val(meta), path("*.bam_results_RiboseQC"), emit: bam_results_riboseqc, optional: true
+    tuple val(meta), path("*.bam_results_RiboseQC_all"), emit: bam_results_riboseqc_all, optional: true
+    tuple val(meta), path("*.bam_P_sites_calcs"), emit: bam_p_sites_calcs, optional: true
     path "versions.yml", emit: versions
 
     when:
@@ -59,6 +63,10 @@ process RIBOSEQC {
     touch ${meta.id}_counts_regions
     touch ${meta.id}.RData
     touch ${meta.id}.bedgraph
+    touch ${meta.id}.bam_for_ORFquant
+    touch ${meta.id}.bam_results_RiboseQC
+    touch ${meta.id}.bam_results_RiboseQC_all
+    touch ${meta.id}.bam_P_sites_calcs
 
     Rscript -e '
         library(RiboseQC)
