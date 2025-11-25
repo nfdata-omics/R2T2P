@@ -14,15 +14,20 @@ workflow DIFFERENTIAL_ANALYSIS {
     main:
     ch_versions = channel.empty()
 
-    // Filter to conditions that are not the control, extract unique condition names,
-    // and create contrast metadata
-    ch_counts_regions
-        .filter { meta, _file -> meta.condition != params.control_label }
-        .map { meta, _file -> [ meta.condition ]}
-        .unique()
-        .map { contrast -> [id: "${contrast.join(",")}_vs_${params.control_label}",
-            condition: contrast, control: [params.control_label] ] }
-        .set { ch_conditions }
+    if ( params.control_label ) {
+        // Filter to conditions that are not the control, extract unique condition names,
+        // and create contrast metadata
+        ch_counts_regions
+            .filter { meta, _file -> meta.condition != params.control_label }
+            .map { meta, _file -> [ meta.condition ]}
+            .unique()
+            .map { contrast -> [id: "${contrast.join(",")}_vs_${params.control_label}",
+                condition: contrast, control: [params.control_label] ] }
+            .set { ch_conditions }
+    } else {
+        // If no control label is provided, set ch_conditions to empty channel to skip DE analysis
+        ch_conditions = channel.empty()
+    }
 
     // Combine contrasts with all count files and filter to only relevant files for each contrast
     ch_conditions
@@ -31,14 +36,30 @@ workflow DIFFERENTIAL_ANALYSIS {
             meta_file.condition in meta_contrast.control + meta_contrast.condition }
         .set { ch_contrasts_full_table }
 
-    // Collect files into contrast-specific tables with metadata columns
+    // Collect files into contrast-specific tables with metadata columns, ordered by library type
     ch_contrasts_full_table
-        .collectFile { meta_contrast, meta_file, file ->
-           [ "${meta_contrast.id}.txt", [ file.name, meta_file.library_type, meta_file.condition,
-                (meta_file.condition in meta_contrast.control ? "TRUE" : "FALSE" ) ].join('\t') + "\n" ]
+        .groupTuple(by: 0) // Group by meta_contrast
+        .map { meta_contrast, meta_files, files ->
+            // Combine and sort the data
+            [meta_files, files].transpose()
+                .sort { a, b ->
+                    // Sort by library_type: RNA before Ribo
+                    def typeA = a[0].library_type
+                    def typeB = b[0].library_type
+                    if (typeA == "RNA" && typeB == "Ribo") return -1
+                    if (typeA == "Ribo" && typeB == "RNA") return 1
+                    return 0
+                }
+                .collect { meta_file, file -> [meta_contrast, meta_file, file] }
         }
-        .map { file -> [ file.name.replace('.txt', ''), file ]  }
-        .set { ch_contrasts_table }
+    .flatten()
+    .collate(3) // Group back into tuples of 3 elements
+    .collectFile( { meta_contrast, meta_file, file ->
+       [ "${meta_contrast.id}.txt", [ file.name, meta_file.library_type, meta_file.condition,
+            (meta_file.condition in meta_contrast.control ? "TRUE" : "FALSE" ) ].join('\t') + "\n" ]
+        }, sort: "index")
+    .map { file -> [ file.name.replace('.txt', ''), file ]  }
+    .set { ch_contrasts_table }
 
     // Group files by contrast, merge with table metadata, and prepare final channel
     ch_contrasts_full_table
