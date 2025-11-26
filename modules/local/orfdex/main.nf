@@ -1,19 +1,15 @@
-process ORFQUANT {
+process ORFDEX {
     tag "${meta.id}"
-    label 'process_single'
+    label 'process_low'
 
-    container "docker.io/nfdata/orfquant:v481ec99847e9d253a11333a5ae12f0a760338501"
+    container "docker.io/nfdata/riboseqc:v1.3.0-patched"
 
     input:
-    tuple val(meta), path(combined_for_orfquant)
-    path "R-user-lib/*"
-    path gtf_Rannot
+    tuple val(meta), path(bam_files), path(table)
+    path orfquant_results
 
     output:
-    tuple val(meta), path("*_Detected_ORFs.gtf"),       emit: gtf
-    tuple val(meta), path("*_Protein_sequences.fasta"), emit: fasta
-    tuple val(meta), path("*_final_ORFquant_results"),  emit: final_results
-    tuple val(meta), path("*_tmp_ORFquant_results"),    emit: tmp_results
+    path "*.RData", emit: results
     path "versions.yml", emit: versions
 
     when:
@@ -25,13 +21,22 @@ process ORFQUANT {
     export R_LIBS_USER=\$PWD/R-user-lib
 
     Rscript --vanilla -e '
-        library("ORFquant")
+        library(RiboseQC)
+        library(DESeq2)
+        library(DEXSeq)
+        library(topGO)
+        library(randomForest)
+        library(glmnet)
+        library(ggrepel)
+        library(GenomicFeatures)
+        library(ORFik)
 
-        run_ORFquant(
-            for_ORFquant_file = "${combined_for_orfquant}",
-            annotation_file = "${gtf_Rannot}",
-            n_cores = ${task.cpus},
-            $args
+        RiboseQC:::run_ORFDEX(
+            ORFquant_res = "${orfquant_results}",
+            file_matrix = "${table}",
+            suffix = "${meta.id}",
+            ${args}
+            cores = ${task.cpus}
         )
 
         # Writing package versions to versions.yml
@@ -43,7 +48,7 @@ process ORFQUANT {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg\$Package]] <- pkg\$Version
         }
-        versions <- list(ORFQUANT = versions)
+        versions <- list(ORFDEX = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '
@@ -51,8 +56,17 @@ process ORFQUANT {
 
     stub:
     """
+
     Rscript -e '
-        library("ORFquant")
+        library(RiboseQC)
+        library(DESeq2)
+        library(DEXSeq)
+        library(topGO)
+        library(randomForest)
+        library(glmnet)
+        library(ggrepel)
+        library(GenomicFeatures)
+        library(ORFik)
 
         # Writing package versions to versions.yml
         x = sessionInfo()
@@ -63,9 +77,10 @@ process ORFQUANT {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg$Package]] <- pkg\$Version
         }
-        versions <- list(ORFQUANT = versions)
+        versions <- list(ORFDEX = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '
     """
+
 }

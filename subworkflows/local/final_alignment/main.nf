@@ -10,7 +10,7 @@ include { RIBOSEQC as RIBOSEQC_RNA           } from '../../../modules/local/ribo
 include { RIBOSEQC as RIBOSEQC_RIBO          } from '../../../modules/local/riboseqc/main'
 include { UCSC_BEDGRAPHTOBIGWIG              } from '../../../modules/nf-core/ucsc/bedgraphtobigwig/main'
 
-workflow FINAL_ALIGNMENT {
+    workflow FINAL_ALIGNMENT {
     take:
     ch_reads        // channel: [ val(meta), [ fastq ] ]
     ch_genome_index // channel: genome_index
@@ -132,12 +132,13 @@ workflow FINAL_ALIGNMENT {
         .mix( BAM_STATS_SAMTOOLS.out.idxstats.collect{ _meta, file -> file } )
 
     //
-    // Merge counts regions files from Ribo-seQC for RNA and Ribo libraries
+    // Merge bams and counts regions files from Ribo-seQC for RNA and Ribo libraries
     //
     counts_regions = RIBOSEQC_RNA.out.counts_regions
         .mix( RIBOSEQC_RIBO.out.counts_regions )
 
     emit:
+    bam              = ch_final_bam_aligned                // channel: [ val(meta), path(bam) ]
     counts_regions   = counts_regions                      // channel: [ val(meta), path(counts_regions) ]
     bam_for_orfquant = RIBOSEQC_RIBO.out.bam_for_orfquant  // channel: [ val(meta), path(bam_for_orfquant) ]
     multiqc_files    = ch_multiqc_files                    // channel: [ logs ]
