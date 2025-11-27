@@ -741,13 +741,10 @@
                 "transcriptome_assembly/merged_bams/merged_bams.transcripts.gtf"
             ],
             [
-                "14h_vs_0h_ORFDEX.RData:md5,7183d1d24b8da0a446d3168ff972ec0d",
                 "14h_vs_0h_ORFquant_counts.RData:md5,818ca11ca30c2d26b7ad44eff4e40599",
                 "14h_vs_0h_ORFquant_feats.RData:md5,4ac58f0037ec1bf25d94f11786c6396b",
                 "combined_forORFquant.RData_Detected_ORFs.gtf:md5,1b7992eb1adb4c9a1623b6d9fecb90fa",
                 "combined_forORFquant.RData_Protein_sequences.fasta:md5,001925996cddf72f7d2c19d66fc0fc0f",
-                "combined_forORFquant.RData_final_ORFquant_results:md5,4caef4b85b991e461951c84fc6d58071",
-                "combined_forORFquant.RData_tmp_ORFquant_results:md5,bdfa5d063f7a73315833df5f26728133",
                 "14h_vs_0h_countmats.RData:md5,175afaa10f7da9edb865327e76b98d04",
                 "14h_vs_0h_multiDE_results_summary_GO.RData:md5,1082f8a03e88c8e7a0993a7405e0130f",
                 "rep1_0h_RNA.Aligned.sortedByCoord.out.bam:md5,ec25fa81e3170e376d12a28b3f640cf4",
