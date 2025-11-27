@@ -1029,7 +1029,6 @@
                 "comp_strg_user.stats:md5,86bb66f2be0c9a340120da3fbcdd211b",
                 "comp_strg_user.tracking:md5,d5afd07d23dedd7da5ca18809ecc9abd",
                 "gene_ID_pairs.tsv:md5,5c1e8051e36dccd72647a86c3a469656",
-                "merged_bams.annotated_ok.gtf:md5,f9213907f0299df8ce1627415e133636",
                 "e2t.ctab:md5,6325481b5f679bd1fe0db059cfc5d46c",
                 "i2t.ctab:md5,8c0eb7f9454ac82dad252699448c1370",
                 "i_data.ctab:md5,d42c3dbfd48e127929a83f6c6ae59e15",
