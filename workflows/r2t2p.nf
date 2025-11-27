@@ -11,6 +11,7 @@ include { TWO_PASS_ALIGNMENT     } from '../subworkflows/local/two_pass_alignmen
 include { TRANSCRIPTOME_ASSEMBLY } from '../subworkflows/local/transcriptome_assembly/main'
 include { FINAL_ALIGNMENT        } from '../subworkflows/local/final_alignment/main'
 include { DIFFERENTIAL_ANALYSIS  } from '../subworkflows/local/differential_analysis/main'
+include { ORF_ANALYSIS           } from '../subworkflows/local/orf_analysis/main'
 
 include { paramsSummaryMap        } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc    } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -118,6 +119,17 @@ workflow R2T2P {
         TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot                           // gtf R-object for Ribo-seQC
     )
     ch_versions = ch_versions.mix(DIFFERENTIAL_ANALYSIS.out.versions)
+
+    //
+    // ORF analysis
+    //
+    ORF_ANALYSIS (
+        FINAL_ALIGNMENT.out.bam,                                        // bam files from alignment against final transcriptome
+        FINAL_ALIGNMENT.out.bam_for_orfquant,                           // RData files for ORFquant for the RiboSeq samples
+        PREPARE_REF.out.bsgenome,                                       // bsgenome for Ribo-seQC
+        TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot                           // gtf R-object for Ribo-seQC
+    )
+    ch_versions = ch_versions.mix(ORF_ANALYSIS.out.versions)
 
     //
     // Collate and save software versions

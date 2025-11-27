@@ -29,3 +29,6 @@ differential_expression/*/*_multiDE_results_summary_allgenes.RData
 differential_expression/*/*_multiDE_results_summary_bins.RData
 final_alignment/*/*.Aligned.sortedByCoord.out.bam_results_RiboseQC
 final_alignment/*/*.Aligned.sortedByCoord.out.bam_results_RiboseQC_all
+ORFquant/*/*_ORFDEX.RData
+ORFquant/combined_forORFquant.RData_final_ORFquant_results
+ORFquant/combined_forORFquant.RData_tmp_ORFquant_results
