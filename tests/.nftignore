@@ -14,6 +14,7 @@ genome/star/Log.out
 */*/*.Log.final.out
 */*/*.Log.out
 */*/*.Log.progress.out
+transcriptome_assembly/merged_bams/merged_bams.annotated_ok.gtf
 transcriptome_assembly/comp_denovo.transcripts_with_strand.gtf_stringtie_Rannot
 transcriptome_assembly/comp_denovo.annotated_ok.gtf_stringtie_Rannot
 transcriptome_assembly/merged_bams/merged_bams.ballgown/t_data.ctab

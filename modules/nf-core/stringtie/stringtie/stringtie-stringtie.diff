@@ -1,0 +1,22 @@
+Changes in component 'nf-core/stringtie/stringtie'
+'modules/nf-core/stringtie/stringtie/environment.yml' is unchanged
+'modules/nf-core/stringtie/stringtie/meta.yml' is unchanged
+Changes in 'stringtie/stringtie/main.nf':
+--- modules/nf-core/stringtie/stringtie/main.nf
++++ modules/nf-core/stringtie/stringtie/main.nf
+@@ -4,8 +4,8 @@
+ 
+     conda "${moduleDir}/environment.yml"
+     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        'https://depot.galaxyproject.org/singularity/stringtie:2.2.3--h43eeafb_0' :
+-        'biocontainers/stringtie:2.2.3--h43eeafb_0' }"
++        'https://depot.galaxyproject.org/singularity/stringtie:3.0.3--h29c0135_0' :
++        'biocontainers/stringtie:3.0.3--h29c0135_0' }"
+ 
+     input:
+     tuple val(meta), path(bam)
+
+'modules/nf-core/stringtie/stringtie/tests/nextflow.config' is unchanged
+'modules/nf-core/stringtie/stringtie/tests/main.nf.test.snap' is unchanged
+'modules/nf-core/stringtie/stringtie/tests/main.nf.test' is unchanged
+************************************************************
