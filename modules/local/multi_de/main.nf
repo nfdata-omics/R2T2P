@@ -1,6 +1,6 @@
 process MULTI_DE {
     tag "${meta.id}"
-    label 'process_low'
+    label 'process_low','process_long','process_high_memory'
 
     container "docker.io/nfdata/riboseqc:v1.3.0-patched"
 

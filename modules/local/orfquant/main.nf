@@ -1,6 +1,6 @@
 process ORFQUANT {
     tag "${meta.id}"
-    label 'process_single'
+    label 'process_low','process_long','process_high_memory'
 
     container "docker.io/nfdata/orfquant:v481ec99847e9d253a11333a5ae12f0a760338501"
 
