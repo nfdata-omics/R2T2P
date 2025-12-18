@@ -104,6 +104,7 @@ workflow ORF_ANALYSIS {
     ch_versions = ch_versions.mix(ORFDEX.out.versions.first())
 
     emit:
+    orfquant_fasta = ORFQUANT.out.fasta                   // channel: [ val(meta), path(*_Protein_sequences.fasta) ]
     versions   = ch_versions                              // channel: [ versions.yml ]
 
 }

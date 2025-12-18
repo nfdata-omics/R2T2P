@@ -12,6 +12,7 @@ include { TRANSCRIPTOME_ASSEMBLY } from '../subworkflows/local/transcriptome_ass
 include { FINAL_ALIGNMENT        } from '../subworkflows/local/final_alignment/main'
 include { DIFFERENTIAL_ANALYSIS  } from '../subworkflows/local/differential_analysis/main'
 include { ORF_ANALYSIS           } from '../subworkflows/local/orf_analysis/main'
+include { PROTEOMICS             } from '../subworkflows/local/proteomics/main'
 
 include { paramsSummaryMap        } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc    } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -34,6 +35,11 @@ workflow R2T2P {
     ch_gff         // value channel: path(gff)
     ch_star_index  // value channel: path(star_index)
     ch_user_gtf    // value channel: path(user_gtf)
+    ch_fragpipe_workflow // value channel: path(fragpipe_workflow)
+    ch_tools_folder // value channel: path(tools_folder)
+    ch_diann_folder // value channel: path(diann_folder)
+    ch_fragpipe_manifest // value channel: path(fragpipe_manifest)
+    ch_fragpipe_annotation // value channel: path(fragpipe_annotation)
 
     main:
 
@@ -130,6 +136,21 @@ workflow R2T2P {
         TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot                           // gtf R-object for Ribo-seQC
     )
     ch_versions = ch_versions.mix(ORF_ANALYSIS.out.versions)
+
+    //
+    // Proteomics database creation and analysis
+    //
+    PROTEOMICS (
+        PREPARE_REF.out.bsgenome,
+        PREPARE_REF.out.gtf_Rannot,
+        ORF_ANALYSIS.out.orfquant_fasta,
+        ch_fragpipe_workflow,
+        ch_tools_folder,
+        ch_diann_folder,
+        ch_fragpipe_manifest,
+        ch_fragpipe_annotation
+    )
+    ch_versions = ch_versions.mix(PROTEOMICS.out.versions)
 
     //
     // Collate and save software versions
