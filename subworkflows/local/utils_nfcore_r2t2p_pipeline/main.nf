@@ -175,6 +175,31 @@ def validateInputParameters() {
     if (params.gff && params.gtf) {
         error("Please check input parameters -> Both GFF and GTF files were provided. Please provide only one of them.")
     }
+
+    // when the fragpipe manifest is provided, all the additional fragpipe files must also be provided
+    if (params.fragpipe_manifest && (!params.fragpipe_workflow || !params.fragpipe_annotation)) {
+        error("Please check input parameters -> When fragpipe_manifest is provided, fragpipe_workflow and fragpipe_annotation must also be provided.")
+    }
+
+    // check that the required jars and executables for fragpipe are present in the folders provided
+    if (params.fragpipe_manifest) {
+        def ionquant_jar = file("${params.fragpipe_tools_folder}/IonQuant-*/IonQuant-*.jar")
+        if (ionquant_jar.isEmpty()) {
+            error("Please check input parameters -> IonQuant JAR file not found in ${params.fragpipe_tools_folder}/IonQuant-*/IonQuant-*.jar")
+        }
+        def msfragger_jar = file("${params.fragpipe_tools_folder}/MSFragger-*/MSFragger-*.jar")
+        if (msfragger_jar.isEmpty()) {
+            error("Please check input parameters -> MSFragger JAR file not found in ${params.fragpipe_tools_folder}/MSFragger-*/MSFragger-*.jar")
+        }
+        def diatracer_jar = file("${params.fragpipe_tools_folder}/diaTracer-*/diaTracer-*.jar")
+        if (diatracer_jar.isEmpty()) {
+            error("Please check input parameters -> diaTracer JAR file not found in ${params.fragpipe_tools_folder}/diaTracer-*/diaTracer-*.jar")
+        }
+        def diann_exe = file("${params.fragpipe_diann_folder}/diann-linux")
+        if (!diann_exe.exists()) {
+            error("Please check input parameters -> DIANN executable not found in ${params.fragpipe_diann_folder}/diann-linux")
+        }
+    }
 }
 
 //

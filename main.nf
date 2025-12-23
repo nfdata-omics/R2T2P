@@ -45,12 +45,17 @@ workflow NFDATAOMICS_R2T2P {
 
     main:
 
-    // Define channels for reference files
-    ch_fasta       = params.fasta      ? Channel.value(file(params.fasta, checkIfExists: true))      : Channel.empty()
-    ch_gtf         = params.gtf        ? Channel.value(file(params.gtf, checkIfExists: true))        : Channel.empty()
-    ch_gff         = params.gff        ? Channel.value(file(params.gff, checkIfExists: true))        : Channel.empty()
-    ch_star_index  = params.star_index ? Channel.value(file(params.star_index, checkIfExists: true)) : Channel.empty()
-    ch_user_gtf    = params.user_provided_annotation ? Channel.value(file(params.user_provided_annotation, checkIfExists: true)) : Channel.empty()
+    // Define channels for reference files and other input files
+    ch_fasta       = params.fasta      ? channel.value(file(params.fasta, checkIfExists: true))      : channel.empty()
+    ch_gtf         = params.gtf        ? channel.value(file(params.gtf, checkIfExists: true))        : channel.empty()
+    ch_gff         = params.gff        ? channel.value(file(params.gff, checkIfExists: true))        : channel.empty()
+    ch_star_index  = params.star_index ? channel.value(file(params.star_index, checkIfExists: true)) : channel.empty()
+    ch_user_gtf    = params.user_provided_annotation ? channel.value(file(params.user_provided_annotation, checkIfExists: true)) : channel.empty()
+    ch_fragpipe_workflow = params.fragpipe_workflow ? channel.value(file(params.fragpipe_workflow, checkIfExists: true)) : channel.empty()
+    ch_tools_folder = params.fragpipe_tools_folder ? channel.value(file(params.fragpipe_tools_folder, checkIfExists: true)) : channel.empty()
+    ch_diann_folder = params.fragpipe_diann_folder ? channel.value(file(params.fragpipe_diann_folder, checkIfExists: true)) : channel.empty()
+    ch_fragpipe_manifest = params.fragpipe_manifest ? channel.value(file(params.fragpipe_manifest, checkIfExists: true)) : channel.empty()
+    ch_fragpipe_annotation = params.fragpipe_annotation ? channel.value(file(params.fragpipe_annotation, checkIfExists: true)) : channel.empty()
 
     //
     // WORKFLOW: Run pipeline
@@ -61,7 +66,12 @@ workflow NFDATAOMICS_R2T2P {
         ch_gtf,
         ch_gff,
         ch_star_index,
-        ch_user_gtf
+        ch_user_gtf,
+        ch_fragpipe_workflow,
+        ch_tools_folder,
+        ch_diann_folder,
+        ch_fragpipe_manifest,
+        ch_fragpipe_annotation
     )
     emit:
     multiqc_report = R2T2P.out.multiqc_report // channel: /path/to/multiqc_report.html

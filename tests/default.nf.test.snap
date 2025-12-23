@@ -743,7 +743,7 @@
             [
                 "14h_vs_0h_ORFquant_counts.RData:md5,818ca11ca30c2d26b7ad44eff4e40599",
                 "14h_vs_0h_ORFquant_feats.RData:md5,4ac58f0037ec1bf25d94f11786c6396b",
-                "combined_forORFquant.RData_Detected_ORFs.gtf:md5,5cafb559a5b8ac98a2f6a9c450286b5c",
+                "combined_forORFquant.RData_Detected_ORFs.gtf:md5,7a750acc93cd40d6b37af96657b5cfd9",
                 "combined_forORFquant.RData_Protein_sequences.fasta:md5,001925996cddf72f7d2c19d66fc0fc0f",
                 "14h_vs_0h_countmats.RData:md5,10384787e277f5ea7dc01d14352b7699",
                 "14h_vs_0h_multiDE_results_summary_GO.RData:md5,1082f8a03e88c8e7a0993a7405e0130f",
@@ -959,7 +959,7 @@
                 "chrName.txt:md5,255cdc5fefdc3ff84cfe3f3270ab8fed",
                 "chrNameLength.txt:md5,7af90b9fadda4a6d2b08b62f61cc2c7b",
                 "chrStart.txt:md5,2c0778c7c8f1fcb59c565669d708d8fa",
-                "genomeParameters.txt:md5,ba394a41298d6ab54fcdc25215a09155",
+                "genomeParameters.txt:md5,0fd0ef5ca84b803b79ecd0525a8e141b",
                 "gffcompare_accuracy_plot_Base-1.txt:md5,5729d126ef307e343856101ff99f141c",
                 "gffcompare_accuracy_plot_Base.txt:md5,48310650c25b7285a87619d0da4fe162",
                 "gffcompare_accuracy_plot_Exon-1.txt:md5,448fc067cc8e55d6f5abd2bc8c8cfb06",
@@ -1011,10 +1011,10 @@
                 "rep2_14h.second_pass.flagstat:md5,11b8b1584be4c5a4d8b7bcdb6ee69724",
                 "rep2_14h.second_pass.idxstats:md5,648e61bfb83e0887056298e2ab753ed2",
                 "rep2_14h.second_pass.stats:md5,8985a0ac5cd63997e38041eaf708a5cf",
-                "combined_new_annotated.gtf:md5,9d282e1d9f6e40a275f233476561cb67",
+                "combined_new_annotated.gtf:md5,bf547a41c927943986459524225c7d74",
                 "comp_denovo.annotated.gtf:md5,ab8e4e412d7d07bbbbf6ae2027630021",
                 "comp_denovo.annotated_ok.gtf:md5,ab8e4e412d7d07bbbbf6ae2027630021",
-                "comp_denovo.annotated_ok.gtf_stringtie.gtf:md5,3d1bdf8138347c4072812d164a9ead24",
+                "comp_denovo.annotated_ok.gtf_stringtie.gtf:md5,359069a3a8922d9ad00b79cf14ac6e7b",
                 "comp_denovo.comp_strg_user.merged_with_strg.gtf.refmap:md5,2a765bf7a77ce2bf84e90f3dcf625cc1",
                 "comp_denovo.comp_strg_user.merged_with_strg.gtf.tmap:md5,5717a73086d5f9a4ec537711f3e74d11",
                 "comp_denovo.loci:md5,94f809f60aacb82174437186d2f3c763",
@@ -1025,7 +1025,7 @@
                 "comp_strg_user.annotated.gtf:md5,03bd0a3d03f95b3f214e06a94612bd11",
                 "comp_strg_user.annotated_ok.gtf:md5,03bd0a3d03f95b3f214e06a94612bd11",
                 "comp_strg_user.loci:md5,9fca0932f02f1c63645f0d0ffeb0c962",
-                "comp_strg_user.merged_with_strg.gtf:md5,2cff8b1b1e90d4f00719d0a7412d5fa8",
+                "comp_strg_user.merged_with_strg.gtf:md5,57316ccd9c7a28c65821f653cbe6f86c",
                 "comp_strg_user.stats:md5,86bb66f2be0c9a340120da3fbcdd211b",
                 "comp_strg_user.tracking:md5,d5afd07d23dedd7da5ca18809ecc9abd",
                 "gene_ID_pairs.tsv:md5,5c1e8051e36dccd72647a86c3a469656",
@@ -1039,6 +1039,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.2"
         },
-        "timestamp": "2025-12-12T16:11:55.783336627"
+        "timestamp": "2025-12-23T15:54:20.052508662"
     }
 }
