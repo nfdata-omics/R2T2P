@@ -23,10 +23,17 @@ workflow PROTEOMICS {
 
     ch_versions = channel.empty()
 
+    // skip proteomics workflow if no fragpipe manifest is provided
+    if ( params.fragpipe_manifest == null ) {
+        ch_protein_dbs = channel.empty()
+    } else {
+        ch_protein_dbs = ch_orfquant_fasta
+    }
+
     CREATE_PROTEIN_DB_WRITE_DB (
         ch_bsgenome,
         ch_gtf_Rannot,
-        ch_orfquant_fasta
+        ch_protein_dbs
     )
     ch_versions = ch_versions.mix(CREATE_PROTEIN_DB_WRITE_DB.out.versions)
 
