@@ -329,7 +329,7 @@
                     "gawk": "5.3.0"
                 },
                 "STRINGTIE": {
-                    "stringtie": "3.0.3"
+                    "stringtie": "3.0.0"
                 },
                 "UCSC_BEDGRAPHTOBIGWIG": {
                     "ucsc": 469

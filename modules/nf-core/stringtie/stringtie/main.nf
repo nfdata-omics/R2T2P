@@ -4,8 +4,8 @@ process STRINGTIE_STRINGTIE {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/stringtie:3.0.3--h29c0135_0' :
-        'biocontainers/stringtie:3.0.3--h29c0135_0' }"
+        'https://depot.galaxyproject.org/singularity/stringtie:3.0.0--h29c0135_1' :
+        'biocontainers/stringtie:3.0.0--h29c0135_1' }"
 
     input:
     tuple val(meta), path(bam)
