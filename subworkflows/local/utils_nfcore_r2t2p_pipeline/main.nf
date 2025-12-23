@@ -184,15 +184,15 @@ def validateInputParameters() {
     // check that the required jars and executables for fragpipe are present in the folders provided
     if (params.fragpipe_manifest) {
         def ionquant_jar = file("${params.fragpipe_tools_folder}/IonQuant-*/IonQuant-*.jar")
-        if (!ionquant_jar.exists()) {
+        if (ionquant_jar.isEmpty()) {
             error("Please check input parameters -> IonQuant JAR file not found in ${params.fragpipe_tools_folder}/IonQuant-*/IonQuant-*.jar")
         }
         def msfragger_jar = file("${params.fragpipe_tools_folder}/MSFragger-*/MSFragger-*.jar")
-        if (!msfragger_jar.exists()) {
+        if (msfragger_jar.isEmpty()) {
             error("Please check input parameters -> MSFragger JAR file not found in ${params.fragpipe_tools_folder}/MSFragger-*/MSFragger-*.jar")
         }
         def diatracer_jar = file("${params.fragpipe_tools_folder}/diaTracer-*/diaTracer-*.jar")
-        if (!diatracer_jar.exists()) {
+        if (diatracer_jar.isEmpty()) {
             error("Please check input parameters -> diaTracer JAR file not found in ${params.fragpipe_tools_folder}/diaTracer-*/diaTracer-*.jar")
         }
         def diann_exe = file("${params.fragpipe_diann_folder}/diann-linux")
