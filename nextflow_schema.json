@@ -58,6 +58,45 @@
                 }
             }
         },
+        "fragpipe_options": {
+            "title": "Fragpipe options",
+            "type": "object",
+            "description": "Input options for running the Fragpipe proteomics tool",
+            "default": "",
+            "properties": {
+                "fragpipe_manifest": {
+                    "type": "string",
+                    "description": "Path to the manifest file",
+                    "help_text": "The manifest file uses the following tab-delimited format:\n\n`<path_to_LC-MS_file> <experiment_name> <bioreplicate> <data_type>`\n\nEach row corresponds to a single MS run. \n\n```\n/storage/b1906_293T_proteinID_01A_QE3_122212.mzML\texp_a\t1\tDDA\n/storage/b1922_293T_proteinID_02A_QE3_122212.mzML\texp_a\t2\tDDA\n/storage/b1923_293T_proteinID_03A_QE3_122212.mzML\texp_b\t1\tDDA\n/storage/b1924_293T_proteinID_04A_QE3_122212.mzML\texp_b\t2\tDDA\n/storage/b1925_293T_proteinID_05A_QE3_122212.mzML\texp_c\t1\tDDA\n```",
+                    "fa_icon": "fas fa-table"
+                },
+                "fragpipe_workflow": {
+                    "type": "string",
+                    "description": "Path to the workflow file",
+                    "fa_icon": "fas fa-stream",
+                    "help_text": "The built-in workflow files can be found in https://github.com/Nesvilab/FragPipe/tree/develop/workflows"
+                },
+                "fragpipe_annotation": {
+                    "type": "string",
+                    "description": "Path to the annotation file",
+                    "fa_icon": "fas fa-vials",
+                    "help_text": "When needed, provide the TMT annotation file with the name ending with annotation.txt."
+                },
+                "fragpipe_tools_folder": {
+                    "type": "string",
+                    "description": "Path to the folder containing MSFragger, IonQuant, and dirTracer",
+                    "fa_icon": "fas fa-tools",
+                    "help_text": "Due to licensing restrictions, MSFragger, IonQuant, and diaTracer cannot be redistributed and are therefore not included in the FragPipe container. As a result, these tools must be provided externally using the corresponding parameter, which should point to a directory containing the required JAR files.\n\nFor academic use, the JAR files can be downloaded free of charge from the following official sources:\nhttps://msfragger.nesvilab.org/\nhttps://ionquant.nesvilab.org/\nhttps://diatracer.nesvilab.org/"
+                },
+                "fragpipe_diann_folder": {
+                    "type": "string",
+                    "description": "Path to the folder containing the DIA-NN binary file.",
+                    "fa_icon": "fas fa-tools",
+                    "help_text": "Due to licensing restrictions, DIA-NN cannot be redistributed and is therefore not included in the FragPipe container. As a result, this tool must be provided externally using the corresponding parameter, which should point to a directory containing the binary `diann-linux`. \n\nFor academic use, DIA-NN can be downloaded free of charge from the following official sources:\nhttps://github.com/vdemichev/DiaNN"
+                }
+            },
+            "fa_icon": "fas fa-hamburger"
+        },
         "reference_genome_options": {
             "title": "Reference genome options",
             "type": "object",
@@ -276,6 +315,9 @@
         },
         {
             "$ref": "#/$defs/institutional_config_options"
+        },
+        {
+            "$ref": "#/$defs/fragpipe_options"
         },
         {
             "$ref": "#/$defs/generic_options"
