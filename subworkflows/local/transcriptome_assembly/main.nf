@@ -35,7 +35,7 @@ workflow TRANSCRIPTOME_ASSEMBLY {
     ch_versions = ch_versions.mix(SAMTOOLS_MERGE.out.versions)
 
     SAMTOOLS_MERGE.out.bam
-        .map { [ it[0] + ["strandedness": "forward"], it[1] ] }
+        .map { [ it[0] + ["strandedness": "reverse"], it[1] ] }
         .set { ch_merged_bam }
 
     // Run StringTie to assemble transcripts from merged alignments
