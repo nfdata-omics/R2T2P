@@ -1,6 +1,6 @@
 process ORFDEX {
     tag "${meta.id}"
-    label 'process_low'
+    label 'process_single', 'process_high_memory'
 
     container "docker.io/nfdata/riboseqc:v1.3.0-patched"
 
