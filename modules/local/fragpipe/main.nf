@@ -14,6 +14,9 @@ process FRAGPIPE {
     path diann_folder
 
     output:
+    path "*.pepindex",   emit: pepindex
+    path "*_results",    emit: fragpipe_results
+    path "*.workflow",   emit: workflow_file
     path "versions.yml", emit: versions
 
     when:
@@ -22,7 +25,7 @@ process FRAGPIPE {
     script:
     """
     # prepare fragpipe workflow file with the correct database path
-    sed "s|^database\\.db-path=.*\$|database.db-path=${protein_db_fasta}|" ${workflow_file} > ${meta.id}_fragpipe_workflow.txt
+    sed "s|^database\\.db-path=.*\$|database.db-path=${protein_db_fasta}|" ${workflow_file} > ${meta.id}.workflow
 
     # prepare manifest file with the mzML paths where links will be created organized by experiment_name
     awk -F'\t' 'BEGIN{OFS=FS} {n=split(\$1,a,"/"); d=\$2; \$1=ENVIRON["PWD"] "/" d "/" a[n]; print}' ${manifest_file} > manifest_file_new_paths
@@ -44,9 +47,9 @@ process FRAGPIPE {
     FRAGPIPE_EXE="/fragpipe_bin/fragpipe-23.1/fragpipe-23.1/bin/fragpipe"
     \$FRAGPIPE_EXE \
                 --headless \
-                --workflow ${meta.id}_fragpipe_workflow.txt \
+                --workflow ${meta.id}.workflow \
                 --manifest manifest_file_new_paths \
-                --workdir fragpipe_${meta.id} \
+                --workdir ${meta.id}_results \
                 --config-tools-folder ./tools-copy \
                 --config-diann ./diann-copy/diann-linux \
                 --config-python /usr/bin/python3
