@@ -5,10 +5,10 @@ process CREATE_PROTEIN_DB_REPLACE_NAMES {
     container "docker.io/nfdata/riboseqc:v1.3.0-patched"
 
     input:
-    tuple val(meta), path(db_fasta), path(fasta_with_decoys_and_contam)
+    tuple val(meta), path("db_fasta.fasta"), path("fasta_with_decoys_and_contam.fasta")
 
     output:
-    tuple val(meta), path("renamed_*"), emit: fasta_with_decoys_and_contam
+    tuple val(meta), path("decoys-contam-*.fasta.fas"), emit: fasta_with_decoys_and_contam
     path "versions.yml", emit: versions
 
     when:
@@ -25,8 +25,8 @@ process CREATE_PROTEIN_DB_REPLACE_NAMES {
         suppressMessages(library("Biostrings"))
 
         # Storing paths to the starting database and to the database with decoys and contaminants
-        db_path <- "${db_fasta}"
-        db_with_decoys_and_contams_path <- "${fasta_with_decoys_and_contam}"
+        db_path <- "db_fasta.fasta"
+        db_with_decoys_and_contams_path <- "fasta_with_decoys_and_contam.fasta"
 
         # Reading the starting database and the database with decoys and contaminants
         db <- readAAStringSet(db_path, format="fasta")
@@ -50,7 +50,7 @@ process CREATE_PROTEIN_DB_REPLACE_NAMES {
         db_with_decoys_and_contams <- c(db_without_contams_and_rev_contams, contams_and_rev_contams)
 
         # Creating the FASTA file
-        writeXStringSet(db_with_decoys_and_contams, filepath=paste0("renamed_", db_with_decoys_and_contams_path), format="fasta")
+        writeXStringSet(db_with_decoys_and_contams, filepath="decoys-contam-${meta.id}.fasta.fas", format="fasta")
 
         # Writing package versions to versions.yml
         x = sessionInfo()
