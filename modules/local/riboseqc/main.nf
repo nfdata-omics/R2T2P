@@ -2,7 +2,7 @@ process RIBOSEQC {
     tag "${meta.id}"
     label 'process_single'
 
-    container "docker.io/nfdata/riboseqc:v1.3.0-patched"
+    container "docker.io/nfdata/riboseqc:v1.4.0-patched"
 
     input:
     tuple val(meta), path(bam)
