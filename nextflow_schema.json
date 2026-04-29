@@ -334,6 +334,9 @@
             "$ref": "#/$defs/fragpipe_options"
         },
         {
+            "$ref": "#/$defs/orfquant_options"
+        },
+        {
             "$ref": "#/$defs/generic_options"
         }
     ]
