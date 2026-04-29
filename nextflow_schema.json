@@ -105,6 +105,7 @@
             "properties": {
                 "orfquant_unique_reads_only": {
                     "type": "boolean",
+                    "default": false,
                     "description": "Whether to use only signal from uniquely mapping reads.",
                     "fa_icon": "fas fa-ban"
                 }
