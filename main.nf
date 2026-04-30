@@ -71,7 +71,11 @@ workflow NFDATAOMICS_R2T2P {
         ch_tools_folder,
         ch_diann_folder,
         ch_fragpipe_manifest,
-        ch_fragpipe_annotation
+        ch_fragpipe_annotation,
+        params.multiqc_config,
+        params.multiqc_logo,
+        params.multiqc_methods_description,
+        params.outdir,
     )
     emit:
     multiqc_report = R2T2P.out.multiqc_report // channel: /path/to/multiqc_report.html
@@ -115,7 +119,6 @@ workflow {
         params.plaintext_email,
         params.outdir,
         params.monochrome_logs,
-        params.hook_url,
         NFDATAOMICS_R2T2P.out.multiqc_report
     )
 }
