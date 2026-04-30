@@ -741,10 +741,17 @@
                 "transcriptome_assembly/merged_bams/merged_bams.transcripts.gtf"
             ],
             [
+<<<<<<< Updated upstream
                 "14h_vs_0h_ORFquant_counts.RData:md5,c348341aeb34f9329d57f6985896813b",
                 "14h_vs_0h_ORFquant_feats.RData:md5,1f44f02f130797163bd2c9a372c44fda",
                 "combined_forORFquant.RData_Detected_ORFs.gtf:md5,96cb4f9f345e800a3f21b43a0adebf98",
                 "combined_forORFquant.RData_Protein_sequences.fasta:md5,a514ef669654c0c29c6e0ae84ae0fafd",
+=======
+                "14h_vs_0h_ORFquant_counts.RData:md5,e926acc77ea0ac47b37d354b6d60e3c7",
+                "14h_vs_0h_ORFquant_feats.RData:md5,385a9a5f021ec2d3c83356e72f8a1711",
+                "combined_forORFquant.RData_Detected_ORFs.gtf:md5,79f5583214628f5051942162646c21e7",
+                "combined_forORFquant.RData_Protein_sequences.fasta:md5,92952827684294123a628662ee8a3392",
+>>>>>>> Stashed changes
                 "14h_vs_0h_countmats.RData:md5,32f1ace17301a4b5f2207d7196a9a076",
                 "14h_vs_0h_multiDE_results_summary_GO.RData:md5,1082f8a03e88c8e7a0993a7405e0130f",
                 "rep1_0h_RNA.Aligned.sortedByCoord.out.bam:md5,a9c95c9cd086d21316af76b11eddb8a3",
@@ -987,6 +994,7 @@
                 "multiqc_citations.txt:md5,64aff2c7bafe5681f8d33b693f5ee45f",
                 "multiqc_gffcompare_gffcompare_reference.txt:md5,fc2c0e64d844fa380cbb1d5ac188e2dd",
                 "multiqc_gffcompare_gffcompare_user_provided.txt:md5,3aa6b6ac1fdc434346b179e6a559641b",
+<<<<<<< Updated upstream
                 "rep1_0h.second_pass.Aligned.sortedByCoord.out.bam:md5,0e69138a026d1df22745affefc5c546b",
                 "rep1_0h.second_pass.Aligned.sortedByCoord.out.bam.bai:md5,d0162a45d01be6c2eaf2abd210f46d29",
                 "rep1_0h.second_pass.SJ.out.tab:md5,d51fbda0f47df5155d343fc403afb446",
@@ -1015,6 +1023,36 @@
                 "comp_denovo.annotated.gtf:md5,72fd2c1ac3173d0df77cf827683baae4",
                 "comp_denovo.annotated_ok.gtf:md5,72fd2c1ac3173d0df77cf827683baae4",
                 "comp_denovo.annotated_ok.gtf_stringtie.gtf:md5,80435492d620f8ebea7ff3646e15523f",
+=======
+                "rep1_0h.second_alignment.Aligned.sortedByCoord.out.bam:md5,a36a0a4d1768d65c8c37d2cc46faa0ec",
+                "rep1_0h.second_alignment.Aligned.sortedByCoord.out.bam.bai:md5,8bd7f58242fc81959a6aaf6e1045b160",
+                "rep1_0h.second_alignment.SJ.out.tab:md5,d51fbda0f47df5155d343fc403afb446",
+                "rep1_0h.second_alignment.flagstat:md5,a43de5c5b7765fce7ca16162dc087f45",
+                "rep1_0h.second_alignment.idxstats:md5,698f8198dd938cbe1bad3af1bd9a3d1d",
+                "rep1_0h.second_alignment.stats:md5,c5a685d5e30493ab301347afc73cbb77",
+                "rep1_14h.second_alignment.Aligned.sortedByCoord.out.bam:md5,0bad179d1307fbda931a35292dd6dffa",
+                "rep1_14h.second_alignment.Aligned.sortedByCoord.out.bam.bai:md5,c39b24aeafbf8c93cb3338cefe4d6873",
+                "rep1_14h.second_alignment.SJ.out.tab:md5,1dbd139e56a734e90fb7c6b5dab378e2",
+                "rep1_14h.second_alignment.flagstat:md5,77503106c57bb2937aa4d6e760b2524a",
+                "rep1_14h.second_alignment.idxstats:md5,a6ec6543a97e3d561b82ccf44e99e988",
+                "rep1_14h.second_alignment.stats:md5,70fa27728bf7b57e069e1e7a800fb084",
+                "rep2_0h.second_alignment.Aligned.sortedByCoord.out.bam:md5,a470b44fbafee2271cb90a5d6da10f3f",
+                "rep2_0h.second_alignment.Aligned.sortedByCoord.out.bam.bai:md5,65e831eed593d64bdd5aedb90d4bb826",
+                "rep2_0h.second_alignment.SJ.out.tab:md5,aa37f6aeaa20c38289d4f0d0f323c5b6",
+                "rep2_0h.second_alignment.flagstat:md5,a8c4308c90735c238a236999409d3a68",
+                "rep2_0h.second_alignment.idxstats:md5,d4a18205d68a0e7e48bb1eb67700f4bb",
+                "rep2_0h.second_alignment.stats:md5,a25261e35ff58e96b33efb1cfea350b7",
+                "rep2_14h.second_alignment.Aligned.sortedByCoord.out.bam:md5,3d01cfc8e3631d7f7eed7c11ab1ada45",
+                "rep2_14h.second_alignment.Aligned.sortedByCoord.out.bam.bai:md5,c773e8abfeb805758f4460ba354e27f6",
+                "rep2_14h.second_alignment.SJ.out.tab:md5,dc768956eac8aa1710d5790080525f6b",
+                "rep2_14h.second_alignment.flagstat:md5,11b8b1584be4c5a4d8b7bcdb6ee69724",
+                "rep2_14h.second_alignment.idxstats:md5,648e61bfb83e0887056298e2ab753ed2",
+                "rep2_14h.second_alignment.stats:md5,2c83f3c4516a39f93159d5359013698b",
+                "combined_new_annotated.gtf:md5,11e50c7cc9e332584a1d8d22b9aa0dc9",
+                "comp_denovo.annotated.gtf:md5,72fd2c1ac3173d0df77cf827683baae4",
+                "comp_denovo.annotated_ok.gtf:md5,72fd2c1ac3173d0df77cf827683baae4",
+                "comp_denovo.annotated_ok.gtf_stringtie.gtf:md5,ef9a580cee5484863ea35eceae6994db",
+>>>>>>> Stashed changes
                 "comp_denovo.comp_strg_user.merged_with_strg.gtf.refmap:md5,8fb3abe5da14f7648d41e08e87077034",
                 "comp_denovo.comp_strg_user.merged_with_strg.gtf.tmap:md5,e77d4db6058aed89e83fa658ff41c73c",
                 "comp_denovo.loci:md5,6ebe6fa37a4498a9039bbb7cb3c2dcbf",
@@ -1025,7 +1063,11 @@
                 "comp_strg_user.annotated.gtf:md5,56579c64001ef0ed6fb29a7f703b0f64",
                 "comp_strg_user.annotated_ok.gtf:md5,56579c64001ef0ed6fb29a7f703b0f64",
                 "comp_strg_user.loci:md5,19d03bb27eedf9c8638281192849423e",
+<<<<<<< Updated upstream
                 "comp_strg_user.merged_with_strg.gtf:md5,336807a4e0e081e3e065ace0d2aee8c7",
+=======
+                "comp_strg_user.merged_with_strg.gtf:md5,5283dffbcfb81c0b40a6a1e841d4b898",
+>>>>>>> Stashed changes
                 "comp_strg_user.stats:md5,17a0f02ce2da5e6be14b3e59a16e482f",
                 "comp_strg_user.tracking:md5,4c7e569cdcbb4d190616efc9318fec8c",
                 "gene_ID_pairs.tsv:md5,2b742679277c22fd9e273125b598174e",
@@ -1039,6 +1081,10 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.3"
         },
+<<<<<<< Updated upstream
         "timestamp": "2026-02-26T10:56:48.989277333"
+=======
+        "timestamp": "2026-04-30T14:23:56.336525805"
+>>>>>>> Stashed changes
     }
 }
