@@ -4,61 +4,80 @@
 
 ## Introduction
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
+This page describes the main inputs required to run R2T2P, including the RNA-seq and Ribo-seq samplesheet,
+reference annotation inputs, and the optional setup required for proteomics searches.
 
 ## Samplesheet input
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+You will need to create a samplesheet with information about the RNA-seq and Ribo-seq libraries you would like to
+analyse before running the pipeline. Use `--input` to specify its location:
 
 ```bash
 --input '[path to samplesheet file]'
 ```
 
+The samplesheet must be a comma-separated file with a header row. R2T2P uses the `library_type` column to route
+libraries through RNA-seq-specific and Ribo-seq-specific steps, and the `condition` column to define contrasts for
+differential analyses when `--control_label` is provided.
+
 ### Multiple runs of the same sample
 
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
+Use the same `sample` and `library_type` values when the same library has been sequenced more than once, for
+example across multiple lanes. The pipeline will concatenate these raw reads before downstream analysis. Repeated
+runs for the same `sample` and `library_type` must all be either single-end or paired-end.
+
+Below is an example for the same paired-end RNA-seq sample sequenced across 3 lanes:
 
 ```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
+sample,fastq_1,fastq_2,library_type,condition
+CONTROL_RNA_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz,RNA,control
+CONTROL_RNA_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz,RNA,control
+CONTROL_RNA_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz,RNA,control
 ```
 
 ### Full samplesheet
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
+The pipeline will auto-detect whether each library is single-end or paired-end from the presence of `fastq_2`.
+Single-end libraries should leave `fastq_2` empty.
 
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
+A samplesheet containing RNA-seq and Ribo-seq libraries may look like this:
 
 ```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+sample,fastq_1,fastq_2,library_type,condition
+CONTROL_RNA_REP1,/path/to/control_rna_rep1_R1.fastq.gz,/path/to/control_rna_rep1_R2.fastq.gz,RNA,control
+CONTROL_RNA_REP2,/path/to/control_rna_rep2_R1.fastq.gz,/path/to/control_rna_rep2_R2.fastq.gz,RNA,control
+CONTROL_RIBO_REP1,/path/to/control_ribo_rep1.fastq.gz,,Ribo,control
+CONTROL_RIBO_REP2,/path/to/control_ribo_rep2.fastq.gz,,Ribo,control
+TREATED_RNA_REP1,/path/to/treated_rna_rep1_R1.fastq.gz,/path/to/treated_rna_rep1_R2.fastq.gz,RNA,treated
+TREATED_RIBO_REP1,/path/to/treated_ribo_rep1.fastq.gz,,Ribo,treated
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+| Column         | Required | Description                                                                                                                                                                                                |
+| -------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sample`       | Yes      | Custom sample or library name. This value cannot contain spaces. Use the same value for repeated sequencing runs that should be concatenated.                                                              |
+| `fastq_1`      | Yes      | Full path to read 1. Files must be gzipped and end with `.fastq.gz`, `.fq.gz`, `.fasta.gz`, or `.fa.gz`.                                                                                                   |
+| `fastq_2`      | No       | Full path to read 2 for paired-end libraries. Files must be gzipped and end with `.fastq.gz`, `.fq.gz`, `.fasta.gz`, or `.fa.gz`. Leave empty for single-end libraries.                                    |
+| `library_type` | Yes      | Library type used to route reads through the workflow. Use `RNA` for RNA-seq libraries and `Ribo` for Ribo-seq libraries.                                                                                  |
+| `condition`    | For DE   | Experimental condition label. If differential analyses are requested, `--control_label` must match one of the values in this column, and all other conditions will be compared against that control label. |
 
-An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
+Use the examples above as templates for preparing your own samplesheet.
 
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run nfdata-omics/r2t2p --input ./samplesheet.csv --outdir ./results --genome GRCh37 -profile docker
+nextflow run nfdata-omics/r2t2p \
+    --input ./samplesheet.csv \
+    --outdir ./results \
+    --fasta ./genome.fa.gz \
+    --gtf ./annotation.gtf.gz \
+    --control_label control \
+    -profile docker
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
+You can provide `--gff` instead of `--gtf`, but only one of the two annotation formats should be supplied.
 
 Note that the pipeline will create the following files in your working directory:
 
@@ -87,11 +106,135 @@ with:
 ```yaml title="params.yaml"
 input: './samplesheet.csv'
 outdir: './results/'
-genome: 'GRCh37'
+fasta: './genome.fa.gz'
+gtf: './annotation.gtf.gz'
+control_label: 'control'
 <...>
 ```
 
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
+
+## Optional proteomics setup
+
+The Protein module is optional. It is enabled only when `--fragpipe_manifest` is provided. When proteomics is
+enabled, R2T2P builds protein databases from the reference annotation and ORFquant results, adds decoys and
+contaminants with Philosopher, and runs FragPipe searches against the generated databases.
+
+Due to licensing restrictions, some FragPipe companion tools cannot be redistributed inside the pipeline
+container. Before running the Protein module, download the required tools manually and make them available to the
+pipeline with `--fragpipe_tools_folder` and `--fragpipe_diann_folder`.
+
+The tools folder must contain the following JAR files in versioned subdirectories:
+
+```text
+tools/
+  MSFragger-<version>/
+    MSFragger-<version>.jar
+  IonQuant-<version>/
+    IonQuant-<version>.jar
+  diaTracer-<version>/
+    diaTracer-<version>.jar
+```
+
+R2T2P validates these paths with the following patterns:
+
+```text
+<TOOLS_DIR>/MSFragger-*/MSFragger-*.jar
+<TOOLS_DIR>/IonQuant-*/IonQuant-*.jar
+<TOOLS_DIR>/diaTracer-*/diaTracer-*.jar
+```
+
+The DIA-NN folder must contain the Linux executable named `diann-linux`:
+
+```text
+diann/
+  diann-linux
+```
+
+If needed, make the DIA-NN binary executable before launching the pipeline:
+
+```bash
+chmod +x /path/to/diann/diann-linux
+```
+
+For academic use, the external tools can be downloaded from their official sources:
+
+- MSFragger: <https://msfragger.nesvilab.org/>
+- IonQuant: <https://ionquant.nesvilab.org/>
+- diaTracer: <https://diatracer.nesvilab.org/>
+- DIA-NN: <https://github.com/vdemichev/DiaNN>
+
+To enable the Protein module, provide the FragPipe manifest, the FragPipe workflow file, the required annotation
+file, and the local folders containing the external tools:
+
+```bash
+nextflow run nfdata-omics/r2t2p \
+    --input ./samplesheet.csv \
+    --outdir ./results \
+    --fasta ./genome.fa.gz \
+    --gtf ./annotation.gtf.gz \
+    --fragpipe_manifest ./proteomics_manifest.tsv \
+    --fragpipe_workflow ./fragpipe.workflow \
+    --fragpipe_annotation ./tmt_annotation.txt \
+    --fragpipe_tools_folder /path/to/tools \
+    --fragpipe_diann_folder /path/to/diann \
+    -profile docker
+```
+
+The FragPipe manifest is a tab-delimited file with no header row. Each row corresponds to one LC-MS/MS run and
+must contain four columns in this order:
+
+```text
+<path_to_LC-MS_file>    <experiment_name>    <bioreplicate>    <data_type>
+```
+
+For example:
+
+```tsv title="proteomics_manifest.tsv"
+/storage/run_01.mzML	exp_a	1	DDA
+/storage/run_02.mzML	exp_a	2	DDA
+/storage/run_03.mzML	exp_b	1	DDA
+/storage/run_04.mzML	exp_b	2	DDA
+```
+
+Use paths that are accessible from the machine or cluster where Nextflow is running.
+
+### FragPipe annotation file
+
+The `--fragpipe_annotation` parameter is currently required whenever `--fragpipe_manifest` is supplied. For TMT
+workflows, provide the channel annotation file expected by FragPipe/TMT-Integrator. The file should contain two
+whitespace-delimited columns: the TMT channel and the sample label assigned to that channel.
+
+For example:
+
+```text title="tmt_annotation.txt"
+126	control_rep1
+127N	control_rep2
+127C	control_rep3
+128N	treated_rep1
+128C	treated_rep2
+129N	treated_rep3
+129C	NA
+130N	NA
+```
+
+Use `NA` for channels that should not be assigned to a sample. During execution, R2T2P creates a copy of this file
+for each `experiment_name` in the FragPipe manifest and appends the experiment name to every non-`NA` sample label.
+For example, if the manifest contains `exp_a`, the label `control_rep1` becomes `control_rep1_exp_a` in the
+per-experiment annotation file used by FragPipe. Because this suffix is added automatically, the labels in
+`--fragpipe_annotation` should normally be the base sample labels without the experiment suffix.
+
+For non-TMT workflows, the parameter is still required by the current pipeline validation. If the selected FragPipe
+workflow does not use a TMT annotation file, provide a small placeholder file that can be read by the pipeline, for
+example:
+
+```text title="fragpipe_annotation_placeholder.txt"
+126	NA
+```
+
+The FragPipe workflow file can be generated with FragPipe or downloaded from the FragPipe workflow collection.
+R2T2P rewrites the `database.db-path` entry in the workflow file so that FragPipe searches use the protein databases
+generated by the pipeline.
 
 ### Updating the pipeline
 

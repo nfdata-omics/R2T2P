@@ -1,3 +1,7 @@
-sample,fastq_1,fastq_2
-SAMPLE_PAIRED_END,/path/to/fastq/files/AEG588A1_S1_L002_R1_001.fastq.gz,/path/to/fastq/files/AEG588A1_S1_L002_R2_001.fastq.gz
-SAMPLE_SINGLE_END,/path/to/fastq/files/AEG588A4_S4_L003_R1_001.fastq.gz,
+sample,fastq_1,fastq_2,library_type,condition
+CONTROL_RNA_REP1,/path/to/fastq/files/control_rna_rep1_R1.fastq.gz,/path/to/fastq/files/control_rna_rep1_R2.fastq.gz,RNA,control
+CONTROL_RNA_REP2,/path/to/fastq/files/control_rna_rep2_R1.fastq.gz,/path/to/fastq/files/control_rna_rep2_R2.fastq.gz,RNA,control
+CONTROL_RIBO_REP1,/path/to/fastq/files/control_ribo_rep1.fastq.gz,,Ribo,control
+CONTROL_RIBO_REP2,/path/to/fastq/files/control_ribo_rep2.fastq.gz,,Ribo,control
+TREATED_RNA_REP1,/path/to/fastq/files/treated_rna_rep1_R1.fastq.gz,/path/to/fastq/files/treated_rna_rep1_R2.fastq.gz,RNA,treated
+TREATED_RIBO_REP1,/path/to/fastq/files/treated_ribo_rep1.fastq.gz,,Ribo,treated
