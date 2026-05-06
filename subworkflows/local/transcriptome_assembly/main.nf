@@ -22,20 +22,20 @@ workflow TRANSCRIPTOME_ASSEMBLY {
 
     main:
 
-    ch_versions = Channel.empty()
-    ch_gff_stats = Channel.empty()
+    ch_versions = channel.empty()
+    ch_gff_stats = channel.empty()
 
     // Merge all those BAM files
     SAMTOOLS_MERGE (
-        ch_bam.collect { it[1] }.map { [ ["id": "merged_bams"], it ] }, // get list of bam files
-        ch_fasta.map { [ [:], it ] },
-        ch_fai.map { [ [:], it ] },
+        ch_bam.collect { _meta, file -> file }.map { file -> [ ["id": "merged_bams"], file ] }, // get list of bam files
+        ch_fasta.map { file -> [ [:], file ] },
+        ch_fai.map { file -> [ [:], file ] },
         [[], []]
     )
     ch_versions = ch_versions.mix(SAMTOOLS_MERGE.out.versions)
 
     SAMTOOLS_MERGE.out.bam
-        .map { [ it[0] + ["strandedness": "reverse"], it[1] ] }
+        .map { meta, file -> [ meta + ["strandedness": "reverse"], file ] }
         .set { ch_merged_bam }
 
     // Run StringTie to assemble transcripts from merged alignments
@@ -63,7 +63,7 @@ workflow TRANSCRIPTOME_ASSEMBLY {
         ch_gtf_to_use = MERGE_WITH_USER_PROVIDED.out.gtf
         ch_gff_stats = ch_gff_stats.mix(MERGE_WITH_USER_PROVIDED.out.gffcompare_stats)
     } else {
-        ch_gtf_to_use = FILTER_UNDEFINED_STRAND.out.output.map { [ it[1] ] }
+        ch_gtf_to_use = FILTER_UNDEFINED_STRAND.out.output.map { _meta, file -> [ file ] }
     }
 
     MERGE_WITH_REF_ANNOTATION (
