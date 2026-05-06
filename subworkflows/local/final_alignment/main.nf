@@ -125,7 +125,7 @@ include { UCSC_BEDGRAPHTOBIGWIG              } from '../../../modules/nf-core/uc
         }
         .set { ch_bam_bai }
 
-    BAM_STATS_SAMTOOLS ( ch_bam_bai, ch_fasta.map { file -> [ [:], file ] }.combine(ch_fai) )
+    BAM_STATS_SAMTOOLS ( ch_bam_bai, ch_fasta.map { file -> [ [:], file ] }.combine(ch_fai).collect() )
 
     ch_multiqc_files  = ch_multiqc_files.mix( BAM_STATS_SAMTOOLS.out.stats.collect{ _meta, file -> file } )
         .mix( BAM_STATS_SAMTOOLS.out.flagstat.collect{ _meta, file -> file } )

@@ -61,7 +61,7 @@ workflow TWO_PASS_ALIGNMENT {
         }
         .set { ch_bam_bai }
 
-    FIRST_BAM_STATS_SAMTOOLS ( ch_bam_bai, ch_fasta.map { file -> [ [:], file ] }.combine(ch_fai) )
+    FIRST_BAM_STATS_SAMTOOLS ( ch_bam_bai, ch_fasta.map { file -> [ [:], file ] }.combine(ch_fai).collect() )
 
     ch_multiqc_files  = ch_multiqc_files.mix( FIRST_BAM_STATS_SAMTOOLS.out.stats.collect{ _meta, file -> file } )
         .mix( FIRST_BAM_STATS_SAMTOOLS.out.flagstat.collect{ _meta, file -> file } )
@@ -135,7 +135,7 @@ workflow TWO_PASS_ALIGNMENT {
         }
         .set { ch_bam_bai }
 
-    SECOND_BAM_STATS_SAMTOOLS ( ch_bam_bai, ch_fasta.map { file -> [ [:], file ] }.combine(ch_fai) )
+    SECOND_BAM_STATS_SAMTOOLS ( ch_bam_bai, ch_fasta.map { file -> [ [:], file ] }.combine(ch_fai).collect() )
 
     ch_multiqc_files  = ch_multiqc_files.mix( SECOND_BAM_STATS_SAMTOOLS.out.stats.collect{ _meta, file -> file } )
         .mix( SECOND_BAM_STATS_SAMTOOLS.out.flagstat.collect{ _meta, file -> file } )
