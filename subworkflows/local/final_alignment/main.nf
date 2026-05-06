@@ -16,6 +16,7 @@ include { UCSC_BEDGRAPHTOBIGWIG              } from '../../../modules/nf-core/uc
     ch_genome_index // channel: genome_index
     ch_gtf          // channel: gtf
     ch_fasta        // channel: fasta
+    ch_fai          // channel: fai
     ch_chrom_sizes  // channel: chrom_sizes
     ch_bsgenome     // channel: bsgenome
     ch_gtf_Rannot   // channel: gtf_Rannot
@@ -124,8 +125,7 @@ include { UCSC_BEDGRAPHTOBIGWIG              } from '../../../modules/nf-core/uc
         }
         .set { ch_bam_bai }
 
-    BAM_STATS_SAMTOOLS ( ch_bam_bai, ch_fasta.map { file -> [ [:], file ] }  )
-    ch_versions = ch_versions.mix( BAM_STATS_SAMTOOLS.out.versions )
+    BAM_STATS_SAMTOOLS ( ch_bam_bai, ch_fasta.map { file -> [ [:], file ] }.combine(ch_fai) )
 
     ch_multiqc_files  = ch_multiqc_files.mix( BAM_STATS_SAMTOOLS.out.stats.collect{ _meta, file -> file } )
         .mix( BAM_STATS_SAMTOOLS.out.flagstat.collect{ _meta, file -> file } )

@@ -16,6 +16,7 @@ workflow TWO_PASS_ALIGNMENT {
     ch_star_index   // path(genome_index)
     ch_gtf          // path(gtf)
     ch_fasta        // path(fasta)
+    ch_fai          // path(fai)
     ch_samplesheet  // samplesheet channel for ordering
     ch_bsgenome     // path(bsgenome)
     ch_gtf_Rannot   // path(gtf_Rannot)
@@ -60,8 +61,7 @@ workflow TWO_PASS_ALIGNMENT {
         }
         .set { ch_bam_bai }
 
-    FIRST_BAM_STATS_SAMTOOLS ( ch_bam_bai, ch_fasta.map { file -> [ [:], file ] }  )
-    ch_versions = ch_versions.mix( FIRST_BAM_STATS_SAMTOOLS.out.versions )
+    FIRST_BAM_STATS_SAMTOOLS ( ch_bam_bai, ch_fasta.map { file -> [ [:], file ] }.combine(ch_fai) )
 
     ch_multiqc_files  = ch_multiqc_files.mix( FIRST_BAM_STATS_SAMTOOLS.out.stats.collect{ _meta, file -> file } )
         .mix( FIRST_BAM_STATS_SAMTOOLS.out.flagstat.collect{ _meta, file -> file } )
@@ -135,8 +135,7 @@ workflow TWO_PASS_ALIGNMENT {
         }
         .set { ch_bam_bai }
 
-    SECOND_BAM_STATS_SAMTOOLS ( ch_bam_bai, ch_fasta.map { file -> [ [:], file ] } )
-    ch_versions = ch_versions.mix( SECOND_BAM_STATS_SAMTOOLS.out.versions )
+    SECOND_BAM_STATS_SAMTOOLS ( ch_bam_bai, ch_fasta.map { file -> [ [:], file ] }.combine(ch_fai) )
 
     ch_multiqc_files  = ch_multiqc_files.mix( SECOND_BAM_STATS_SAMTOOLS.out.stats.collect{ _meta, file -> file } )
         .mix( SECOND_BAM_STATS_SAMTOOLS.out.flagstat.collect{ _meta, file -> file } )

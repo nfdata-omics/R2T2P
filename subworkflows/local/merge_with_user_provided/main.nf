@@ -19,7 +19,7 @@ workflow MERGE_WITH_USER_PROVIDED {
     GFFCOMPARE (
         ch_user_gtf.map { gtf -> [ ["id": "comp_strg_user"], gtf ] },
         [[], [], []], // no fasta
-        ch_merged_gtf.map { gtf -> [ [:], gtf ] }
+        ch_merged_gtf.map { _meta, gtf -> [ [:], gtf ] }
     )
     ch_versions = ch_versions.mix(GFFCOMPARE.out.versions)
 
