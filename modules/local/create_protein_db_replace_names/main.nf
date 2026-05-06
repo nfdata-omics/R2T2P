@@ -69,7 +69,7 @@ process CREATE_PROTEIN_DB_REPLACE_NAMES {
 
     stub:
     """
-    touch renamed_${fasta_with_decoys_and_contam}
+    touch renamed_fasta_with_decoys_and_contam.fasta
 
     Rscript -e '
         # Attaching the R package Biostrings
