@@ -85,6 +85,7 @@ workflow R2T2P {
         PREPARE_REF.out.star_index,
         PREPARE_REF.out.gtf,
         PREPARE_REF.out.fasta,
+        PREPARE_REF.out.fai,
         ch_samplesheet,
         PREPARE_REF.out.bsgenome,
         PREPARE_REF.out.gtf_Rannot
@@ -113,6 +114,7 @@ workflow R2T2P {
         PREPARE_REF.out.star_index,                                     // genome_index
         TRANSCRIPTOME_ASSEMBLY.out.gtf.collect{ _meta, file -> file },  // new gtf after assembly
         PREPARE_REF.out.fasta,                                          // genome fasta
+        PREPARE_REF.out.fai,                                            // genome fai
         PREPARE_REF.out.chrom_sizes,                                    // chrom sizes for bigWig conversion
         PREPARE_REF.out.bsgenome,                                       // bsgenome for Ribo-seQC
         TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot                           // gtf R-object for Ribo-seQC

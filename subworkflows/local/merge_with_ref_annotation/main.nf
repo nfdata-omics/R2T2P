@@ -16,13 +16,13 @@ workflow MERGE_WITH_REF_ANNOTATION {
 
     main:
 
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     // Compare (denovo vs ) the merged GTF with user annotation
     GFFCOMPARE (
-        ch_merged_gtf.map { [ ["id": "comp_denovo"], it ] },
+        ch_merged_gtf.map { gtf -> [ ["id": "comp_denovo"], gtf ] },
         [[], [], []], // no fasta
-        ch_ref_gtf.map { [ [:], it ] }
+        ch_ref_gtf.map { gtf -> [ [:], gtf ] }
     )
     ch_versions = ch_versions.mix(GFFCOMPARE.out.versions)
 
@@ -52,6 +52,6 @@ workflow MERGE_WITH_REF_ANNOTATION {
     emit:
     gtf              = CAT_GTF.out.gtf                         // channel: [ val(meta), [ gtf ] ]
     gtf_Rannot       = R_MERGE_DENOVO_WITH_REF.out.gtf_Rannot  // channel: [ gtf_Rannot ]
-    gffcompare_stats = GFFCOMPARE.out.stats.map { [ it[1] ] }  // channel: [ stats ]
+    gffcompare_stats = GFFCOMPARE.out.stats.map { _meta, stats -> [ stats ] }  // channel: [ stats ]
     versions         = ch_versions                             // channel: [ versions.yml ]
 }
