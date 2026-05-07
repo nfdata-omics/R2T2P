@@ -32,7 +32,7 @@ lint:
   correct_meta_inputs:
     - modules/nf-core/star/align/meta.yml
     - modules/nf-core/cat/fastq/main.nf
-nf_core_version: 3.5.2
+nf_core_version: 4.0.2
 repository_type: pipeline
 template:
   author: R. Albanese, M. Bonfanti

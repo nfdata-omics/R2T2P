@@ -40,11 +40,15 @@ workflow R2T2P {
     ch_diann_folder // value channel: path(diann_folder)
     ch_fragpipe_manifest // value channel: path(fragpipe_manifest)
     ch_fragpipe_annotation // value channel: path(fragpipe_annotation)
+    multiqc_config
+    multiqc_logo
+    multiqc_methods_description
+    outdir
 
     main:
 
-    ch_versions = channel.empty()
-    ch_multiqc_files = channel.empty()
+    def ch_versions = channel.empty()
+    def ch_multiqc_files = channel.empty()
     //
     // SUBWORKFLOW: Prepare reference genome
     //
@@ -81,6 +85,7 @@ workflow R2T2P {
         PREPARE_REF.out.star_index,
         PREPARE_REF.out.gtf,
         PREPARE_REF.out.fasta,
+        PREPARE_REF.out.fai,
         ch_samplesheet,
         PREPARE_REF.out.bsgenome,
         PREPARE_REF.out.gtf_Rannot
@@ -109,6 +114,7 @@ workflow R2T2P {
         PREPARE_REF.out.star_index,                                     // genome_index
         TRANSCRIPTOME_ASSEMBLY.out.gtf.collect{ _meta, file -> file },  // new gtf after assembly
         PREPARE_REF.out.fasta,                                          // genome fasta
+        PREPARE_REF.out.fai,                                            // genome fai
         PREPARE_REF.out.chrom_sizes,                                    // chrom sizes for bigWig conversion
         PREPARE_REF.out.bsgenome,                                       // bsgenome for Ribo-seQC
         TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot                           // gtf R-object for Ribo-seQC
@@ -155,7 +161,7 @@ workflow R2T2P {
     //
     // Collate and save software versions
     //
-    def topic_versions = Channel.topic("versions")
+    def topic_versions = channel.topic("versions")
         .distinct()
         .branch { entry ->
             versions_file: entry instanceof Path
@@ -172,58 +178,43 @@ workflow R2T2P {
             "${process}:\n${tool_versions.join('\n')}"
         }
 
-    softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
+    def ch_collated_versions = softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
         .mix(topic_versions_string)
         .collectFile(
-            storeDir: "${params.outdir}/pipeline_info",
+            storeDir: "${outdir}/pipeline_info",
             name:  'r2t2p_software_'  + 'mqc_'  + 'versions.yml',
             sort: true,
             newLine: true
-        ).set { ch_collated_versions }
+        )
 
     //
     // MODULE: MultiQC
     //
-    ch_multiqc_config        = channel.fromPath(
-        "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-    ch_multiqc_custom_config = params.multiqc_config ?
-        channel.fromPath(params.multiqc_config, checkIfExists: true) :
-        channel.empty()
-    ch_multiqc_logo          = params.multiqc_logo ?
-        channel.fromPath(params.multiqc_logo, checkIfExists: true) :
-        channel.empty()
-
-    summary_params      = paramsSummaryMap(
-        workflow, parameters_schema: "nextflow_schema.json")
-    ch_workflow_summary = channel.value(paramsSummaryMultiqc(summary_params))
-    ch_multiqc_files = ch_multiqc_files.mix(
-        ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_custom_methods_description = params.multiqc_methods_description ?
-        file(params.multiqc_methods_description, checkIfExists: true) :
-        file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
-    ch_methods_description                = channel.value(
-        methodsDescriptionText(ch_multiqc_custom_methods_description))
-
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
-    ch_multiqc_files = ch_multiqc_files.mix(
-        ch_methods_description.collectFile(
-            name: 'methods_description_mqc.yaml',
-            sort: true
-        )
+    def ch_summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+    def ch_workflow_summary = channel.value(paramsSummaryMultiqc(ch_summary_params))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+    def ch_multiqc_custom_methods_description = multiqc_methods_description
+        ? file(multiqc_methods_description, checkIfExists: true)
+        : file("${projectDir}/assets/methods_description_template.yml", checkIfExists: true)
+    def ch_methods_description = channel.value(methodsDescriptionText(ch_multiqc_custom_methods_description))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml', sort: true))
+    MULTIQC(
+        ch_multiqc_files.flatten().collect().map { files ->
+            [
+                [id: 'r2t2p'],
+                files,
+                multiqc_config
+                    ? file(multiqc_config, checkIfExists: true)
+                    : file("${projectDir}/assets/multiqc_config.yml", checkIfExists: true),
+                multiqc_logo ? file(multiqc_logo, checkIfExists: true) : [],
+                [],
+                [],
+            ]
+        }
     )
-
-    MULTIQC (
-        ch_multiqc_files.collect(),
-        ch_multiqc_config.toList(),
-        ch_multiqc_custom_config.toList(),
-        ch_multiqc_logo.toList(),
-        [],
-        []
-    )
-
-    emit:multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
+    emit:multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
     versions       = ch_versions                 // channel: [ path(versions.yml) ]
-
 }
 
 /*
