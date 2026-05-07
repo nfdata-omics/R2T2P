@@ -14,16 +14,15 @@
 ## Introduction
 
 **nfdata-omics/r2t2p** is a bioinformatics pipeline for integrated transcriptome, translatome, and proteome
-characterization. It uses RNA-seq data to reconstruct and refine transcript annotations, Ribo-seq data to
-identify translated regions at isoform level with ORFquant, and optional LC-MS/MS proteomics data to search
-custom protein databases with FragPipe.
+characterization. It uses RNA-seq data to reconstruct and refine transcriptome annotations, Ribo-seq data to
+identify translated regions at isoform level with *ORFquant*, and optional LC-MS/MS proteomics data to perform
+custom protein database searches with *FragPipe*.
 
-The pipeline is organized into three main analysis modules: an RNA module for de novo transcriptome assembly
-and annotation merging, a Translation module for final RNA-seq/Ribo-seq alignment, RiboseQC processing,
-differential analyses, and ORF discovery, and a Protein module for proteomic searches against annotated,
-ORFquant-derived, and combined protein databases. Quality-control files, mapping statistics, annotation
-comparison metrics, ORF summaries, proteomics logs, software versions, and workflow provenance are collected
-into final reports.
+The pipeline is organized into three main analysis modules: an RNA module for *de novo* transcriptome assembly
+and annotation merging, a Translation module for final RNA-seq/Ribo-seq alignment, *RiboseQC* processing,
+differential analyses, and isoform-level *de novo* ORF finding, and a Protein module for proteomic searches against annotated,
+ORFquant-derived, and combined protein databases. The pipeline also produces reports including quality-control files, mapping statistics, 
+annotation-comparison metrics, ORF summaries, proteomics logs, software versions, and workflow provenance.
 
 ![workflow-map](docs/metromap.png)
 
@@ -32,12 +31,12 @@ The default workflow performs the following steps:
 1. Read validation, concatenation of repeated runs, and raw-read QC
    ([`fq`](https://github.com/stjude-rust-labs/fq),
    [`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)).
-2. Reference preparation, including STAR genome index generation and RiboseQC annotation preparation when needed.
+2. Reference preparation, including *STAR* genome index generation and *RiboseQC* annotation preparation when needed.
 3. RNA-seq genome alignment and splice-junction discovery ([`STAR`](https://github.com/alexdobin/STAR)).
 4. RNA-seq-guided transcriptome assembly ([`StringTie`](https://ccb.jhu.edu/software/stringtie/)).
 5. Annotation comparison and merging
    ([`GFFCompare`](https://ccb.jhu.edu/software/stringtie/gffcompare.shtml), custom R scripts).
-6. Final RNA-seq and Ribo-seq alignments against the augmented annotation
+6. Final RNA-seq and Ribo-seq alignments by providing *STAR* with exon-exon junctions of the augmented annotation
    ([`STAR`](https://github.com/alexdobin/STAR)).
 7. Alignment processing, feature quantification, and genome-browser coverage generation
    ([`samtools`](http://www.htslib.org/), [`RiboseQC`](https://github.com/ohlerlab/RiboseQC),
@@ -46,7 +45,7 @@ The default workflow performs the following steps:
    ([`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html),
    [`DEXSeq`](https://bioconductor.org/packages/release/bioc/html/DEXSeq.html)).
 9. Isoform-aware ORF discovery and protein FASTA generation ([`ORFquant`](https://github.com/ohlerlab/ORFquant)).
-10. Optional proteomic database preparation and FragPipe searches
+10. Optional proteomic database preparation and *FragPipe* searches
     ([`Philosopher`](https://philosopher.nesvilab.org/), [`FragPipe`](https://fragpipe.nesvilab.org/)).
 11. Aggregated QC and run-provenance reporting ([`MultiQC`](http://multiqc.info/)).
 
@@ -87,8 +86,8 @@ nextflow run nfdata-omics/r2t2p \
 You can provide `--gff` instead of `--gtf`; the pipeline will convert it to GTF format before downstream
 analysis.
 
-Proteomics searches are optional. To enable the Protein module, provide the FragPipe manifest, FragPipe workflow
-file, any required TMT annotation file, and local paths to the external FragPipe tools that cannot be bundled in
+Proteomic searches are optional. To enable the Protein module, provide the *FragPipe* manifest, *FragPipe* workflow
+file, any required TMT annotation file, and local paths to the external *FragPipe* tools that cannot be bundled in
 the container.
 
 For more information about the workflow rationale and expected outputs, see the pipeline documentation:
