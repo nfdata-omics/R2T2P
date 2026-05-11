@@ -25,22 +25,36 @@ workflow TRANSCRIPTOME_ASSEMBLY {
     ch_versions = channel.empty()
     ch_gff_stats = channel.empty()
 
+    // Collect BAM files and create merged meta validating that strandedness is consistent across all BAM files
+    ch_bam
+        .map { meta, bam -> [meta.strandedness, bam] }
+        .collect(flat: false)
+        .map { collected_items ->
+            // Extract strandedness values and BAM files
+            def unique_strandedness = collected_items.collect { item -> item[0] }.unique()
+            def bam_files = collected_items.collect { item -> item[1] }
+            // Check if all strandedness values are the same
+            if (unique_strandedness.size() > 1) {
+                error "Inconsistent strandedness values found: ${unique_strandedness}. All BAM files must have the same strandedness."
+            }
+            // Create new meta with merged information
+            def merged_meta = [ "id": "merged_bams", "strandedness": unique_strandedness[0] ]
+            return [merged_meta, bam_files]
+        }
+        .set { ch_collected_bams }
+
     // Merge all those BAM files
     SAMTOOLS_MERGE (
-        ch_bam.collect { _meta, file -> file }.map { file -> [ ["id": "merged_bams"], file ] }, // get list of bam files
+        ch_collected_bams,
         ch_fasta.map { file -> [ [:], file ] },
         ch_fai.map { file -> [ [:], file ] },
         [[], []]
     )
     ch_versions = ch_versions.mix(SAMTOOLS_MERGE.out.versions)
 
-    SAMTOOLS_MERGE.out.bam
-        .map { meta, file -> [ meta + ["strandedness": "reverse"], file ] }
-        .set { ch_merged_bam }
-
     // Run StringTie to assemble transcripts from merged alignments
     STRINGTIE (
-        ch_merged_bam,
+        SAMTOOLS_MERGE.out.bam,
         ch_gtf
     )
     ch_versions = ch_versions.mix(STRINGTIE.out.versions)

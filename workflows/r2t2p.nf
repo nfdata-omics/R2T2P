@@ -91,11 +91,29 @@ workflow R2T2P {
         PREPARE_REF.out.gtf_Rannot
     )
 
+    TWO_PASS_ALIGNMENT.out.strandedness
+        .map { meta, strandedness_file ->
+
+            def inferred_value = strandedness_file.readLines()
+                .find { l -> l.startsWith('inferred_strands') }
+                .split('\t')[1].trim()
+
+            def strandedness = (inferred_value == '+') ? 'forward' :
+                (inferred_value == '-') ? 'reverse' : 'unstranded'
+
+            [meta.id, meta + [strandedness: strandedness]]
+        }
+        .join(
+            TWO_PASS_ALIGNMENT.out.bam.map { meta, bam -> [meta.id, bam] }
+        )
+        .map { _id, updated_meta, bam -> [updated_meta, bam] }
+        .set { ch_bam_with_strandness }
+
     //
     // Transcriptome assembly from aligned reads
     //
     TRANSCRIPTOME_ASSEMBLY (
-        TWO_PASS_ALIGNMENT.out.bam,
+        ch_bam_with_strandness,
         PREPARE_REF.out.fasta,
         PREPARE_REF.out.fai,
         PREPARE_REF.out.gtf,
@@ -105,6 +123,7 @@ workflow R2T2P {
     )
     ch_versions = ch_versions.mix(TRANSCRIPTOME_ASSEMBLY.out.versions)
     ch_multiqc_files = ch_multiqc_files.mix(TRANSCRIPTOME_ASSEMBLY.out.gff_stats)
+
 
     //
     // Final alignment
