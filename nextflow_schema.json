@@ -84,7 +84,7 @@
                 },
                 "fragpipe_tools_folder": {
                     "type": "string",
-                    "description": "Path to the folder containing MSFragger, IonQuant, and dirTracer",
+                    "description": "Path to the folder containing MSFragger, IonQuant, and diaTracer",
                     "fa_icon": "fas fa-tools",
                     "help_text": "Due to licensing restrictions, MSFragger, IonQuant, and diaTracer cannot be redistributed and are therefore not included in the FragPipe container. As a result, these tools must be provided externally using the corresponding parameter, which should point to a directory containing the required JAR files.\n\nFor academic use, the JAR files can be downloaded free of charge from the following official sources:\nhttps://msfragger.nesvilab.org/\nhttps://ionquant.nesvilab.org/\nhttps://diatracer.nesvilab.org/"
                 },
