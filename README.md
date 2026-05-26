@@ -13,46 +13,53 @@
 
 ## Introduction
 
-**nfdata-omics/r2t2p** is a bioinformatics pipeline for integrated transcriptome, translatome, and proteome
-characterization. It uses RNA-seq data to reconstruct and refine transcriptome annotations, Ribo-seq data to
-identify translated regions at isoform level with *ORFquant*, and optional LC-MS/MS proteomics data to perform
-custom protein database searches with *FragPipe*.
+**nfdata-omics/r2t2p** is a modular pipeline for integrative, data-driven analyses from RNA to Protein. The pipeline comprises the following three independent but interoperable modules:
+1. The RNA module for *de novo* transcriptome reconstruction with short-read data and merging between transcriptome annotations
+2. The Translation module for *de novo* isoform-level detection of translated ORFs with Ribo-seq data
+3. The Protein module for proteome characterization via searches using protein databases and experimental data (DDA TMT, DDA LFQ, or DIA data).
 
-The pipeline is organized into three main analysis modules: an RNA module for *de novo* transcriptome assembly
-and annotation merging, a Translation module for final RNA-seq/Ribo-seq alignment, *RiboseQC* processing,
-differential analyses, and isoform-level *de novo* ORF finding, and a Protein module for proteomic searches against annotated,
-ORFquant-derived, and combined protein databases. The pipeline also produces reports including quality-control files, mapping statistics, 
-annotation-comparison metrics, ORF summaries, proteomics logs, software versions, and workflow provenance.
+The pipeline also performs differential expression analyses at multiple levels, and it produces a wide range of quality-control reports and statistics, including mapping statistics, annotation-comparison metrics, *de novo* translated ORF finding summaries, log files, and information on software versions.
+
+Additional details on the rationale behind the entire pipeline and behind each module are present in the section [Workflow rationale](docs/workflow.md). Information on input files and proteomic data analysis tools are provided in [Usage](docs/usage.md), whereas details on the generated outputs can be found in [Output](docs/output.md).
+
+Thanks to its modularity and flexibility, the pipeline can be used for 6 different use cases (R2T2P, R2T, T2P, single modules), depending on the provided data types. Instructions for pipeline setup for the different scenarios are present in the section **Use cases** below. 
 
 ![workflow-map](docs/metromap.png)
 
-The default workflow performs the following steps:
+When provided with RNA-seq, Ribo-seq, and proteomic data, the entire workflow (R2T2P) performs the following steps:
 
 1. Read validation, concatenation of repeated runs, and raw-read QC
    ([`fq`](https://github.com/stjude-rust-labs/fq),
    [`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)).
-2. Reference preparation, including *STAR* genome index generation and *RiboseQC* annotation preparation when needed.
+2. Reference preparation, including *STAR* genome index generation and *RiboseQC* annotation preparation, if not already available.
 3. RNA-seq genome alignment and splice-junction discovery ([`STAR`](https://github.com/alexdobin/STAR)).
 4. RNA-seq-guided transcriptome assembly ([`StringTie`](https://ccb.jhu.edu/software/stringtie/)).
-5. Annotation comparison and merging
+5. Comparison and merging between transcriptome annotations
    ([`GFFCompare`](https://ccb.jhu.edu/software/stringtie/gffcompare.shtml), custom R scripts).
 6. Final RNA-seq and Ribo-seq alignments by providing *STAR* with exon-exon junctions of the augmented annotation
    ([`STAR`](https://github.com/alexdobin/STAR)).
 7. Alignment processing, feature quantification, and genome-browser coverage generation
    ([`samtools`](http://www.htslib.org/), [`RiboseQC`](https://github.com/ohlerlab/RiboseQC),
    [`bedGraphToBigWig`](https://genome.ucsc.edu/goldenPath/help/bigWig.html)).
-8. Gene-level and ORF-level differential analyses when contrasts are provided
+8. Gene-level, sub-gene level, and ORF-level differential analyses when contrasts are provided
    ([`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html),
    [`DEXSeq`](https://bioconductor.org/packages/release/bioc/html/DEXSeq.html)).
 9. Isoform-aware ORF discovery and protein FASTA generation ([`ORFquant`](https://github.com/ohlerlab/ORFquant)).
-10. Optional proteomic database preparation and *FragPipe* searches
+10. Protein database preparation and proteomic searches with the *FragPipe* suite, which comprises different proteomic data analysis tools and packages, including *MSFragger*, *MSBooster*, *Percolator*, *Philosopher*, *IonQuant*, *TMT-Integrator*, *MSFragger-DIA*, *DIA-Umpire*, *EasyPQP*, and *DIA-NN*
     ([`Philosopher`](https://philosopher.nesvilab.org/), [`FragPipe`](https://fragpipe.nesvilab.org/)).
 11. Aggregated QC and run-provenance reporting ([`MultiQC`](http://multiqc.info/)).
 
-## Usage
+## Use cases
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/get_started/environment_setup/overview) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/get_started/run-your-first-pipeline) with `-profile test` before running the workflow on actual data.
+
+1. R2T2P
+2. R2T
+3. T2P
+4. R
+5. T
+6. P
 
 First, prepare a samplesheet with your RNA-seq and Ribo-seq input data:
 
@@ -89,12 +96,6 @@ analysis.
 Proteomic searches are optional. To enable the Protein module, provide the *FragPipe* manifest, *FragPipe* workflow
 file, any required TMT annotation file, and local paths to the external *FragPipe* tools that cannot be bundled in
 the container.
-
-For more information about the workflow rationale and expected outputs, see the pipeline documentation:
-
-- [Workflow rationale](docs/workflow.md)
-- [Usage](docs/usage.md)
-- [Output](docs/output.md)
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/running/run-pipelines#using-parameter-files).
