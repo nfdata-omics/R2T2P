@@ -20,9 +20,9 @@
 
 The pipeline also performs differential expression analyses at multiple levels, and it produces a wide range of quality-control reports and statistics, including mapping statistics, annotation-comparison metrics, *de novo* translated ORF finding summaries, log files, and information on software versions.
 
-Additional details on the rationale behind the entire pipeline and behind each module are present in the section [Workflow rationale](docs/workflow.md). Information on input files and proteomic data analysis tools are provided in [Usage](docs/usage.md), whereas details on the generated outputs can be found in [Output](docs/output.md).
+Additional details on the rationale behind the entire pipeline and behind each module are present in the section [Workflow rationale](docs/workflow.md). Information on structure and content of input files, on all the pipeline parameters, and on proteomic data analysis tools are provided in [Usage](docs/usage.md), whereas details on the generated outputs can be found in [Output](docs/output.md).
 
-Thanks to its modularity and flexibility, the pipeline can be used for 6 different use cases (R2T2P, R2T, T2P, single modules), depending on the provided data types. Instructions for pipeline setup for the different scenarios are present in the section **Use cases** below. 
+Thanks to its modularity and flexibility, the pipeline can be used for 6 different use cases (R2T2P, R2T, T2P, single modules), depending on the provided data types. Instructions for executing all the possible pipeline configurations are present in the section **Use cases** below. 
 
 ![workflow-map](docs/metromap.png)
 
@@ -54,48 +54,98 @@ When provided with RNA-seq, Ribo-seq, and proteomic data, the entire workflow (R
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/get_started/environment_setup/overview) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/get_started/run-your-first-pipeline) with `-profile test` before running the workflow on actual data.
 
-1. R2T2P
-2. R2T
-3. T2P
-4. R
-5. T
-6. P
+Depending on the provided data types, the R2T2P pipeline can be run in 6 different configurations: 
 
-First, prepare a samplesheet with your RNA-seq and Ribo-seq input data:
+**1. R2T2P**
 
-`samplesheet.csv`:
-
-```csv
-sample,fastq_1,fastq_2,library_type,condition
-CONTROL_RNA_REP1,/path/to/control_rna_R1.fastq.gz,/path/to/control_rna_R2.fastq.gz,RNA,control
-CONTROL_RIBO_REP1,/path/to/control_ribo.fastq.gz,,Ribo,control
-TREATED_RNA_REP1,/path/to/treated_rna_R1.fastq.gz,/path/to/treated_rna_R2.fastq.gz,RNA,treated
-TREATED_RIBO_REP1,/path/to/treated_ribo.fastq.gz,,Ribo,treated
-```
-
-Each row represents a single-end or paired-end RNA-seq or Ribo-seq library. The `library_type` column is used
-to route reads through RNA-seq-specific and Ribo-seq-specific steps, and `condition` is used to define
-contrasts when differential analyses are requested. Multiple rows with the same sample identifier are treated
-as repeated sequencing runs and are concatenated before downstream analysis.
-
-Now, you can run the pipeline using:
-
+When providing RNA-seq, Ribo-seq, and proteomic data, the full pipeline configuration is used. An example command for running this pipeline configuration is as follows:
 ```bash
 nextflow run nfdata-omics/r2t2p \
-   -profile <docker/singularity/.../institute> \
-   --input samplesheet.csv \
-   --fasta <GENOME_FASTA> \
-   --gtf <REFERENCE_GTF> \
-   --control_label control \
-   --outdir <OUTDIR>
+    --input <SAMPLESHEET_CSV> \
+    --outdir <OUTDIR> \
+    --fasta <GENOME_FASTA> \
+    --gtf <REFERENCE_GTF> \
+    --user_provided_annotation (optional) <ADDITIONAL_GTF> \
+    --fragpipe_manifest <FRAGPIPE_MANIFEST_TSV> \
+    --fragpipe_workflow <FRAGPIPE_WORKFLOW_FILE> \
+    --fragpipe_annotation <FRAGPIPE_TMT_ANNOTATION_FILE> \
+    --fragpipe_tools_folder <TOOLS_DIR> \
+    --fragpipe_diann_folder <DIANN_DIR> \
+    -profile <docker/singularity/.../institute>
 ```
 
-You can provide `--gff` instead of `--gtf`; the pipeline will convert it to GTF format before downstream
-analysis.
+**2. R2T**
 
-Proteomic searches are optional. To enable the Protein module, provide the *FragPipe* manifest, *FragPipe* workflow
-file, any required TMT annotation file, and local paths to the external *FragPipe* tools that cannot be bundled in
-the container.
+When providing RNA-seq and Ribo-seq data (no proteomic data), only the RNA and Translation modules are used. This pipeline configuration, called R2T, can be run as follows:
+```bash
+nextflow run nfdata-omics/r2t2p \
+    --input <SAMPLESHEET_CSV> \
+    --outdir <OUTDIR> \
+    --fasta <GENOME_FASTA> \
+    --gtf <REFERENCE_GTF> \
+    --user_provided_annotation (optional) <ADDITIONAL_GTF> \
+    -profile <docker/singularity/.../institute>
+```
+
+**3. T2P**
+
+When providing Ribo-seq and proteomic data (no RNA-seq data), only the Translation and Protein modules are used. This pipeline configuration, called T2P, can be run as follows:
+```bash
+nextflow run nfdata-omics/r2t2p \
+    --input <SAMPLESHEET_CSV> \
+    --outdir <OUTDIR> \
+    --fasta <GENOME_FASTA> \
+    --gtf <REFERENCE_GTF> \
+    --user_provided_rannot <RANNOT_FILE> \
+    --fragpipe_manifest <FRAGPIPE_MANIFEST_TSV> \
+    --fragpipe_workflow <FRAGPIPE_WORKFLOW_FILE> \
+    --fragpipe_annotation <FRAGPIPE_TMT_ANNOTATION_FILE> \
+    --fragpipe_tools_folder <TOOLS_DIR> \
+    --fragpipe_diann_folder <DIANN_DIR> \
+    -profile <docker/singularity/.../institute>
+```
+
+**4. R only**
+
+When providing only RNA-seq data, the RNA module can be run as follows:
+```bash
+nextflow run nfdata-omics/r2t2p \
+    --input <SAMPLESHEET_CSV> \
+    --outdir <OUTDIR> \
+    --fasta <GENOME_FASTA> \
+    --gtf <REFERENCE_GTF> \
+    --user_provided_annotation (optional) <ADDITIONAL_GTF> \
+    -profile <docker/singularity/.../institute>
+```
+
+**5. T only**
+
+When providing only Ribo-seq data, the Translation module can be run as follows:
+```bash
+nextflow run nfdata-omics/r2t2p \
+    --input <SAMPLESHEET_CSV> \
+    --outdir <OUTDIR> \
+    --fasta <GENOME_FASTA> \
+    --gtf <REFERENCE_GTF> \
+    --user_provided_rannot <RANNOT_FILE> \
+    -profile <docker/singularity/.../institute>
+```
+
+**6. P only**
+
+When providing only proteomic data, the Protein module can be run as follows:
+```bash
+nextflow run nfdata-omics/r2t2p \
+    --outdir <OUTDIR> \
+    --gtf <REFERENCE_GTF> \
+    --user_provided_prot_database <PROTEIN_DATABASE_FASTA> \
+    --fragpipe_manifest <FRAGPIPE_MANIFEST_TSV> \
+    --fragpipe_workflow <FRAGPIPE_WORKFLOW_FILE> \
+    --fragpipe_annotation <FRAGPIPE_TMT_ANNOTATION_FILE> \
+    --fragpipe_tools_folder <TOOLS_DIR> \
+    --fragpipe_diann_folder <DIANN_DIR> \
+    -profile <docker/singularity/.../institute>
+```
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/running/run-pipelines#using-parameter-files).
