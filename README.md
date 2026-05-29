@@ -45,7 +45,7 @@ When provided with RNA-seq, Ribo-seq, and proteomic data, the entire workflow (R
    ([`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html),
    [`DEXSeq`](https://bioconductor.org/packages/release/bioc/html/DEXSeq.html)).
 9. Isoform-aware ORF discovery and protein FASTA generation ([`ORFquant`](https://github.com/ohlerlab/ORFquant)).
-10. Protein database preparation and proteomic searches with the *FragPipe* suite, which comprises different proteomic data analysis tools and packages, including *MSFragger*, *MSBooster*, *Percolator*, *Philosopher*, *IonQuant*, *TMT-Integrator*, *MSFragger-DIA*, *DIA-Umpire*, *EasyPQP*, and *DIA-NN*
+10. Protein database preparation and proteomic searches with the *FragPipe* suite, which combines different proteomic data analysis tools and packages, including *MSFragger*, *MSBooster*, *Percolator*, *Philosopher*, *IonQuant*, *TMT-Integrator*, *MSFragger-DIA*, *DIA-Umpire*, *EasyPQP*, and *DIA-NN*
     ([`Philosopher`](https://philosopher.nesvilab.org/), [`FragPipe`](https://fragpipe.nesvilab.org/)).
 11. Aggregated QC and run-provenance reporting ([`MultiQC`](http://multiqc.info/)).
 
