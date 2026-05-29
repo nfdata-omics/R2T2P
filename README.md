@@ -49,10 +49,10 @@ When provided with RNA-seq, Ribo-seq, and proteomic data, the entire workflow (R
     ([`Philosopher`](https://philosopher.nesvilab.org/), [`FragPipe`](https://fragpipe.nesvilab.org/)).
 11. Aggregated QC and run-provenance reporting ([`MultiQC`](http://multiqc.info/)).
 
-## Use cases
-
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/get_started/environment_setup/overview) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/get_started/run-your-first-pipeline) with `-profile test` before running the workflow on actual data.
+
+## Use cases
 
 Depending on the provided data types, the R2T2P pipeline can be run in 6 different configurations: 
 
