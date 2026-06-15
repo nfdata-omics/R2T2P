@@ -96,7 +96,7 @@ nextflow run nfdata-omics/r2t2p \
     --outdir <OUTDIR> \
     --fasta <GENOME_FASTA> \
     --gtf <REFERENCE_GTF> \
-    --user_provided_rannot <RANNOT_FILE> \
+    --user_provided_annotation (optional) <ADDITIONAL_GTF> \
     --fragpipe_manifest <FRAGPIPE_MANIFEST_TSV> \
     --fragpipe_workflow <FRAGPIPE_WORKFLOW_FILE> \
     --fragpipe_annotation <FRAGPIPE_TMT_ANNOTATION_FILE> \
@@ -127,7 +127,7 @@ nextflow run nfdata-omics/r2t2p \
     --outdir <OUTDIR> \
     --fasta <GENOME_FASTA> \
     --gtf <REFERENCE_GTF> \
-    --user_provided_rannot <RANNOT_FILE> \
+    --user_provided_annotation (optional) <ADDITIONAL_GTF> \
     -profile <docker/singularity/.../institute>
 ```
 
