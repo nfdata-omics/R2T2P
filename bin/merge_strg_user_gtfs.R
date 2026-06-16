@@ -199,6 +199,8 @@ merged_gtf_user_bckp <- merged_gtf_user
 merged_gtf_user$gene_id <- exp_new_gene_ids[match(merged_gtf_user$gene_id, exp_old_gene_ids)]
 merged_gtf_user$gene_id[which(is.na(merged_gtf_user$gene_id))] <- merged_gtf_user_bckp$gene_id[which(is.na(merged_gtf_user$gene_id))]
 merged_gtf_user$gene_name <- merged_gtf_user$gene_id
+# Adding the prefix "R2." to USER transcript IDs in transcript_id
+merged_gtf_user$transcript_id <- paste0("R2.", merged_gtf_user$transcript_id)
 
 # Update StringTie transcript gene IDs with merged IDs
 merged_gtf_strg_bckp <- merged_gtf_strg
