@@ -58,45 +58,31 @@ process CREATE_PROTEIN_DB_WRITE_DB {
         # Adding names of protein sequences
         names(annot_proteins) <- nmss
 
-        # Creating the FASTA file of annotated proteins
-        writeXStringSet(annot_proteins, filepath="annot_proteins_db.fasta", format="fasta")
-
         # --- FASTA file of ORFquant proteins
 
         orfquant_proteins <- readAAStringSet("${orfquant_protein_fasta}", format="fasta")
         names(orfquant_proteins) <- sapply(strsplit(names(orfquant_proteins), split="\\\\|"), "[[", 1)
         names(orfquant_proteins) <- paste("R2T2P_", names(orfquant_proteins), sep="")
 
-        # Creating the FASTA file of ORFquant proteins
-        writeXStringSet(orfquant_proteins, filepath="orfquant_proteins_db.fasta", format="fasta")
-
         # --- FASTA file of annotated and ORFquant proteins
 
         # Combining the two AAStringSet objects (annotated proteins + ORFquant proteins)
         annot_and_orfquant_proteins <- c(annot_proteins, orfquant_proteins)
 
-        # Creating the FASTA file of annotated and ORFquant proteins
-        writeXStringSet(annot_and_orfquant_proteins, filepath="annot_and_orfquant_proteins_db.fasta", format="fasta")
-
-        # --- Replace original FASTA headers with Uniprot-like FASTA headers (Added this part on 9th July 2025)
+        # --- Replace original FASTA headers with Uniprot-like FASTA headers
 
         # Loading the Rannot (annotated + de novo transcripts)
         load_annotation(${gtf_stringtie_Rannot})
 
-        # Reading the FASTA files
-        annot_and_orfquant_db <- readAAStringSet("annot_and_orfquant_proteins_db.fasta", format="fasta")
-        annot_db <- readAAStringSet("annot_proteins_db.fasta", format="fasta")
-        orfquant_db <- readAAStringSet("orfquant_proteins_db.fasta", format="fasta")
-
         # Defining new protein IDs and creating a txt file with pairs (original and new protein IDs)
-        new_prot_ids <- paste0("P", 100000000 + 1:length(annot_and_orfquant_db))
-        prot_ID_pairs_df <- data.frame(orig_id=names(annot_and_orfquant_db), new_id=new_prot_ids)
+        new_prot_ids <- paste0("P", 100000000 + 1:length(annot_and_orfquant_proteins))
+        prot_ID_pairs_df <- data.frame(orig_id=names(annot_and_orfquant_proteins), new_id=new_prot_ids)
         write.table(prot_ID_pairs_df, file="prot_ID_pairs.txt", sep="\t", row.names=F, col.names=T, quote=F)
 
         # Replacing original FASTA headers with Uniprot-like FASTA headers
         new_names_part1 <- paste("tr", new_prot_ids, paste0(new_prot_ids,"_HUMAN"), sep="|")
         new_names_part2 <- "Protein description OS=Homo sapiens OX=9606"
-        old_names <- names(annot_and_orfquant_db)
+        old_names <- names(annot_and_orfquant_proteins)
         old_names_no_pattern <- gsub(old_names, pattern="R2T2P_", replacement="")
         new_names_part3 <- paste0("GN=", GTF_annotation\$trann\$gene_id[match(sapply(strsplit(old_names_no_pattern, split="_"), "[[", 1), GTF_annotation\$trann\$transcript_id)])
         new_names_part4 <- "PE=1 SV=1"
@@ -104,19 +90,19 @@ process CREATE_PROTEIN_DB_WRITE_DB {
                         new_names_part2,
                         new_names_part3,
                         new_names_part4)
-        new_names[grepl(old_names, pattern="R2T2P")] <- gsub(new_names[grepl(old_names, pattern="R2T2P")],
+        new_names[grepl(old_names, pattern="^R2T2P")] <- gsub(new_names[grepl(old_names, pattern="^R2T2P")],
                                                             pattern="PE=1",
                                                             replacement="PE=4")
-        names(annot_and_orfquant_db) <- new_names
+        names(annot_and_orfquant_proteins) <- new_names
 
         # Filtering to get proteins of the two smaller databases
-        annot_db <- annot_and_orfquant_db[old_names %in% names(annot_db)]
-        orfquant_db <- annot_and_orfquant_db[old_names %in% names(orfquant_db)]
+        annot_proteins <- annot_and_orfquant_proteins[old_names %in% names(annot_proteins)]
+        orfquant_proteins <- annot_and_orfquant_proteins[old_names %in% names(orfquant_proteins)]
 
         # Creating FASTA files of the 3 databases (annotated + ORFquant proteins, annotated proteins, ORFquant proteins)
-        writeXStringSet(annot_and_orfquant_db, filepath="annot_and_orfquant_proteins_db.fasta", format="fasta")
-        writeXStringSet(annot_db, filepath="annot_proteins_db.fasta", format="fasta")
-        writeXStringSet(orfquant_db, filepath="orfquant_proteins_db.fasta", format="fasta")
+        writeXStringSet(annot_and_orfquant_proteins, filepath="annot_and_orfquant_proteins_db.fasta", format="fasta")
+        writeXStringSet(annot_proteins, filepath="annot_proteins_db.fasta", format="fasta")
+        writeXStringSet(orfquant_proteins, filepath="orfquant_proteins_db.fasta", format="fasta")
 
         # Writing package versions to versions.yml
         x = sessionInfo()
