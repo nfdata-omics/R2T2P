@@ -9,6 +9,7 @@ include { CREATE_FIRSTPASS_JUNCTIONS                      } from '../../../modul
 include { STAR_ALIGN as STAR_WITH_NOVEL_JUNCT             } from '../../../modules/nf-core/star/align/main'
 include { SAMTOOLS_INDEX as SECOND_SAMTOOLS_INDEX         } from '../../../modules/nf-core/samtools/index/main'
 include { BAM_STATS_SAMTOOLS as SECOND_BAM_STATS_SAMTOOLS } from '../../../subworkflows/nf-core/bam_stats_samtools/main'
+include { RIBOSEQC                                        } from '../../../modules/local/riboseqc/main'
 
 workflow TWO_PASS_ALIGNMENT {
     take:
@@ -141,8 +142,20 @@ workflow TWO_PASS_ALIGNMENT {
         .mix( SECOND_BAM_STATS_SAMTOOLS.out.flagstat.collect{ _meta, file -> file } )
         .mix( SECOND_BAM_STATS_SAMTOOLS.out.idxstats.collect{ _meta, file -> file } )
 
+    //
+    // Quality control with Ribo-seQC
+    //
+
+    RIBOSEQC (
+        STAR_WITH_NOVEL_JUNCT.out.bam_sorted_aligned,
+        ch_bsgenome,
+        ch_gtf_Rannot
+    )
+    ch_versions = ch_versions.mix(RIBOSEQC.out.versions.first())
+
     emit:
     bam           = STAR_WITH_NOVEL_JUNCT.out.bam_sorted_aligned // channel: [ val(meta), [ bam ] ]
+    strandedness  = RIBOSEQC.out.strandedness                    // channel: [ val(meta), path(strandedness) ]
     versions      = ch_versions                                  // channel: [ versions.yml ]
     multiqc_files = ch_multiqc_files                             // channel: [ stats ]
 

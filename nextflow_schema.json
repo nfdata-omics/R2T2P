@@ -84,7 +84,7 @@
                 },
                 "fragpipe_tools_folder": {
                     "type": "string",
-                    "description": "Path to the folder containing MSFragger, IonQuant, and dirTracer",
+                    "description": "Path to the folder containing MSFragger, IonQuant, and diaTracer",
                     "fa_icon": "fas fa-tools",
                     "help_text": "Due to licensing restrictions, MSFragger, IonQuant, and diaTracer cannot be redistributed and are therefore not included in the FragPipe container. As a result, these tools must be provided externally using the corresponding parameter, which should point to a directory containing the required JAR files.\n\nFor academic use, the JAR files can be downloaded free of charge from the following official sources:\nhttps://msfragger.nesvilab.org/\nhttps://ionquant.nesvilab.org/\nhttps://diatracer.nesvilab.org/"
                 },
@@ -108,6 +108,23 @@
                     "default": false,
                     "description": "Whether to use only signal from uniquely mapping reads.",
                     "fa_icon": "fas fa-ban"
+                }
+            },
+            "fa_icon": "fas fa-hamburger"
+        },
+        "riboseqc_options": {
+            "title": "Ribo-seQC options",
+            "type": "object",
+            "description": "Input options for running the Ribo-seQC tool",
+            "default": "",
+            "properties": {
+                "riboseqc_readlength_choice_method": {
+                    "type": "string",
+                    "default": "max_coverage",
+                    "description": "Method used by Ribo-seQC to choose read length(s) for downstream analysis.",
+                    "help_text": "Use `max_coverage` to select the read length with maximum coverage, or `all` to process all read lengths.",
+                    "fa_icon": "fas fa-ruler-horizontal",
+                    "enum": ["max_coverage", "all"]
                 }
             },
             "fa_icon": "fas fa-hamburger"
@@ -325,6 +342,9 @@
         },
         {
             "$ref": "#/$defs/fragpipe_options"
+        },
+        {
+            "$ref": "#/$defs/riboseqc_options"
         },
         {
             "$ref": "#/$defs/orfquant_options"
