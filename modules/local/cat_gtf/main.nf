@@ -20,6 +20,7 @@ process CAT_GTF {
     script:
     """
     cat ${denovo_gtf} ${reference_gft} > combined_new_annotated.gtf
+    sed -i '/^##date /d' combined_new_annotated.gtf
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

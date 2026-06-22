@@ -34,6 +34,11 @@ process ORFQUANT {
             $args
         )
 
+        for (gtf_file in Sys.glob("*_Detected_ORFs.gtf")) {
+            gtf_lines <- readLines(gtf_file, warn = FALSE)
+            writeLines(gtf_lines[!grepl("^##date ", gtf_lines)], gtf_file)
+        }
+
         # Writing package versions to versions.yml
         x = sessionInfo()
         versions <- list(
