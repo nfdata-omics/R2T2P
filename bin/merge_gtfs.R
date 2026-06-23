@@ -131,6 +131,8 @@ names(all) <- NULL
 gtf_file <- paste0(args[2], "_stringtie.gtf")
 
 export.gff2(object = all, con = gtf_file)
+gtf_lines <- readLines(gtf_file, warn = FALSE)
+writeLines(gtf_lines[!grepl("^##date ", gtf_lines)], gtf_file)
 
 seqinfotwob <- GTF_annotation$seqinfo
 annotation <- makeTxDbFromGFF(file = gtf_file, format = "gtf", chrominfo = seqinfotwob)
