@@ -771,7 +771,7 @@
             [
                 "14h_vs_0h_ORFquant_counts.RData:md5,488401a77211b40707753bfdadefcaa0",
                 "14h_vs_0h_ORFquant_feats.RData:md5,6eeb1c7dc966dc0e0a6368c28bd0571a",
-                "combined_forORFquant.RData_Detected_ORFs.gtf:md5,4124ce3b6e36936603ae4dfcdd93ad5b",
+                "combined_forORFquant.RData_Detected_ORFs.gtf:md5,ae3e64eb949c126b8607b60ad6329342",
                 "combined_forORFquant.RData_Protein_sequences.fasta:md5,5a643e16b07cabc682ed4a7cda4495f4",
                 "14h_vs_0h_countmats.RData:md5,32f1ace17301a4b5f2207d7196a9a076",
                 "14h_vs_0h_multiDE_results_summary_GO.RData:md5,1082f8a03e88c8e7a0993a7405e0130f",
@@ -1067,10 +1067,10 @@
                 "rep2_14h.second_alignment.flagstat:md5,11b8b1584be4c5a4d8b7bcdb6ee69724",
                 "rep2_14h.second_alignment.idxstats:md5,648e61bfb83e0887056298e2ab753ed2",
                 "rep2_14h.second_alignment.stats:md5,1b068f3da1cdb092266d4c30fbfcdb29",
-                "combined_new_annotated.gtf:md5,adbca8c1da8db5a37de7d8c7c8809998",
+                "combined_new_annotated.gtf:md5,7768cd1b95a20d1c93eb73fd0773c8a7",
                 "comp_denovo.annotated.gtf:md5,72fd2c1ac3173d0df77cf827683baae4",
                 "comp_denovo.annotated_ok.gtf:md5,72fd2c1ac3173d0df77cf827683baae4",
-                "comp_denovo.annotated_ok.gtf_stringtie.gtf:md5,86e8f4b18f09c8a8824362dcef9f9091",
+                "comp_denovo.annotated_ok.gtf_stringtie.gtf:md5,11419324eb2a6516ceb1b22f81098824",
                 "comp_denovo.comp_strg_user.merged_with_strg.gtf.refmap:md5,8fb3abe5da14f7648d41e08e87077034",
                 "comp_denovo.comp_strg_user.merged_with_strg.gtf.tmap:md5,e77d4db6058aed89e83fa658ff41c73c",
                 "comp_denovo.loci:md5,6ebe6fa37a4498a9039bbb7cb3c2dcbf",
@@ -1081,7 +1081,7 @@
                 "comp_strg_user.annotated.gtf:md5,56579c64001ef0ed6fb29a7f703b0f64",
                 "comp_strg_user.annotated_ok.gtf:md5,56579c64001ef0ed6fb29a7f703b0f64",
                 "comp_strg_user.loci:md5,19d03bb27eedf9c8638281192849423e",
-                "comp_strg_user.merged_with_strg.gtf:md5,6c419b4ac9d547f1afdc8d91791f1d83",
+                "comp_strg_user.merged_with_strg.gtf:md5,e44ee2ff3b3162bb8b0ed5a88e8ed53c",
                 "comp_strg_user.stats:md5,17a0f02ce2da5e6be14b3e59a16e482f",
                 "comp_strg_user.tracking:md5,4c7e569cdcbb4d190616efc9318fec8c",
                 "gene_ID_pairs.tsv:md5,2b742679277c22fd9e273125b598174e",
@@ -1095,6 +1095,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.10.4"
         },
-        "timestamp": "2026-05-11T15:22:25.890617104"
+        "timestamp": "2026-06-23T10:28:19.860251242"
     }
 }

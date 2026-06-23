@@ -215,3 +215,5 @@ merged_gtf <- sort(merged_gtf)
 # Export final merged GTF file
 gtf_file <- paste0(sub("\\.gtf$", "", args[2]), ".merged_with_strg.gtf")
 export.gff2(object = merged_gtf, con = gtf_file)
+gtf_lines <- readLines(gtf_file, warn = FALSE)
+writeLines(gtf_lines[!grepl("^##date ", gtf_lines)], gtf_file)

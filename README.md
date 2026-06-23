@@ -13,48 +13,145 @@
 
 ## Introduction
 
-**nfdata-omics/r2t2p** is a bioinformatics pipeline that ...
+**nfdata-omics/r2t2p** is a modular pipeline for integrative, data-driven analyses from RNA to Protein. The pipeline comprises the following three independent but interoperable modules:
 
-<!-- TODO nf-core:
-   Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
-   major pipeline sections and the types of output it produces. You're giving an overview to someone new
-   to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
--->
+1. The RNA module for _de novo_ transcriptome reconstruction with short-read data and merging between transcriptome annotations
+2. The Translation module for _de novo_ isoform-level detection of translated ORFs with Ribo-seq data
+3. The Protein module for proteome characterization via searches using protein databases and experimental data (DDA TMT, DDA LFQ, or DIA data).
 
-<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
-     workflows use the "tube map" design for that. See https://nf-co.re/docs/community/brand/workflow-schematics#examples for examples.   -->
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+The pipeline also performs differential expression analyses at multiple levels, and it produces a wide range of quality-control reports and statistics, including mapping statistics, annotation-comparison metrics, _de novo_ translated ORF finding summaries, log files, and information on software versions.
 
-## Usage
+Additional details on the rationale behind the entire pipeline and behind each module are present in the section [Workflow rationale](docs/workflow.md). Information on structure and content of input files, on all the pipeline parameters, and on proteomic data analysis tools are provided in [Usage](docs/usage.md), whereas details on the generated outputs can be found in [Output](docs/output.md).
+
+Thanks to its modularity and flexibility, the pipeline can be used for 6 different use cases (R2T2P, R2T, T2P, single modules), depending on the provided data types. Instructions for executing all the possible pipeline configurations are present in the section **Use cases** below.
+
+![workflow-map](docs/metromap.png)
+
+When provided with RNA-seq, Ribo-seq, and proteomic data, the entire workflow (R2T2P) performs the following steps:
+
+1. Read validation, concatenation of repeated runs, and raw-read QC
+   ([`fq`](https://github.com/stjude-rust-labs/fq),
+   [`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)).
+2. Reference preparation, including _STAR_ genome index generation and _RiboseQC_ annotation preparation, if not already available.
+3. RNA-seq genome alignment and splice-junction discovery ([`STAR`](https://github.com/alexdobin/STAR)).
+4. RNA-seq-guided transcriptome assembly ([`StringTie`](https://ccb.jhu.edu/software/stringtie/)).
+5. Comparison and merging between transcriptome annotations
+   ([`GFFCompare`](https://ccb.jhu.edu/software/stringtie/gffcompare.shtml), custom R scripts).
+6. Final RNA-seq and Ribo-seq alignments by providing _STAR_ with exon-exon junctions of the augmented annotation
+   ([`STAR`](https://github.com/alexdobin/STAR)).
+7. Alignment processing, feature quantification, and genome-browser coverage generation
+   ([`samtools`](http://www.htslib.org/), [`RiboseQC`](https://github.com/ohlerlab/RiboseQC),
+   [`bedGraphToBigWig`](https://genome.ucsc.edu/goldenPath/help/bigWig.html)).
+8. Gene-level, sub-gene level, and ORF-level differential analyses when contrasts are provided
+   ([`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html),
+   [`DEXSeq`](https://bioconductor.org/packages/release/bioc/html/DEXSeq.html)).
+9. Isoform-aware ORF discovery and protein FASTA generation ([`ORFquant`](https://github.com/ohlerlab/ORFquant)).
+10. Protein database preparation and proteomic searches with the _FragPipe_ suite, which combines different proteomic data analysis tools and packages, including _MSFragger_, _MSBooster_, _Percolator_, _Philosopher_, _IonQuant_, _TMT-Integrator_, _MSFragger-DIA_, _DIA-Umpire_, _EasyPQP_, and _DIA-NN_
+    ([`Philosopher`](https://philosopher.nesvilab.org/), [`FragPipe`](https://fragpipe.nesvilab.org/)).
+11. Aggregated QC and run-provenance reporting ([`MultiQC`](http://multiqc.info/)).
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/get_started/environment_setup/overview) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/get_started/run-your-first-pipeline) with `-profile test` before running the workflow on actual data.
 
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
+## Use cases
 
-First, prepare a samplesheet with your input data that looks as follows:
+Depending on the provided data types, the R2T2P pipeline can be run in 6 different configurations:
 
-`samplesheet.csv`:
+**1. R2T2P**
 
-```csv
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-```
-
-Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
-
--->
-
-Now, you can run the pipeline using:
-
-<!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
+When providing RNA-seq, Ribo-seq, and proteomic data, the full pipeline configuration is used. An example command for running this pipeline configuration is as follows:
 
 ```bash
 nextflow run nfdata-omics/r2t2p \
-   -profile <docker/singularity/.../institute> \
-   --input samplesheet.csv \
-   --outdir <OUTDIR>
+    --input <SAMPLESHEET_CSV> \
+    --outdir <OUTDIR> \
+    --fasta <GENOME_FASTA> \
+    --gtf <REFERENCE_GTF> \
+    --user_provided_annotation (optional) <ADDITIONAL_GTF> \
+    --fragpipe_manifest <FRAGPIPE_MANIFEST_TSV> \
+    --fragpipe_workflow <FRAGPIPE_WORKFLOW_FILE> \
+    --fragpipe_annotation <FRAGPIPE_TMT_ANNOTATION_FILE> \
+    --fragpipe_tools_folder <TOOLS_DIR> \
+    --fragpipe_diann_folder <DIANN_DIR> \
+    -profile <docker/singularity/.../institute>
+```
+
+**2. R2T**
+
+When providing RNA-seq and Ribo-seq data (no proteomic data), only the RNA and Translation modules are used. This pipeline configuration, called R2T, can be run as follows:
+
+```bash
+nextflow run nfdata-omics/r2t2p \
+    --input <SAMPLESHEET_CSV> \
+    --outdir <OUTDIR> \
+    --fasta <GENOME_FASTA> \
+    --gtf <REFERENCE_GTF> \
+    --user_provided_annotation (optional) <ADDITIONAL_GTF> \
+    -profile <docker/singularity/.../institute>
+```
+
+**3. T2P**
+
+When providing Ribo-seq and proteomic data (no RNA-seq data), only the Translation and Protein modules are used. This pipeline configuration, called T2P, can be run as follows:
+
+```bash
+nextflow run nfdata-omics/r2t2p \
+    --input <SAMPLESHEET_CSV> \
+    --outdir <OUTDIR> \
+    --fasta <GENOME_FASTA> \
+    --gtf <REFERENCE_GTF> \
+    --user_provided_annotation (optional) <ADDITIONAL_GTF> \
+    --fragpipe_manifest <FRAGPIPE_MANIFEST_TSV> \
+    --fragpipe_workflow <FRAGPIPE_WORKFLOW_FILE> \
+    --fragpipe_annotation <FRAGPIPE_TMT_ANNOTATION_FILE> \
+    --fragpipe_tools_folder <TOOLS_DIR> \
+    --fragpipe_diann_folder <DIANN_DIR> \
+    -profile <docker/singularity/.../institute>
+```
+
+**4. R only**
+
+When providing only RNA-seq data, the RNA module can be run as follows:
+
+```bash
+nextflow run nfdata-omics/r2t2p \
+    --input <SAMPLESHEET_CSV> \
+    --outdir <OUTDIR> \
+    --fasta <GENOME_FASTA> \
+    --gtf <REFERENCE_GTF> \
+    --user_provided_annotation (optional) <ADDITIONAL_GTF> \
+    -profile <docker/singularity/.../institute>
+```
+
+**5. T only**
+
+When providing only Ribo-seq data, the Translation module can be run as follows:
+
+```bash
+nextflow run nfdata-omics/r2t2p \
+    --input <SAMPLESHEET_CSV> \
+    --outdir <OUTDIR> \
+    --fasta <GENOME_FASTA> \
+    --gtf <REFERENCE_GTF> \
+    --user_provided_annotation (optional) <ADDITIONAL_GTF> \
+    -profile <docker/singularity/.../institute>
+```
+
+**6. P only**
+
+When providing only proteomic data, the Protein module can be run as follows:
+
+```bash
+nextflow run nfdata-omics/r2t2p \
+    --outdir <OUTDIR> \
+    --gtf <REFERENCE_GTF> \
+    --user_provided_prot_database <PROTEIN_DATABASE_FASTA> \
+    --fragpipe_manifest <FRAGPIPE_MANIFEST_TSV> \
+    --fragpipe_workflow <FRAGPIPE_WORKFLOW_FILE> \
+    --fragpipe_annotation <FRAGPIPE_TMT_ANNOTATION_FILE> \
+    --fragpipe_tools_folder <TOOLS_DIR> \
+    --fragpipe_diann_folder <DIANN_DIR> \
+    -profile <docker/singularity/.../institute>
 ```
 
 > [!WARNING]
@@ -62,7 +159,7 @@ nextflow run nfdata-omics/r2t2p \
 
 ## Credits
 
-nfdata-omics/r2t2p was originally written by R. Albanese, M. Bonfanti.
+nfdata-omics/r2t2p was originally written by R. Albanese (Calviello Group) and M. Bonfanti (National Facility for Data Handling and Analysis) at Human Technopole.
 
 We thank the following people for their extensive assistance in the development of this pipeline:
 
@@ -76,8 +173,6 @@ If you would like to contribute to this pipeline, please see the [contributing g
 
 <!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
 <!-- If you use nfdata-omics/r2t2p for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
-
-<!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 

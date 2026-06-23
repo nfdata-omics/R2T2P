@@ -19,7 +19,12 @@ process GET_GO_PACKAGE {
     export R_LIBS_USER=\$PWD
 
     Rscript --vanilla -e '
-        BiocManager::install("org.Hs.eg.db", force=TRUE, ask=FALSE)
+        org_db <- "${org_db}"
+        options(timeout = 1000)
+        BiocManager::install(org_db, force=TRUE, ask=FALSE)
+        if (!requireNamespace(org_db, quietly = TRUE)) {
+            stop("Failed to install ", org_db)
+        }
 
         # Writing package versions to versions.yml
         x = sessionInfo()
