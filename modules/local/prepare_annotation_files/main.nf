@@ -10,7 +10,7 @@ process PREPARE_ANNOTATION_FILES {
 
     output:
     tuple val(meta2), path("annotation/*.gtf_Rannot"), emit: gtf_Rannot
-    tuple val(meta), path("BSgenome.any.species.GRCh38/"), emit: bsgenome
+    tuple val(meta), path("BSgenome.Homo.sapiens.GRCh38/"), emit: bsgenome
     path "versions.yml", emit: versions
 
     when:
@@ -26,7 +26,7 @@ process PREPARE_ANNOTATION_FILES {
             "annotation",
             "${genome_2bit}",
             "${gtf}",
-            "any.species",
+            "Homo.sapiens",
             "GRCh38"
         )
 
