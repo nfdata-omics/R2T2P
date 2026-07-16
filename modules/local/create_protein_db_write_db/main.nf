@@ -72,7 +72,7 @@ process CREATE_PROTEIN_DB_WRITE_DB {
         # --- Replace original FASTA headers with Uniprot-like FASTA headers
 
         # Loading the Rannot (annotated + de novo transcripts)
-        load_annotation(${gtf_stringtie_Rannot})
+        load_annotation("${gtf_stringtie_Rannot}")
 
         # Defining new protein IDs and creating a txt file with pairs (original and new protein IDs)
         new_prot_ids <- paste0("P", 100000000 + 1:length(annot_and_orfquant_proteins))
