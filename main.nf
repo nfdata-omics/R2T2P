@@ -16,18 +16,6 @@
 include { R2T2P  } from './workflows/r2t2p'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_r2t2p_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_r2t2p_pipeline'
-include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_r2t2p_pipeline'
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-params.fasta            = getGenomeAttribute('fasta')
-params.gff              = getGenomeAttribute('gff')
-params.gtf              = getGenomeAttribute('gtf')
-params.star_index       = getGenomeAttribute('star')
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
