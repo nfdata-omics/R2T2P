@@ -21,8 +21,47 @@ process PREPARE_ANNOTATION_FILES {
     export R_LIBS_USER=\$PWD
 
     Rscript --vanilla -e '
-        library(RiboseQC)
-        RiboseQC::prepare_annotation_files(
+         library(GenomeInfoDb)
+         library(RiboseQC)
+         
+         find_grch38_ncbi_dir <- function(
+             assembly_accession,
+             assembly_name = NA_character_
+         ) {
+             if (!identical(assembly_accession, "GCF_000001405.26")) {
+                 stop(
+                     "Temporary workaround supports only GCF_000001405.26; received: ",
+                     assembly_accession
+                 )
+             }
+         
+             prefix <- "GCF_000001405.26_GRCh38"
+         
+             directory <- paste0(
+                 "https://ftp.ncbi.nlm.nih.gov/genomes/all/",
+                 "GCF/000/001/405/",
+                 prefix
+             )
+         
+             c(directory, prefix)
+         }
+         
+         assignInNamespace(
+             "find_NCBI_assembly_ftp_dir",
+             find_grch38_ncbi_dir,
+             ns = "GenomeInfoDb"
+         )
+         
+         stopifnot(
+             nrow(
+                 GenomeInfoDb::fetch_assembly_report(
+                     "GCF_000001405.26",
+                     assembly_name = "GRCh38"
+                 )
+             ) > 0L
+        )
+        
+       RiboseQC::prepare_annotation_files(
             "annotation",
             "${genome_2bit}",
             "${gtf}",
