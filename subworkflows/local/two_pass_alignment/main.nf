@@ -30,6 +30,31 @@ workflow TWO_PASS_ALIGNMENT {
     //
     // Map reads with STAR
     //
+
+    ch_first_reads = ch_reads.view { meta, reads ->
+        "STAR_FIRST_ALIGN READS: id=${meta.id}, reads=${reads}"
+    }
+    
+    ch_first_index = ch_star_index
+        .map { index -> tuple([:], index) }
+        .view { item ->
+            "STAR_FIRST_ALIGN INDEX: ${item}"
+        }
+    
+    ch_first_gtf = ch_gtf
+        .map { gtf -> tuple([:], gtf) }
+        .view { item ->
+            "STAR_FIRST_ALIGN GTF: ${item}"
+        }
+    
+    ch_no_junctions = channel.value(
+        file("$projectDir/assets/NO_FILE", checkIfExists: true)
+    )
+    
+    ch_no_junctions.view {
+        "STAR_FIRST_ALIGN NO_FILE: ${it}"
+    } 
+
     STAR_FIRST_ALIGN (
         ch_reads,
         ch_star_index.map { file -> [ [:], file ] },
