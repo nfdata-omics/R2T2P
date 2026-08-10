@@ -32,16 +32,105 @@ process RIBOSEQC {
         library(RiboseQC)
         library(msa)
 
-        # Loading RiboseQC annotation
-        load_annotation("${gtf_Rannot}")
+        RiboseQC_analysis <- getFromNamespace(
+            "RiboseQC_analysis",
+            "RiboseQC"
+        )
 
-        # Running RiboseQC analysis
+        body_text <- paste(
+            deparse(
+                body(RiboseQC_analysis),
+                width.cutoff = 500L
+            ),
+            collapse = "\\n"
+        )
+
+        pattern_ok5 <- "sum(ok5)/length(ok5) > 0.5"
+        pattern_ok3 <- "sum(ok3)/length(ok3) > 0.5"
+
+        replacement_ok5 <- paste0(
+            "length(ok5) > 0L && ",
+            "any(!is.na(ok5)) && ",
+            "mean(ok5, na.rm = TRUE) > 0.5"
+        )
+
+        replacement_ok3 <- paste0(
+            "length(ok3) > 0L && ",
+            "any(!is.na(ok3)) && ",
+            "mean(ok3, na.rm = TRUE) > 0.5"
+        )
+
+        n_ok5 <- length(
+            gregexpr(
+                pattern_ok5,
+                body_text,
+                fixed = TRUE
+            )[[1]]
+        )
+
+        if (
+            identical(
+                gregexpr(pattern_ok5, body_text, fixed = TRUE)[[1]],
+                -1L
+            )
+        ) {
+            n_ok5 <- 0L
+        }
+
+        n_ok3 <- length(
+            gregexpr(
+                pattern_ok3,
+                body_text,
+                fixed = TRUE
+            )[[1]]
+        )
+
+        if (
+            identical(
+                gregexpr(pattern_ok3, body_text, fixed = TRUE)[[1]],
+                -1L
+            )
+        ) {
+            n_ok3 <- 0L
+        }
+
+        message("Patching ok5 conditions: ", n_ok5)
+        message("Patching ok3 conditions: ", n_ok3)
+
+        if (n_ok5 < 1L || n_ok3 < 1L) {
+            stop(
+                "Could not find the expected ok5/ok3 conditions ",
+                "in RiboseQC_analysis()"
+            )
+        }
+
+        body_text <- gsub(
+            pattern_ok5,
+            replacement_ok5,
+            body_text,
+            fixed = TRUE
+        )
+
+        body_text <- gsub(
+            pattern_ok3,
+            replacement_ok3,
+            body_text,
+            fixed = TRUE
+        )
+
+        body(RiboseQC_analysis) <- parse(
+            text = body_text,
+            keep.source = FALSE
+        )[[1]]
+
+        load_annotation("${gtf_Rannot}")
+    
         RiboseQC_analysis(
             annotation_file = "${gtf_Rannot}",
             bam_file = "${bam}",
             ${args}
         )
-
+    
         # Writing package versions to versions.yml
         x = sessionInfo()
         versions <- list(
