@@ -34,13 +34,19 @@ workflow PREPARE_FASTQ {
 
     ch_versions = ch_versions.mix(CAT_FASTQ.out.versions.first())
 
+    //ch_reads
+    //    .branch { _meta, fastq ->
+    //        fasta: fastq[0].endsWith('.fasta.gz') || fastq[0].endsWith('.fa.gz')
+    //        fastq: fastq[0].endsWith('.fastq.gz') || fastq[0].endsWith('.fq.gz')
+    //    }
+    //    .set { ch_reads_by_type }
+
     ch_reads
         .branch { _meta, fastq ->
-            fasta: fastq[0].endsWith('.fasta.gz') || fastq[0].endsWith('.fa.gz')
-            fastq: fastq[0].endsWith('.fastq.gz') || fastq[0].endsWith('.fq.gz')
+            fasta: fastq[0].name.endsWith('.fasta.gz') || fastq[0].name.endsWith('.fa.gz')
+            fastq: fastq[0].name.endsWith('.fastq.gz') || fastq[0].name.endsWith('.fq.gz')
         }
         .set { ch_reads_by_type }
-
     //
     // MODULE: Lint FastQ files
     //
