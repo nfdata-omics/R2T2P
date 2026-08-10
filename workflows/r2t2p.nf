@@ -63,6 +63,7 @@ workflow R2T2P {
     //
     // SUBWORKFLOW: Prepare FastQ files
     //
+    
     PREPARE_FASTQ (
         ch_samplesheet
     )
@@ -124,19 +125,33 @@ workflow R2T2P {
     ch_versions = ch_versions.mix(TRANSCRIPTOME_ASSEMBLY.out.versions)
     ch_multiqc_files = ch_multiqc_files.mix(TRANSCRIPTOME_ASSEMBLY.out.gff_stats)
 
+    //
+    // Deal with lack of RNA output for Ribo-only
+    //
+    
+    ch_final_gtf = TRANSCRIPTOME_ASSEMBLY.out.gtf
+        .map { _meta, file -> file }
+        .concat(PREPARE_REF.out.gtf)
+        .first()
+    
+    ch_final_gtf_Rannot = TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot
+        .concat(PREPARE_REF.out.gtf_Rannot)
+        .first()
 
     //
     // Final alignment
     //
     FINAL_ALIGNMENT (
         ch_reads,
-        PREPARE_REF.out.star_index,                                     // genome_index
-        TRANSCRIPTOME_ASSEMBLY.out.gtf.collect{ _meta, file -> file },  // new gtf after assembly
+        PREPARE_REF.out.star_index,                                      // genome_index
+        ch_final_gtf,
+      //  TRANSCRIPTOME_ASSEMBLY.out.gtf.collect{ _meta, file -> file },  // new gtf after assembly
         PREPARE_REF.out.fasta,                                          // genome fasta
         PREPARE_REF.out.fai,                                            // genome fai
         PREPARE_REF.out.chrom_sizes,                                    // chrom sizes for bigWig conversion
         PREPARE_REF.out.bsgenome,                                       // bsgenome for Ribo-seQC
-        TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot                           // gtf R-object for Ribo-seQC
+        ch_final_gtf_Rannot
+     //   TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot                           // gtf R-object for Ribo-seQC
     )
     ch_versions = ch_versions.mix(FINAL_ALIGNMENT.out.versions)
     ch_multiqc_files = ch_multiqc_files.mix(FINAL_ALIGNMENT.out.multiqc_files)
