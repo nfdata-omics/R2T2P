@@ -2,7 +2,7 @@ process FRAGPIPE {
     tag "${meta.id}"
     label 'process_high', 'process_high_memory'
 
-    container "docker.io/fcyucn/fragpipe:23.1"
+    container "docker.io/fcyucn/fragpipe:24.0"
 
     input:
     tuple val(meta), path(protein_db_fasta)
