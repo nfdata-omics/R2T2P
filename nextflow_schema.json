@@ -168,9 +168,6 @@
                 "gtf": {
                     "type": "string"
                 },
-                "gff": {
-                    "type": "string"
-                },
                 "star_index": {
                     "type": "string"
                 },

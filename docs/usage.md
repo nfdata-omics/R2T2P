@@ -77,7 +77,6 @@ nextflow run nfdata-omics/r2t2p \
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
-You can provide `--gff` instead of `--gtf`, but only one of the two annotation formats should be supplied.
 
 Note that the pipeline will create the following files in your working directory:
 

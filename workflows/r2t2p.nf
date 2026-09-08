@@ -32,7 +32,6 @@ workflow R2T2P {
     ch_samplesheet // channel: samplesheet read in from --input
     ch_fasta       // value channel: path(fasta)
     ch_gtf         // value channel: path(gtf)
-    ch_gff         // value channel: path(gff)
     ch_star_index  // value channel: path(star_index)
     ch_user_gtf    // value channel: path(user_gtf)
     ch_fragpipe_workflow // value channel: path(fragpipe_workflow)
@@ -55,7 +54,6 @@ workflow R2T2P {
     PREPARE_REF (
         ch_fasta,
         ch_gtf,
-        ch_gff,
         ch_star_index,
     )
     ch_versions = ch_versions.mix(PREPARE_REF.out.versions)
