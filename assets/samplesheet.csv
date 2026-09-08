@@ -1,4 +1,4 @@
-sample,fastq_1,fastq_2,library_type,condition
+sample,fastq_1,fastq_2,assay_type,condition
 CONTROL_RNA_REP1,/path/to/fastq/files/control_rna_rep1_R1.fastq.gz,/path/to/fastq/files/control_rna_rep1_R2.fastq.gz,RNA,control
 CONTROL_RNA_REP2,/path/to/fastq/files/control_rna_rep2_R1.fastq.gz,/path/to/fastq/files/control_rna_rep2_R2.fastq.gz,RNA,control
 CONTROL_RIBO_REP1,/path/to/fastq/files/control_ribo_rep1.fastq.gz,,Ribo,control

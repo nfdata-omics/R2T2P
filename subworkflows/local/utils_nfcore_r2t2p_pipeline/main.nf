@@ -95,9 +95,9 @@ workflow PIPELINE_INITIALISATION {
         .map {
             meta, fastq_1, fastq_2 ->
                 if (!fastq_2) {
-                    return [ [meta.id, meta.library_type], meta + [ single_end:true ], [ fastq_1 ] ]
+                    return [ [meta.id, meta.assay_type], meta + [ single_end:true ], [ fastq_1 ] ]
                 } else {
-                    return [ [meta.id, meta.library_type], meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
+                    return [ [meta.id, meta.assay_type], meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
                 }
         }
         .groupTuple()

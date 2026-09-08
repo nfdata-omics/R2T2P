@@ -44,7 +44,7 @@ workflow DIFFERENTIAL_ANALYSIS {
             [meta_files, files].transpose()
                 .sort { a, b ->
                     def order = [ "RNA": 0, "Ribo": 1 ]
-                    def cmp = order.get(a[0].library_type, 99) <=> order.get(b[0].library_type, 99)
+                    def cmp = order.get(a[0].assay_type, 99) <=> order.get(b[0].assay_type, 99)
                     if (cmp != 0) return cmp
                     return a[0].id <=> b[0].id
                 }
@@ -53,7 +53,7 @@ workflow DIFFERENTIAL_ANALYSIS {
     .flatten()
     .collate(3) // Group back into tuples of 3 elements
     .collectFile( { meta_contrast, meta_file, file ->
-       [ "${meta_contrast.id}.txt", [ file.name, meta_file.library_type, meta_file.condition,
+       [ "${meta_contrast.id}.txt", [ file.name, meta_file.assay_type, meta_file.condition,
             (meta_file.condition in meta_contrast.control ? "TRUE" : "FALSE" ) ].join('\t') + "\n" ]
         }, sort: "index")
     .map { file -> [ file.name.replace('.txt', ''), file ]  }

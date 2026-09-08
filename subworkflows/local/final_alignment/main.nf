@@ -28,8 +28,8 @@ include { UCSC_BEDGRAPHTOBIGWIG              } from '../../../modules/nf-core/uc
 
     ch_reads
         .branch { meta, _fastq ->
-            rna:  meta.library_type == "RNA"
-            ribo: meta.library_type == "Ribo"
+            rna:  meta.assay_type == "RNA"
+            ribo: meta.assay_type == "Ribo"
         }
     .set { ch_reads_by_type }
 
