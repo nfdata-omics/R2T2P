@@ -10,8 +10,8 @@ process R_MERGE_DENOVO_WITH_REF {
     path ref_gtf_Rannotation
 
     output:
-    tuple val(meta), path("*.gtf_stringtie.gtf"), emit: gtf
-    path "*.gtf_stringtie_Rannot", emit: gtf_Rannot
+    tuple val(meta), path("combined_annotations.gtf"), emit: gtf
+    path "combined_annotations_Rannot", emit: gtf_Rannot
     path "versions.yml", emit: versions
 
     when:
@@ -39,6 +39,10 @@ process R_MERGE_DENOVO_WITH_REF {
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '
+
+    mv ${comp_denovo_gtf}_stringtie.gtf combined_annotations.gtf
+    mv ${comp_denovo_gtf}_stringtie_Rannot combined_annotations_Rannot
+
     """
 
     stub:
