@@ -161,7 +161,6 @@ workflow TWO_PASS_ALIGNMENT {
 
     UCSC_BEDGRAPHTOBIGWIG (
         RIBOSEQC.out.bedgraph
-            .mix( RIBOSEQC.out.bedgraph )
             .map { _meta, files -> files }
             .flatten()
             .map { file -> [ [ id: file.name.replaceFirst(/\.bedgraph$/, '') ], file ] },
