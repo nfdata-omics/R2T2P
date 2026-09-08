@@ -86,6 +86,7 @@ workflow R2T2P {
         PREPARE_REF.out.gtf,
         PREPARE_REF.out.fasta,
         PREPARE_REF.out.fai,
+        PREPARE_REF.out.chrom_sizes,
         ch_samplesheet,
         PREPARE_REF.out.bsgenome,
         PREPARE_REF.out.gtf_Rannot

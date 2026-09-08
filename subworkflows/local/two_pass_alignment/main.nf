@@ -10,6 +10,7 @@ include { STAR_ALIGN as STAR_WITH_NOVEL_JUNCT             } from '../../../modul
 include { SAMTOOLS_INDEX as SECOND_SAMTOOLS_INDEX         } from '../../../modules/nf-core/samtools/index/main'
 include { BAM_STATS_SAMTOOLS as SECOND_BAM_STATS_SAMTOOLS } from '../../../subworkflows/nf-core/bam_stats_samtools/main'
 include { RIBOSEQC                                        } from '../../../modules/local/riboseqc/main'
+include { UCSC_BEDGRAPHTOBIGWIG                           } from '../../../modules/nf-core/ucsc/bedgraphtobigwig/main'
 
 workflow TWO_PASS_ALIGNMENT {
     take:
@@ -18,6 +19,7 @@ workflow TWO_PASS_ALIGNMENT {
     ch_gtf          // path(gtf)
     ch_fasta        // path(fasta)
     ch_fai          // path(fai)
+    ch_chrom_sizes  // channel: chrom_sizes
     ch_samplesheet  // samplesheet channel for ordering
     ch_bsgenome     // path(bsgenome)
     ch_gtf_Rannot   // path(gtf_Rannot)
@@ -152,6 +154,20 @@ workflow TWO_PASS_ALIGNMENT {
         ch_gtf_Rannot
     )
     ch_versions = ch_versions.mix(RIBOSEQC.out.versions.first())
+
+    //
+    // Convert bedGraph to bigWig
+    //
+
+    UCSC_BEDGRAPHTOBIGWIG (
+        RIBOSEQC.out.bedgraph
+            .mix( RIBOSEQC.out.bedgraph )
+            .map { _meta, files -> files }
+            .flatten()
+            .map { file -> [ [ id: file.name.replaceFirst(/\.bedgraph$/, '') ], file ] },
+        ch_chrom_sizes
+    )
+    ch_versions = ch_versions.mix(UCSC_BEDGRAPHTOBIGWIG.out.versions.first())
 
     emit:
     bam           = STAR_WITH_NOVEL_JUNCT.out.bam_sorted_aligned // channel: [ val(meta), [ bam ] ]
