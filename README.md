@@ -70,7 +70,7 @@ nextflow run nfdata-omics/r2t2p \
     --user_provided_annotation (optional) <ADDITIONAL_GTF> \
     --fragpipe_manifest <FRAGPIPE_MANIFEST_TSV> \
     --fragpipe_workflow <FRAGPIPE_WORKFLOW_FILE> \
-    --fragpipe_annotation <FRAGPIPE_TMT_ANNOTATION_FILE> \
+    --fragpipe_TMT_annotation <FRAGPIPE_TMT_ANNOTATION_FILE> \
     --fragpipe_tools_folder <TOOLS_DIR> \
     --fragpipe_diann_folder <DIANN_DIR> \
     -profile <docker/singularity/.../institute>
@@ -103,7 +103,7 @@ nextflow run nfdata-omics/r2t2p \
     --user_provided_annotation (optional) <ADDITIONAL_GTF> \
     --fragpipe_manifest <FRAGPIPE_MANIFEST_TSV> \
     --fragpipe_workflow <FRAGPIPE_WORKFLOW_FILE> \
-    --fragpipe_annotation <FRAGPIPE_TMT_ANNOTATION_FILE> \
+    --fragpipe_TMT_annotation <FRAGPIPE_TMT_ANNOTATION_FILE> \
     --fragpipe_tools_folder <TOOLS_DIR> \
     --fragpipe_diann_folder <DIANN_DIR> \
     -profile <docker/singularity/.../institute>
@@ -148,7 +148,7 @@ nextflow run nfdata-omics/r2t2p \
     --user_provided_prot_database <PROTEIN_DATABASE_FASTA> \
     --fragpipe_manifest <FRAGPIPE_MANIFEST_TSV> \
     --fragpipe_workflow <FRAGPIPE_WORKFLOW_FILE> \
-    --fragpipe_annotation <FRAGPIPE_TMT_ANNOTATION_FILE> \
+    --fragpipe_TMT_annotation <FRAGPIPE_TMT_ANNOTATION_FILE> \
     --fragpipe_tools_folder <TOOLS_DIR> \
     --fragpipe_diann_folder <DIANN_DIR> \
     -profile <docker/singularity/.../institute>

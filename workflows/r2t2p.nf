@@ -39,7 +39,7 @@ workflow R2T2P {
     ch_tools_folder // value channel: path(tools_folder)
     ch_diann_folder // value channel: path(diann_folder)
     ch_fragpipe_manifest // value channel: path(fragpipe_manifest)
-    ch_fragpipe_annotation // value channel: path(fragpipe_annotation)
+    ch_fragpipe_annotation // value channel: path(fragpipe_TMT_annotation)
     multiqc_config
     multiqc_logo
     multiqc_methods_description

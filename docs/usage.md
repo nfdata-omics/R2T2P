@@ -175,7 +175,7 @@ nextflow run nfdata-omics/r2t2p \
     --gtf ./annotation.gtf.gz \
     --fragpipe_manifest ./proteomics_manifest.tsv \
     --fragpipe_workflow ./fragpipe.workflow \
-    --fragpipe_annotation ./tmt_annotation.txt \
+    --fragpipe_TMT_annotation ./tmt_annotation.txt \
     --fragpipe_tools_folder /path/to/tools \
     --fragpipe_diann_folder /path/to/diann \
     -profile docker
@@ -201,7 +201,7 @@ Use paths that are accessible from the machine or cluster where Nextflow is runn
 
 ### FragPipe annotation file
 
-The `--fragpipe_annotation` parameter is currently required whenever `--fragpipe_manifest` is supplied. For TMT
+The `--fragpipe_TMT_annotation` parameter is currently required whenever `--fragpipe_manifest` is supplied. For TMT
 workflows, provide the channel annotation file expected by FragPipe/TMT-Integrator. The file should contain two
 whitespace-delimited columns: the TMT channel and the sample label assigned to that channel.
 
@@ -222,13 +222,13 @@ Use `NA` for channels that should not be assigned to a sample. During execution,
 for each `experiment_name` in the FragPipe manifest and appends the experiment name to every non-`NA` sample label.
 For example, if the manifest contains `exp_a`, the label `control_rep1` becomes `control_rep1_exp_a` in the
 per-experiment annotation file used by FragPipe. Because this suffix is added automatically, the labels in
-`--fragpipe_annotation` should normally be the base sample labels without the experiment suffix.
+`--fragpipe_TMT_annotation` should normally be the base sample labels without the experiment suffix.
 
 For non-TMT workflows, the parameter is still required by the current pipeline validation. If the selected FragPipe
 workflow does not use a TMT annotation file, provide a small placeholder file that can be read by the pipeline, for
 example:
 
-```text title="fragpipe_annotation_placeholder.txt"
+```text title="fragpipe_TMT_annotation_placeholder.txt"
 126	NA
 ```
 

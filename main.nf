@@ -55,8 +55,8 @@ workflow NFDATAOMICS_R2T2P {
     ch_tools_folder = params.fragpipe_tools_folder ? channel.value(file(params.fragpipe_tools_folder, checkIfExists: true)) : channel.empty()
     ch_diann_folder = params.fragpipe_diann_folder ? channel.value(file(params.fragpipe_diann_folder, checkIfExists: true)) : channel.empty()
     ch_fragpipe_manifest = params.fragpipe_manifest ? channel.value(file(params.fragpipe_manifest, checkIfExists: true)) : channel.empty()
-    ch_fragpipe_annotation = params.fragpipe_annotation ? channel.value(file(params.fragpipe_annotation, checkIfExists: true)) : channel.empty()
-
+    ch_fragpipe_annotation = params.fragpipe_TMT_annotation ? channel.value(file(params.fragpipe_TMT_annotation, checkIfExists: true)) :
+        channel.value(file("$projectDir/assets/NO_FILE", checkIfExists: true))
     //
     // WORKFLOW: Run pipeline
     //
