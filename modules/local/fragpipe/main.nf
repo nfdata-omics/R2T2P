@@ -51,7 +51,7 @@ process FRAGPIPE {
                 --headless \
                 --workflow ${meta.id}.workflow \
                 --manifest manifest_file_new_paths \
-                --workdir ${meta.id}_results \
+                --workdir ${meta.id}_search \
                 --config-tools-folder ./tools-copy \
                 --config-diann ./diann-copy/diann-linux \
                 --config-python /usr/bin/python3
