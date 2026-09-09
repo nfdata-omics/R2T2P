@@ -76,7 +76,7 @@
                     "fa_icon": "fas fa-stream",
                     "help_text": "The built-in workflow files can be found in https://github.com/Nesvilab/FragPipe/tree/develop/workflows"
                 },
-                "fragpipe_annotation": {
+                "fragpipe_TMT_annotation": {
                     "type": "string",
                     "description": "Path to the annotation file",
                     "fa_icon": "fas fa-vials",
@@ -166,9 +166,6 @@
                     "default": "s3://ngi-igenomes/igenomes/"
                 },
                 "gtf": {
-                    "type": "string"
-                },
-                "gff": {
                     "type": "string"
                 },
                 "star_index": {

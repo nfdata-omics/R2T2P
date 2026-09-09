@@ -33,7 +33,9 @@ process FRAGPIPE {
     # create experiment_name directories and add to each subfolder the annotation file
     for exp_name in \$(awk '{print \$2}' manifest_file_new_paths  | sort -u); do
         mkdir -p "\$exp_name"
-        awk -v s="_\$exp_name" '{ if (\$2 != "NA") \$2 = \$2 s; print \$1, \$2 }' "$tmt_annotation_file" > "\$exp_name/tmt_annotation.txt"
+        if [ "\$(basename "${tmt_annotation_file}")" != "NO_FILE" ]; then
+            awk -v s="_\$exp_name" '{ if (\$2 != "NA") \$2 = \$2 s; print \$1, \$2 }' "$tmt_annotation_file" > "\$exp_name/tmt_annotation.txt"
+        fi
     done
 
     # create links to the staged mzML files in each experiment subfolder
@@ -49,7 +51,7 @@ process FRAGPIPE {
                 --headless \
                 --workflow ${meta.id}.workflow \
                 --manifest manifest_file_new_paths \
-                --workdir ${meta.id}_results \
+                --workdir ${meta.id}_search \
                 --config-tools-folder ./tools-copy \
                 --config-diann ./diann-copy/diann-linux \
                 --config-python /usr/bin/python3

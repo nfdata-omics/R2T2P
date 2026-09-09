@@ -39,9 +39,9 @@ workflow PROTEOMICS {
     )
     ch_versions = ch_versions.mix(CREATE_PROTEIN_DB_WRITE_DB.out.versions)
 
-    CREATE_PROTEIN_DB_WRITE_DB.out.annot_prot_fasta.map{ file -> [["id": "annot_prot"], file] }
-        .concat( CREATE_PROTEIN_DB_WRITE_DB.out.orfquant_prot_fasta.map{ file -> [["id": "orfquant_prot"], file] }  )
-        .concat( CREATE_PROTEIN_DB_WRITE_DB.out.annot_and_orfquant_prot_fasta.map{ file -> [["id": "annot_and_orfquant_prot"], file] }  )
+    CREATE_PROTEIN_DB_WRITE_DB.out.annot_prot_fasta.map{ file -> [["id": file.baseName], file] }
+        .concat( CREATE_PROTEIN_DB_WRITE_DB.out.orfquant_prot_fasta.map{ file -> [["id": file.baseName], file] }  )
+        .concat( CREATE_PROTEIN_DB_WRITE_DB.out.annot_and_orfquant_prot_fasta.map{ file -> [["id": file.baseName], file] }  )
         .set{ ch_protein_dbs }
 
     PHILOSOPHER (

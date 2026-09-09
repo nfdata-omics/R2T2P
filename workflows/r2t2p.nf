@@ -32,14 +32,13 @@ workflow R2T2P {
     ch_samplesheet // channel: samplesheet read in from --input
     ch_fasta       // value channel: path(fasta)
     ch_gtf         // value channel: path(gtf)
-    ch_gff         // value channel: path(gff)
     ch_star_index  // value channel: path(star_index)
     ch_user_gtf    // value channel: path(user_gtf)
     ch_fragpipe_workflow // value channel: path(fragpipe_workflow)
     ch_tools_folder // value channel: path(tools_folder)
     ch_diann_folder // value channel: path(diann_folder)
     ch_fragpipe_manifest // value channel: path(fragpipe_manifest)
-    ch_fragpipe_annotation // value channel: path(fragpipe_annotation)
+    ch_fragpipe_annotation // value channel: path(fragpipe_TMT_annotation)
     multiqc_config
     multiqc_logo
     multiqc_methods_description
@@ -55,7 +54,6 @@ workflow R2T2P {
     PREPARE_REF (
         ch_fasta,
         ch_gtf,
-        ch_gff,
         ch_star_index,
     )
     ch_versions = ch_versions.mix(PREPARE_REF.out.versions)
@@ -72,8 +70,8 @@ workflow R2T2P {
 
     ch_reads
         .branch { meta, _fastq ->
-            rna:  meta.library_type == "RNA"
-            ribo: meta.library_type == "Ribo"
+            rna:  meta.assay_type == "RNA"
+            ribo: meta.assay_type == "Ribo"
         }
     .set { ch_reads_by_type }
 
@@ -86,6 +84,7 @@ workflow R2T2P {
         PREPARE_REF.out.gtf,
         PREPARE_REF.out.fasta,
         PREPARE_REF.out.fai,
+        PREPARE_REF.out.chrom_sizes,
         ch_samplesheet,
         PREPARE_REF.out.bsgenome,
         PREPARE_REF.out.gtf_Rannot

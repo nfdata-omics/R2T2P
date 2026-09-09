@@ -11,11 +11,11 @@ process CREATE_PROTEIN_DB_WRITE_DB {
     tuple val(meta), path(orfquant_protein_fasta)
 
     output:
-    path "annot_proteins_db.fasta",              emit: annot_prot_fasta
-    path "orfquant_proteins_db.fasta",           emit: orfquant_prot_fasta
-    path "annot_and_orfquant_proteins_db.fasta", emit: annot_and_orfquant_prot_fasta
-    path "prot_ID_pairs.txt",                    emit: prot_id_pairs
-    path "versions.yml", emit: versions
+    path "ref_database.fasta",      emit: annot_prot_fasta
+    path "custom_database.fasta",   emit: orfquant_prot_fasta
+    path "combined_database.fasta", emit: annot_and_orfquant_prot_fasta
+    path "prot_ID_pairs.txt",       emit: prot_id_pairs
+    path "versions.yml",            emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -100,9 +100,9 @@ process CREATE_PROTEIN_DB_WRITE_DB {
         orfquant_proteins <- annot_and_orfquant_proteins[old_names %in% names(orfquant_proteins)]
 
         # Creating FASTA files of the 3 databases (annotated + ORFquant proteins, annotated proteins, ORFquant proteins)
-        writeXStringSet(annot_and_orfquant_proteins, filepath="annot_and_orfquant_proteins_db.fasta", format="fasta")
-        writeXStringSet(annot_proteins, filepath="annot_proteins_db.fasta", format="fasta")
-        writeXStringSet(orfquant_proteins, filepath="orfquant_proteins_db.fasta", format="fasta")
+        writeXStringSet(annot_and_orfquant_proteins, filepath="combined_database.fasta", format="fasta")
+        writeXStringSet(annot_proteins, filepath="ref_database.fasta", format="fasta")
+        writeXStringSet(orfquant_proteins, filepath="custom_database.fasta", format="fasta")
 
         # Writing package versions to versions.yml
         x = sessionInfo()
@@ -121,9 +121,9 @@ process CREATE_PROTEIN_DB_WRITE_DB {
 
     stub:
     """
-    touch annot_proteins_db.fasta
-    touch orfquant_proteins_db.fasta
-    touch annot_and_orfquant_proteins_db.fasta
+    touch ref_database.fasta
+    touch custom_database.fasta
+    touch combined_database.fasta
     touch prot_ID_pairs.txt
 
     Rscript -e '

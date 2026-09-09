@@ -17,6 +17,7 @@ genome/star/Log.out
 transcriptome_assembly/merged_bams/merged_bams.annotated_ok.gtf
 transcriptome_assembly/comp_denovo.transcripts_with_strand.gtf_stringtie_Rannot
 transcriptome_assembly/comp_denovo.annotated_ok.gtf_stringtie_Rannot
+transcriptome_assembly/combined_annotations_Rannot
 transcriptome_assembly/merged_bams/merged_bams.ballgown/t_data.ctab
 transcriptome_assembly/merged_bams/merged_bams.ballgown/e_data.ctab
 transcriptome_assembly/merged_bams/merged_bams.gene.abundance.txt

@@ -25,7 +25,6 @@ include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_r2t2
 */
 
 params.fasta            = getGenomeAttribute('fasta')
-params.gff              = getGenomeAttribute('gff')
 params.gtf              = getGenomeAttribute('gtf')
 params.star_index       = getGenomeAttribute('star')
 
@@ -48,15 +47,14 @@ workflow NFDATAOMICS_R2T2P {
     // Define channels for reference files and other input files
     ch_fasta       = params.fasta      ? channel.value(file(params.fasta, checkIfExists: true))      : channel.empty()
     ch_gtf         = params.gtf        ? channel.value(file(params.gtf, checkIfExists: true))        : channel.empty()
-    ch_gff         = params.gff        ? channel.value(file(params.gff, checkIfExists: true))        : channel.empty()
     ch_star_index  = params.star_index ? channel.value(file(params.star_index, checkIfExists: true)) : channel.empty()
     ch_user_gtf    = params.user_provided_annotation ? channel.value(file(params.user_provided_annotation, checkIfExists: true)) : channel.empty()
     ch_fragpipe_workflow = params.fragpipe_workflow ? channel.value(file(params.fragpipe_workflow, checkIfExists: true)) : channel.empty()
     ch_tools_folder = params.fragpipe_tools_folder ? channel.value(file(params.fragpipe_tools_folder, checkIfExists: true)) : channel.empty()
     ch_diann_folder = params.fragpipe_diann_folder ? channel.value(file(params.fragpipe_diann_folder, checkIfExists: true)) : channel.empty()
     ch_fragpipe_manifest = params.fragpipe_manifest ? channel.value(file(params.fragpipe_manifest, checkIfExists: true)) : channel.empty()
-    ch_fragpipe_annotation = params.fragpipe_annotation ? channel.value(file(params.fragpipe_annotation, checkIfExists: true)) : channel.empty()
-
+    ch_fragpipe_annotation = params.fragpipe_TMT_annotation ? channel.value(file(params.fragpipe_TMT_annotation, checkIfExists: true)) :
+        channel.value(file("$projectDir/assets/NO_FILE", checkIfExists: true))
     //
     // WORKFLOW: Run pipeline
     //
@@ -64,7 +62,6 @@ workflow NFDATAOMICS_R2T2P {
         samplesheet,
         ch_fasta,
         ch_gtf,
-        ch_gff,
         ch_star_index,
         ch_user_gtf,
         ch_fragpipe_workflow,
