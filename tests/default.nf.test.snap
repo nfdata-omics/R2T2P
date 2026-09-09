@@ -686,6 +686,7 @@
                 "second_alignment/rep2_14h/rep2_14h.second_alignment.stats",
                 "transcriptome_assembly",
                 "transcriptome_assembly/combined_annotations.gtf",
+                "transcriptome_assembly/combined_annotations_Rannot",
                 "transcriptome_assembly/comp_denovo.annotated.gtf",
                 "transcriptome_assembly/comp_denovo.annotated_ok.gtf",
                 "transcriptome_assembly/comp_denovo.comp_strg_user.merged_with_strg.gtf.refmap",
