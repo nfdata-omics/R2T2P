@@ -46,7 +46,7 @@ process FRAGPIPE {
     cp -Lr ${diann_folder} ./diann-copy
 
     # lauch fragpipe
-    FRAGPIPE_EXE="/fragpipe_bin/fragpipe-23.1/fragpipe-23.1/bin/fragpipe"
+    FRAGPIPE_EXE="/fragpipe_bin/fragpipe-24.0/fragpipe-24.0/bin/fragpipe"
     \$FRAGPIPE_EXE \
                 --headless \
                 --workflow ${meta.id}.workflow \
