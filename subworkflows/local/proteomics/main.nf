@@ -11,8 +11,7 @@ workflow PROTEOMICS {
 
     take:
     ch_bsgenome              // channel: bsgenome
-    ch_gtf_Rannot            // channel: gtf_Rannot for the reference annotation
-    ch_gtf_stringtie_Rannot  // channel: gtf_Rannot for the StringTie annotation
+    ch_gtf_Rannot            // channel: gtf_Rannot (ref or product of R module, depending)
     ch_orfquant_fasta        // channel: fasta with proteins sequences from ORFquant
     workflow_file            // value channel: path to fragpipe workflow file
     ch_tools_folder          // value channel: folder with the external tools for fragpipe
@@ -34,7 +33,6 @@ workflow PROTEOMICS {
     CREATE_PROTEIN_DB_WRITE_DB (
         ch_bsgenome,
         ch_gtf_Rannot,
-        ch_gtf_stringtie_Rannot,
         ch_protein_dbs
     )
     ch_versions = ch_versions.mix(CREATE_PROTEIN_DB_WRITE_DB.out.versions)

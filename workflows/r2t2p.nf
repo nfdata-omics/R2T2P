@@ -192,7 +192,6 @@ workflow R2T2P {
     //
     PROTEOMICS (
         PREPARE_REF.out.bsgenome,
-        PREPARE_REF.out.gtf_Rannot,
         ch_final_gtf_Rannot,
         ORF_ANALYSIS.out.orfquant_fasta,
         ch_fragpipe_workflow,
