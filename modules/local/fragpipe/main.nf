@@ -15,7 +15,7 @@ process FRAGPIPE {
 
     output:
     path "*.pepindex",   emit: pepindex
-    path "*_results",    emit: fragpipe_results
+    path "*_search",    emit: fragpipe_results
     path "*.workflow",   emit: workflow_file
     path "versions.yml", emit: versions
 
