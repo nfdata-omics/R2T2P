@@ -187,6 +187,9 @@ must contain four columns in this order:
 <path_to_LC-MS_file>    <experiment_name>    <bioreplicate>    <data_type>
 ```
 
+`experiment_name` cannot contain whitespace because it is used as an output directory name. The `bioreplicate`
+field may be left empty.
+
 For example:
 
 ```tsv title="proteomics_manifest.tsv"

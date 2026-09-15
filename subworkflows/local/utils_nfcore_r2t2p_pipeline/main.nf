@@ -111,6 +111,11 @@ workflow PIPELINE_INITIALISATION {
         }
         .set { ch_samplesheet }
 
+    //
+    // Validate the FragPipe manifest after samplesheet processing
+    //
+    validateFragpipeManifest()
+
     emit:
     samplesheet = ch_samplesheet
     versions    = ch_versions
@@ -214,6 +219,75 @@ def validateInputParameters() {
         if (!diann_exe.exists()) {
             error("Please check input parameters -> DIANN executable not found in ${params.fragpipe_diann_folder}/diann-linux")
         }
+    }
+}
+
+//
+// Validate the format and referenced files of the FragPipe manifest
+//
+def validateFragpipeManifest() {
+    if (!params.fragpipe_manifest) {
+        return
+    }
+
+    def manifest = file(params.fragpipe_manifest)
+    def errors = []
+    def valid_data_types = ['DDA', 'DDA+', 'DIA', 'DIA-Quant', 'DIA-Lib'] as Set
+    def lines
+
+    try {
+        lines = manifest.readLines()
+    } catch (Exception e) {
+        error("Please check input parameters -> Could not read FragPipe manifest '${params.fragpipe_manifest}': ${e.message}")
+    }
+
+    if (!lines) {
+        error("Please check input parameters -> FragPipe manifest '${params.fragpipe_manifest}' contains no data rows.")
+    }
+
+    lines.eachWithIndex { line, index ->
+        def row_number = index + 1
+
+        if (!line.trim()) {
+            errors << "row ${row_number}: empty rows are not allowed"
+        } else {
+            def columns = line.split('\\t', -1).collect { it.trim() }
+
+            if (columns.size() != 4) {
+                errors << "row ${row_number}: expected 4 tab-delimited columns (path, experiment_name, bioreplicate, data_type), found ${columns.size()}"
+            } else {
+                def (lc_ms_file, experiment_name, _bioreplicate, data_type) = columns
+
+                if (!lc_ms_file) {
+                    errors << "row ${row_number}: path to the LC-MS file is empty"
+                } else {
+                    try {
+                        if (!file(lc_ms_file).exists()) {
+                            errors << "row ${row_number}: LC-MS file is not accessible: ${lc_ms_file}"
+                        }
+                    } catch (Exception e) {
+                        errors << "row ${row_number}: could not access LC-MS file '${lc_ms_file}': ${e.message}"
+                    }
+                }
+
+                if (!experiment_name) {
+                    errors << "row ${row_number}: experiment_name is empty"
+                } else if (experiment_name =~ /\s/) {
+                    errors << "row ${row_number}: experiment_name must not contain whitespace: ${experiment_name}"
+                }
+
+                // FragPipe permits an empty bioreplicate field, as used by the pipeline test manifest.
+                if (!data_type) {
+                    errors << "row ${row_number}: data_type is empty"
+                } else if (!(data_type in valid_data_types)) {
+                    errors << "row ${row_number}: unsupported data_type '${data_type}'. Supported values: ${valid_data_types.join(', ')}"
+                }
+            }
+        }
+    }
+
+    if (errors) {
+        error("Please check input parameters -> FragPipe manifest '${params.fragpipe_manifest}' is invalid:\n  - ${errors.join('\n  - ')}")
     }
 }
 
