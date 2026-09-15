@@ -177,6 +177,20 @@ def validateInputParameters() {
         error("Please check input parameters -> GTF file was not provided. Please provide one.")
     }
 
+    // The requested control must be represented in the samplesheet before DE analyses are built.
+    if (params.control_label) {
+        def conditions = samplesheetToList(params.input, "${projectDir}/assets/schema_input.json")
+            .collect { meta, _fastq_1, _fastq_2 -> meta.condition }
+            .findAll { it }
+            .unique()
+            .sort()
+
+        if (!conditions.contains(params.control_label)) {
+            def available_conditions = conditions ? conditions.join(', ') : '(none)'
+            error("Please check input parameters -> --control_label '${params.control_label}' does not match any condition in the input samplesheet. Available conditions: ${available_conditions}")
+        }
+    }
+
     // when the fragpipe manifest is provided, all the additional fragpipe files must also be provided
     if (params.fragpipe_manifest && (!params.fragpipe_workflow || !params.fragpipe_TMT_annotation)) {
         error("Please check input parameters -> When fragpipe_manifest is provided, fragpipe_workflow and fragpipe_TMT_annotation must also be provided.")
