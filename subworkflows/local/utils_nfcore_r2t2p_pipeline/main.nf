@@ -86,6 +86,7 @@ workflow PIPELINE_INITIALISATION {
     // Custom validation for pipeline parameters
     //
     validateInputParameters()
+    validateDifferentialAnalysisReplicates()
 
     //
     // Create channel from input file provided through params.input
@@ -304,6 +305,38 @@ def validateInputSamplesheet(input) {
     }
 
     return [ metas[0], fastqs ]
+}
+
+//
+// Check that every assay type has at least two biological replicates per condition for DE analysis
+//
+def validateDifferentialAnalysisReplicates() {
+    if (!params.control_label) {
+        return
+    }
+
+    def samplesheet = samplesheetToList(params.input, "${projectDir}/assets/schema_input.json")
+    def conditions = samplesheet.collect { meta, _fastq_1, _fastq_2 -> meta.condition }.unique().sort()
+    def assay_types = samplesheet.collect { meta, _fastq_1, _fastq_2 -> meta.assay_type }.unique().sort()
+    def replicate_counts = samplesheet
+        .collect { meta, _fastq_1, _fastq_2 -> [meta.assay_type, meta.condition, meta.id] }
+        .unique()
+        .groupBy { assay_type, condition, _id -> [assay_type, condition] }
+        .collectEntries { key, replicates -> [key, replicates.size()] }
+
+    def errors = []
+    assay_types.each { assay_type ->
+        conditions.each { condition ->
+            def count = replicate_counts.get([assay_type, condition], 0)
+            if (count < 2) {
+                errors << "${assay_type}, ${condition}: found ${count} unique sample(s); at least 2 are required for differential analysis"
+            }
+        }
+    }
+
+    if (errors) {
+        error("Please check input samplesheet -> Insufficient biological replicates for differential analysis:\n  - ${errors.join('\n  - ')}")
+    }
 }
 //
 // Get attribute from genome config file e.g. fasta
