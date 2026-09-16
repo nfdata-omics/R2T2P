@@ -177,9 +177,9 @@ def validateInputParameters() {
         error("Please check input parameters -> GTF file was not provided. Please provide one.")
     }
 
-    // when the fragpipe manifest is provided, all the additional fragpipe files must also be provided
-    if (params.fragpipe_manifest && (!params.fragpipe_workflow || !params.fragpipe_TMT_annotation)) {
-        error("Please check input parameters -> When fragpipe_manifest is provided, fragpipe_workflow and fragpipe_TMT_annotation must also be provided.")
+    // when the fragpipe manifest is provided, also the workflow file must also be provided
+    if (params.fragpipe_manifest && !params.fragpipe_workflow) {
+        error("Please check input parameters -> When fragpipe_manifest is provided, fragpipe_workflow must also be provided.")
     }
 
     // check that the required jars and executables for fragpipe are present in the folders provided
