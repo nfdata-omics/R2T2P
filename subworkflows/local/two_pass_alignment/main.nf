@@ -82,6 +82,7 @@ workflow TWO_PASS_ALIGNMENT {
         }
         .join(STAR_FIRST_ALIGN.out.pass1_spl_juc_tab)
         .toSortedList { a, b -> a[1] <=> b[1] }
+        .filter { list -> !list.isEmpty() }
         .map { list -> [["id": "merged_junctions"], list.collect { _meta, _position, junction -> junction }] }
         .set { ch_merged_junctions }
 

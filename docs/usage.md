@@ -20,6 +20,9 @@ The samplesheet must be a comma-separated file with a header row. R2T2P uses the
 libraries through RNA-seq-specific and Ribo-seq-specific steps, and the `condition` column to define contrasts for
 differential analyses when `--control_label` is provided.
 
+When differential analysis is requested, every combination of `assay_type` and `condition` must have at least two
+biological replicates. Multiple sequencing runs of the same sample count as one replicate.
+
 ### Multiple runs of the same sample
 
 Use the same `sample` and `assay_type` values when the same library has been sequenced more than once, for
@@ -186,6 +189,9 @@ must contain four columns in this order:
 ```text
 <path_to_LC-MS_file>    <experiment_name>    <bioreplicate>    <data_type>
 ```
+
+`experiment_name` cannot contain whitespace because it is used as an output directory name. The `bioreplicate`
+field may be left empty.
 
 For example:
 

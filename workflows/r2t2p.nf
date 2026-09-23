@@ -123,6 +123,32 @@ workflow R2T2P {
     ch_versions = ch_versions.mix(TRANSCRIPTOME_ASSEMBLY.out.versions)
     ch_multiqc_files = ch_multiqc_files.mix(TRANSCRIPTOME_ASSEMBLY.out.gff_stats)
 
+    ch_final_gtf = TRANSCRIPTOME_ASSEMBLY.out.gtf
+        .map { _meta, file -> file }
+        .toList()
+        .map { [files: it] }
+        .combine(
+            PREPARE_REF.out.gtf
+                .toList()
+                .map { [files: it] }
+        )
+        .map { assembled, reference ->
+            assembled.files ?: reference.files
+        }
+        .collect()
+
+    ch_final_gtf_Rannot = TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot
+        .toList()
+        .map { [files: it] }
+        .combine(
+            PREPARE_REF.out.gtf_Rannot
+                .toList()
+                .map { [files: it] }
+        )
+        .map { assembled, reference ->
+            (assembled.files ?: reference.files)[0]
+        }
+        .collect()
 
     //
     // Final alignment
@@ -130,12 +156,12 @@ workflow R2T2P {
     FINAL_ALIGNMENT (
         ch_reads,
         PREPARE_REF.out.star_index,                                     // genome_index
-        TRANSCRIPTOME_ASSEMBLY.out.gtf.collect{ _meta, file -> file },  // new gtf after assembly
+        ch_final_gtf,                                                   // new gtf after assembly
         PREPARE_REF.out.fasta,                                          // genome fasta
         PREPARE_REF.out.fai,                                            // genome fai
         PREPARE_REF.out.chrom_sizes,                                    // chrom sizes for bigWig conversion
         PREPARE_REF.out.bsgenome,                                       // bsgenome for Ribo-seQC
-        TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot                           // gtf R-object for Ribo-seQC
+        ch_final_gtf_Rannot                                             // gtf R-object for Ribo-seQC
     )
     ch_versions = ch_versions.mix(FINAL_ALIGNMENT.out.versions)
     ch_multiqc_files = ch_multiqc_files.mix(FINAL_ALIGNMENT.out.multiqc_files)
@@ -146,7 +172,7 @@ workflow R2T2P {
     DIFFERENTIAL_ANALYSIS (
         FINAL_ALIGNMENT.out.counts_regions,                             // Ribo-seQC-processed alignment files
         PREPARE_REF.out.bsgenome,                                       // bsgenome for Ribo-seQC
-        TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot                           // gtf R-object for Ribo-seQC
+        ch_final_gtf_Rannot                                             // gtf R-object for Ribo-seQC
     )
     ch_versions = ch_versions.mix(DIFFERENTIAL_ANALYSIS.out.versions)
 
@@ -157,7 +183,7 @@ workflow R2T2P {
         FINAL_ALIGNMENT.out.bam,                                        // bam files from alignment against final transcriptome
         FINAL_ALIGNMENT.out.bam_for_orfquant,                           // RData files for ORFquant for the RiboSeq samples
         PREPARE_REF.out.bsgenome,                                       // bsgenome for Ribo-seQC
-        TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot                           // gtf R-object for Ribo-seQC
+        ch_final_gtf_Rannot                                             // gtf R-object for Ribo-seQC
     )
     ch_versions = ch_versions.mix(ORF_ANALYSIS.out.versions)
 
@@ -166,8 +192,7 @@ workflow R2T2P {
     //
     PROTEOMICS (
         PREPARE_REF.out.bsgenome,
-        PREPARE_REF.out.gtf_Rannot,
-        TRANSCRIPTOME_ASSEMBLY.out.gtf_Rannot,
+        ch_final_gtf_Rannot,
         ORF_ANALYSIS.out.orfquant_fasta,
         ch_fragpipe_workflow,
         ch_tools_folder,

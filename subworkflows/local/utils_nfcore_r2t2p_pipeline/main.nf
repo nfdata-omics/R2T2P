@@ -86,6 +86,7 @@ workflow PIPELINE_INITIALISATION {
     // Custom validation for pipeline parameters
     //
     validateInputParameters()
+    validateDifferentialAnalysisReplicates()
 
     //
     // Create channel from input file provided through params.input
@@ -110,6 +111,11 @@ workflow PIPELINE_INITIALISATION {
                 return [ meta, fastqs.flatten() ]
         }
         .set { ch_samplesheet }
+
+    //
+    // Validate the FragPipe manifest after samplesheet processing
+    //
+    validateFragpipeManifest()
 
     emit:
     samplesheet = ch_samplesheet
@@ -177,6 +183,20 @@ def validateInputParameters() {
         error("Please check input parameters -> GTF file was not provided. Please provide one.")
     }
 
+    // The requested control must be represented in the samplesheet before DE analyses are built.
+    if (params.control_label) {
+        def conditions = samplesheetToList(params.input, "${projectDir}/assets/schema_input.json")
+            .collect { meta, _fastq_1, _fastq_2 -> meta.condition }
+            .findAll { it }
+            .unique()
+            .sort()
+
+        if (!conditions.contains(params.control_label)) {
+            def available_conditions = conditions ? conditions.join(', ') : '(none)'
+            error("Please check input parameters -> --control_label '${params.control_label}' does not match any condition in the input samplesheet. Available conditions: ${available_conditions}")
+        }
+    }
+
     // when the fragpipe manifest is provided, also the workflow file must also be provided
     if (params.fragpipe_manifest && !params.fragpipe_workflow) {
         error("Please check input parameters -> When fragpipe_manifest is provided, fragpipe_workflow must also be provided.")
@@ -204,6 +224,75 @@ def validateInputParameters() {
 }
 
 //
+// Validate the format and referenced files of the FragPipe manifest
+//
+def validateFragpipeManifest() {
+    if (!params.fragpipe_manifest) {
+        return
+    }
+
+    def manifest = file(params.fragpipe_manifest)
+    def errors = []
+    def valid_data_types = ['DDA', 'DDA+', 'DIA', 'DIA-Quant', 'DIA-Lib'] as Set
+    def lines
+
+    try {
+        lines = manifest.readLines()
+    } catch (Exception e) {
+        error("Please check input parameters -> Could not read FragPipe manifest '${params.fragpipe_manifest}': ${e.message}")
+    }
+
+    if (!lines) {
+        error("Please check input parameters -> FragPipe manifest '${params.fragpipe_manifest}' contains no data rows.")
+    }
+
+    lines.eachWithIndex { line, index ->
+        def row_number = index + 1
+
+        if (!line.trim()) {
+            errors << "row ${row_number}: empty rows are not allowed"
+        } else {
+            def columns = line.split('\\t', -1).collect { it.trim() }
+
+            if (columns.size() != 4) {
+                errors << "row ${row_number}: expected 4 tab-delimited columns (path, experiment_name, bioreplicate, data_type), found ${columns.size()}"
+            } else {
+                def (lc_ms_file, experiment_name, _bioreplicate, data_type) = columns
+
+                if (!lc_ms_file) {
+                    errors << "row ${row_number}: path to the LC-MS file is empty"
+                } else {
+                    try {
+                        if (!file(lc_ms_file).exists()) {
+                            errors << "row ${row_number}: LC-MS file is not accessible: ${lc_ms_file}"
+                        }
+                    } catch (Exception e) {
+                        errors << "row ${row_number}: could not access LC-MS file '${lc_ms_file}': ${e.message}"
+                    }
+                }
+
+                if (!experiment_name) {
+                    errors << "row ${row_number}: experiment_name is empty"
+                } else if (experiment_name =~ /\s/) {
+                    errors << "row ${row_number}: experiment_name must not contain whitespace: ${experiment_name}"
+                }
+
+                // FragPipe permits an empty bioreplicate field, as used by the pipeline test manifest.
+                if (!data_type) {
+                    errors << "row ${row_number}: data_type is empty"
+                } else if (!(data_type in valid_data_types)) {
+                    errors << "row ${row_number}: unsupported data_type '${data_type}'. Supported values: ${valid_data_types.join(', ')}"
+                }
+            }
+        }
+    }
+
+    if (errors) {
+        error("Please check input parameters -> FragPipe manifest '${params.fragpipe_manifest}' is invalid:\n  - ${errors.join('\n  - ')}")
+    }
+}
+
+//
 // Validate channels from input samplesheet
 //
 def validateInputSamplesheet(input) {
@@ -216,6 +305,38 @@ def validateInputSamplesheet(input) {
     }
 
     return [ metas[0], fastqs ]
+}
+
+//
+// Check that every assay type has at least two biological replicates per condition for DE analysis
+//
+def validateDifferentialAnalysisReplicates() {
+    if (!params.control_label) {
+        return
+    }
+
+    def samplesheet = samplesheetToList(params.input, "${projectDir}/assets/schema_input.json")
+    def conditions = samplesheet.collect { meta, _fastq_1, _fastq_2 -> meta.condition }.unique().sort()
+    def assay_types = samplesheet.collect { meta, _fastq_1, _fastq_2 -> meta.assay_type }.unique().sort()
+    def replicate_counts = samplesheet
+        .collect { meta, _fastq_1, _fastq_2 -> [meta.assay_type, meta.condition, meta.id] }
+        .unique()
+        .groupBy { assay_type, condition, _id -> [assay_type, condition] }
+        .collectEntries { key, replicates -> [key, replicates.size()] }
+
+    def errors = []
+    assay_types.each { assay_type ->
+        conditions.each { condition ->
+            def count = replicate_counts.get([assay_type, condition], 0)
+            if (count < 2) {
+                errors << "${assay_type}, ${condition}: found ${count} unique sample(s); at least 2 are required for differential analysis"
+            }
+        }
+    }
+
+    if (errors) {
+        error("Please check input samplesheet -> Insufficient biological replicates for differential analysis:\n  - ${errors.join('\n  - ')}")
+    }
 }
 //
 // Get attribute from genome config file e.g. fasta
