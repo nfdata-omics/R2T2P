@@ -24,8 +24,10 @@ process UCSC_BEDGRAPHTOBIGWIG {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def VERSION = '469' // WARN: Version information not provided by tool on CLI. Please update this string when bumping container versions.
     """
+    LC_ALL=C sort -k1,1 -k2,2n $bedgraph > ${prefix}.sorted.bedGraph
+
     bedGraphToBigWig \\
-        $bedgraph \\
+        ${prefix}.sorted.bedGraph \\
         $sizes \\
         ${prefix}.bigWig
 

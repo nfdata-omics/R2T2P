@@ -2,7 +2,7 @@ process PHILOSOPHER {
     tag "${meta.id}"
     label 'process_low'
 
-    container "docker.io/fcyucn/fragpipe:23.1"
+    container "docker.io/fcyucn/fragpipe:24.0"
 
     input:
     tuple val(meta), path(db_fasta)
@@ -16,7 +16,7 @@ process PHILOSOPHER {
 
     script:
     """
-    PHILO_EXE="/fragpipe_bin/fragpipe-23.1/fragpipe-23.1/tools/Philosopher/philosopher-v5.1.2"
+    PHILO_EXE="/fragpipe_bin/fragpipe-24.0/fragpipe-24.0/tools/Philosopher/philosopher-v5.1.3-RC9"
     \$PHILO_EXE workspace --init
     \$PHILO_EXE database --custom ${db_fasta} --contam
     \$PHILO_EXE workspace --clean

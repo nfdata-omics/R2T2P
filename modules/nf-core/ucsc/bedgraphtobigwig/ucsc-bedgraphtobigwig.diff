@@ -1,0 +1,22 @@
+Changes in component 'nf-core/ucsc/bedgraphtobigwig'
+'modules/nf-core/ucsc/bedgraphtobigwig/environment.yml' is unchanged
+'modules/nf-core/ucsc/bedgraphtobigwig/meta.yml' is unchanged
+Changes in 'ucsc/bedgraphtobigwig/main.nf':
+--- modules/nf-core/ucsc/bedgraphtobigwig/main.nf
++++ modules/nf-core/ucsc/bedgraphtobigwig/main.nf
+@@ -24,8 +24,10 @@
+     def prefix = task.ext.prefix ?: "${meta.id}"
+     def VERSION = '469' // WARN: Version information not provided by tool on CLI. Please update this string when bumping container versions.
+     """
++    LC_ALL=C sort -k1,1 -k2,2n $bedgraph > ${prefix}.sorted.bedGraph
++
+     bedGraphToBigWig \\
+-        $bedgraph \\
++        ${prefix}.sorted.bedGraph \\
+         $sizes \\
+         ${prefix}.bigWig
+ 
+
+'modules/nf-core/ucsc/bedgraphtobigwig/tests/main.nf.test.snap' is unchanged
+'modules/nf-core/ucsc/bedgraphtobigwig/tests/main.nf.test' is unchanged
+************************************************************
