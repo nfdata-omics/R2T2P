@@ -116,6 +116,17 @@ control_label: 'control'
 
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
 
+## Reproducible StringTie output
+
+StringTie assigns assembled-transcript IDs in processing order. To run it serially and obtain deterministic
+StringTie GTF record ordering and IDs for otherwise identical inputs, enable `--stringtie_serial`:
+
+```bash
+nextflow run nfdata-omics/r2t2p -profile docker --stringtie_serial
+```
+
+This sets StringTie to one CPU and can increase the runtime of transcriptome assembly.
+
 ## Optional proteomics setup
 
 The Protein module is optional. It is enabled only when `--fragpipe_manifest` is provided. When proteomics is

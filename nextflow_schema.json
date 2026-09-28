@@ -129,6 +129,22 @@
             },
             "fa_icon": "fas fa-hamburger"
         },
+        "stringtie_options": {
+            "title": "StringTie options",
+            "type": "object",
+            "description": "Options for RNA-seq-guided transcriptome assembly with StringTie.",
+            "default": "",
+            "properties": {
+                "stringtie_serial": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Run StringTie with one CPU to produce deterministic transcript and gene IDs.",
+                    "help_text": "Use this option when reproducible StringTie GTF record ordering and IDs are required. It disables StringTie parallelism and can increase runtime.",
+                    "fa_icon": "fas fa-list-ol"
+                }
+            },
+            "fa_icon": "fas fa-dna"
+        },
         "reference_genome_options": {
             "title": "Reference genome options",
             "type": "object",
@@ -342,6 +358,9 @@
         },
         {
             "$ref": "#/$defs/riboseqc_options"
+        },
+        {
+            "$ref": "#/$defs/stringtie_options"
         },
         {
             "$ref": "#/$defs/orfquant_options"
