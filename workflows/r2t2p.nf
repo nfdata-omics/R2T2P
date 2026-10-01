@@ -198,7 +198,8 @@ workflow R2T2P {
         ch_tools_folder,
         ch_diann_folder,
         ch_fragpipe_manifest,
-        ch_fragpipe_annotation
+        ch_fragpipe_annotation,
+        ORF_ANALYSIS.out.orfquant_results.map { _meta, file -> file }.collect()
     )
     ch_versions = ch_versions.mix(PROTEOMICS.out.versions)
 

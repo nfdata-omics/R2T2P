@@ -105,6 +105,7 @@ workflow ORF_ANALYSIS {
 
     emit:
     orfquant_fasta = ORFQUANT.out.fasta                   // channel: [ val(meta), path(*_Protein_sequences.fasta) ]
+    orfquant_results = ORFQUANT.out.final_results          // channel: [ val(meta), path(*_ORFquant_results.RData) ]
     versions   = ch_versions                              // channel: [ versions.yml ]
 
 }

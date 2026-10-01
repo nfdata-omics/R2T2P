@@ -14,9 +14,10 @@ process FRAGPIPE {
     path diann_folder
 
     output:
-    path "*.pepindex",   emit: pepindex
-    path "*_search",    emit: fragpipe_results
-    path "*.workflow",   emit: workflow_file
+    tuple val(meta), path("*.pepindex"), emit: pepindex
+    tuple val(meta), path("*_search"),   emit: fragpipe_results
+    tuple val(meta), path("*.workflow"), emit: workflow_file
+    tuple val(meta), path("*/tmt_annotation.txt"), emit: tmt_annotation_files
     path "versions.yml", emit: versions
 
     when:

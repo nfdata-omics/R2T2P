@@ -6,6 +6,7 @@ include { CREATE_PROTEIN_DB_WRITE_DB      } from '../../../modules/local/create_
 include { PHILOSOPHER                     } from '../../../modules/local/philosopher/main'
 include { CREATE_PROTEIN_DB_REPLACE_NAMES } from '../../../modules/local/create_protein_db_replace_names/main'
 include { FRAGPIPE                        } from '../../../modules/local/fragpipe/main'
+include { DIFF_PROTEOMICS                 } from '../../../modules/local/diff_proteomics/main'
 
 workflow PROTEOMICS {
 
@@ -18,10 +19,35 @@ workflow PROTEOMICS {
     ch_diann_folder          // value channel: folder with the diann installation for fragpipe
     ch_manifest              // value channel: path to fragpipe manifest file
     ch_annotation_file       // value channel: path to tmt_annotation file (optional)
+    ch_orfquant_results      // value channel: path to ORFquant results (*_final_ORFquant_results)
 
     main:
 
     ch_versions = channel.empty()
+
+    // Infer the analysis type only after checking all manifest data_type values.
+    ch_manifest
+        .splitCsv( header: ["path", "experiment_name", "bioreplicate", "data_type"], sep: '\t' )
+        .map { row -> row.data_type?.trim() ?: '' }
+        .collect()
+        .map { data_types ->
+            def manifest_types = data_types.unique()
+            if (manifest_types.size() != 1) {
+                error("FragPipe manifest must contain the same data_type in every row. Found: ${manifest_types.join(', ')}")
+            }
+            def manifest_type = manifest_types.first()
+            if (!(manifest_type in ['DDA', 'DDA+', 'DIA', 'DIA-Quant', 'DIA-Lib'])) {
+                error("Unsupported FragPipe manifest data_type: '${manifest_type}'")
+            }
+            return manifest_type
+        }
+        .combine(ch_annotation_file)
+        .map { manifest_type, annotation_file ->
+            def has_annotation = annotation_file && annotation_file.name != 'NO_FILE'
+            return manifest_type in ['DDA', 'DDA+'] ? (has_annotation ? 'DDA_TMT' : 'DDA_LFQ') : 'DIA'
+        }
+        .first()
+        .set { ch_data_type }
 
     // skip proteomics workflow if no fragpipe manifest is provided
     if ( params.fragpipe_manifest == null ) {
@@ -72,6 +98,17 @@ workflow PROTEOMICS {
         ch_diann_folder
     )
     ch_versions = ch_versions.mix(FRAGPIPE.out.versions.first())
+
+    DIFF_PROTEOMICS (
+        FRAGPIPE.out.fragpipe_results.join(FRAGPIPE.out.tmt_annotation_files),
+        ch_manifest,
+        ch_bsgenome,
+        ch_gtf_Rannot,
+        ch_orfquant_results,
+        ch_data_type,
+        params.proteomics_control_label
+    )
+    ch_versions = ch_versions.mix(DIFF_PROTEOMICS.out.versions.first())
 
     emit:
     versions   = ch_versions                              // channel: [ versions.yml ]
