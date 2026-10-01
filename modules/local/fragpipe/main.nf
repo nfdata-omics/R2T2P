@@ -1,6 +1,6 @@
 process FRAGPIPE {
     tag "${meta.id}"
-    label 'process_high', 'process_high_memory'
+    label 'process_medium', 'process_long', 'process_high_memory'
 
     container "docker.io/fcyucn/fragpipe:24.0"
 
