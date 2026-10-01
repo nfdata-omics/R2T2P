@@ -5,7 +5,7 @@ process DIFF_PROTEOMICS {
     container "docker.io/nfdata/riboseqc:v1.3.0-patched"
 
     input:
-    tuple val(meta), path(search_folder), path(tmt_annotation_files)
+    tuple val(meta), path(search_folder), path(tmt_annotation_files, stageAs: 'tmt_annotations??/*')
     path manifest_file
     path "R-user-lib/*"
     path gtf_Rannot
@@ -22,7 +22,7 @@ process DIFF_PROTEOMICS {
 
     script:
     def args = task.ext.args ?: ''
-    def annotation_files = data_type == "DDA_TMT" ? "--annotation-files \"" + tmt_annotation_files.join(',') + "\"" : ''
+    def annotation_files = data_type == "DDA_TMT" ? "--annotation-files \"" + [tmt_annotation_files].flatten().join(',') + "\"" : ''
     """
     export R_LIBS_USER=\$PWD/R-user-lib
 
