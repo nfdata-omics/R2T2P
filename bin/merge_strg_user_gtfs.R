@@ -8,8 +8,8 @@ suppressMessages(library("igraph"))
 args <- commandArgs(trailingOnly = TRUE)
 
 # Load GTF annotations for reference and user-supplied files
-GTF_annotation <- makeTxDbFromGFF(file = args[1])
-annotation_str <- makeTxDbFromGFF(file = args[2])
+GTF_annotation <- txdbmaker::makeTxDbFromGFF(file = args[1])
+annotation_str <- txdbmaker::makeTxDbFromGFF(file = args[2])
 
 # Extract exons and genes from both annotations
 exs_annot <- exonsBy(GTF_annotation, by = "tx", use.names = TRUE)
@@ -163,7 +163,7 @@ names(all) <- NULL
 
 # Merge STRG and USER gene IDs for transcripts assigned to STRG genes
 merged_gtf <- all
-user_gtf_txdb <- makeTxDbFromGFF(args[3])
+user_gtf_txdb <- txdbmaker::makeTxDbFromGFF(args[3])
 merged_gtf_strg <- merged_gtf[grepl(merged_gtf$transcript_id, pattern = "^R1")]
 merged_gtf_user <- merged_gtf[!grepl(merged_gtf$transcript_id, pattern = "^R1")]
 

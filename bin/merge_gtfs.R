@@ -6,7 +6,7 @@ args <- commandArgs(trailingOnly = TRUE)
 
 GTF_annotation <- get(load(args[1]))
 annotation_ok <- GTF_annotation
-annotation_str <- makeTxDbFromGFF(file = args[2])
+annotation_str <- txdbmaker::makeTxDbFromGFF(file = args[2])
 
 exs_annot <- GTF_annotation$exons_txs
 exs_str <- exonsBy(annotation_str, by = "tx", use.names = T)
@@ -135,7 +135,7 @@ gtf_lines <- readLines(gtf_file, warn = FALSE)
 writeLines(gtf_lines[!grepl("^##date ", gtf_lines)], gtf_file)
 
 seqinfotwob <- GTF_annotation$seqinfo
-annotation <- makeTxDbFromGFF(file = gtf_file, format = "gtf", chrominfo = seqinfotwob)
+annotation <- txdbmaker::makeTxDbFromGFF(file = gtf_file, format = "gtf", chrominfo = seqinfotwob)
 
 genes <- GenomicFeatures::genes(annotation)
 exons_ge <- exonsBy(annotation, by = "gene")
