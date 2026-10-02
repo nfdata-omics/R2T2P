@@ -2,7 +2,7 @@ process DIFF_PROTEOMICS {
     tag "${meta.id}"
     label 'process_single', 'process_high_memory'
 
-    container "docker.io/nfdata/riboseqc:v2.0.0-patched"
+    container "docker.io/nfdata/riboseqc:v2.1.0-patched"
 
     input:
     tuple val(meta), path(search_folder), path(tmt_annotation_files, stageAs: 'tmt_annotations??/*')

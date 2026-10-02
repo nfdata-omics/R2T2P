@@ -2,7 +2,7 @@ process R_MERGE_DENOVO_WITH_REF {
     tag "${meta.id}"
     label 'process_single'
 
-    container "docker.io/nfdata/riboseqc:v2.0.0-patched"
+    container "docker.io/nfdata/riboseqc:v2.1.0-patched"
 
     input:
     tuple val(meta), path(comp_denovo_gtf)
