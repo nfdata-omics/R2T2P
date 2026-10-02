@@ -19,6 +19,10 @@ process PREPARE_ANNOTATION_FILES {
     script:
     """
     export R_LIBS_USER=\$PWD
+    # Keep pak caches writable when the container runs with the host UID.
+    export R_USER_CACHE_DIR=\$PWD/.cache/R
+    export PKG_PACKAGE_CACHE_DIR=\$R_USER_CACHE_DIR/pkgcache/pkg
+    mkdir -p "\$PKG_PACKAGE_CACHE_DIR"
 
     Rscript --vanilla -e '
         library(RiboseQC)
