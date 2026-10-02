@@ -2,7 +2,7 @@ process CREATE_FIRSTPASS_JUNCTIONS {
     tag "${meta.id}"
     label 'process_single'
 
-    container "docker.io/nfdata/riboseqc:v1.3.0-patched"
+    container "docker.io/nfdata/riboseqc:v2.0.0-patched"
 
     input:
     tuple val(meta), path("dir??/SJ.out.tab")

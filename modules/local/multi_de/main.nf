@@ -2,7 +2,7 @@ process MULTI_DE {
     tag "${meta.id}"
     label 'process_low','process_long','process_high_memory'
 
-    container "docker.io/nfdata/riboseqc:v1.3.0-patched"
+    container "docker.io/nfdata/riboseqc:v2.0.0-patched"
 
     input:
     tuple val(meta), path(counts_regions), path(table)

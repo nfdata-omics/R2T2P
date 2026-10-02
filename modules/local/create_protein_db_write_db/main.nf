@@ -2,7 +2,7 @@ process CREATE_PROTEIN_DB_WRITE_DB {
     tag "${meta.id}"
     label 'process_single'
 
-    container "docker.io/nfdata/riboseqc:v1.3.0-patched"
+    container "docker.io/nfdata/riboseqc:v2.0.0-patched"
 
     input:
     path "R-user-lib/*"

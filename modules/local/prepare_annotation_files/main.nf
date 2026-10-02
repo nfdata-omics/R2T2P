@@ -2,7 +2,7 @@ process PREPARE_ANNOTATION_FILES {
     tag "${meta2.id}"
     label 'process_single'
 
-    container "docker.io/nfdata/riboseqc:v1.3.0-patched"
+    container "docker.io/nfdata/riboseqc:v2.0.0-patched"
 
     input:
     tuple val(meta), path(genome_2bit)

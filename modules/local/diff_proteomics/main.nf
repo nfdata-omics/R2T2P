@@ -2,7 +2,7 @@ process DIFF_PROTEOMICS {
     tag "${meta.id}"
     label 'process_single', 'process_high_memory'
 
-    container "docker.io/nfdata/riboseqc:v1.3.0-patched"
+    container "docker.io/nfdata/riboseqc:v2.0.0-patched"
 
     input:
     tuple val(meta), path(search_folder), path(tmt_annotation_files, stageAs: 'tmt_annotations??/*')
@@ -47,7 +47,7 @@ process DIFF_PROTEOMICS {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg\$Package]] <- pkg\$Version
         }
-        versions <- list(R_MERGE_DENOVO_WITH_REF = versions)
+        versions <- list(DIFF_PROTEOMICS = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '
@@ -69,7 +69,7 @@ process DIFF_PROTEOMICS {
             pkg <- x\$otherPkgs[[i]]
             versions[[pkg\$Package]] <- pkg\$Version
         }
-        versions <- list(R_MERGE_DENOVO_WITH_REF = versions)
+        versions <- list(DIFF_PROTEOMICS = versions)
         # Convert list to yaml and write to file
         yaml::write_yaml(versions, "versions.yml")
     '
