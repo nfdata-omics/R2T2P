@@ -99,6 +99,9 @@ workflow PROTEOMICS {
     )
     ch_versions = ch_versions.mix(FRAGPIPE.out.versions.first())
 
+    // An unset control label skips differential analysis while keeping FragPipe searches enabled.
+    ch_proteomics_control_label = params.proteomics_control_label ? channel.value(params.proteomics_control_label) : channel.empty()
+
     DIFF_PROTEOMICS (
         FRAGPIPE.out.fragpipe_results.join(FRAGPIPE.out.tmt_annotation_files),
         ch_manifest,
@@ -106,7 +109,7 @@ workflow PROTEOMICS {
         ch_gtf_Rannot,
         ch_orfquant_results,
         ch_data_type,
-        params.proteomics_control_label
+        ch_proteomics_control_label
     )
     ch_versions = ch_versions.mix(DIFF_PROTEOMICS.out.versions.first())
 

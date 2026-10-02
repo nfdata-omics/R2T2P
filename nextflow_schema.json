@@ -64,6 +64,12 @@
             "description": "Input options for running the Fragpipe proteomics tool",
             "default": "",
             "properties": {
+                "proteomics_control_label": {
+                    "type": "string",
+                    "description": "Control condition label for proteomics differential analysis. Leave unset to skip this step.",
+                    "help_text": "For DDA_LFQ and DIA runs, use an experiment_name from the FragPipe manifest. For DDA_TMT runs, use a non-NA sample label from the TMT annotation file before the automatically appended experiment suffix (labels starting with Reference are excluded). For example, control_rep1 becomes control_rep1_exp_a, so the control label is control_rep1. All other conditions are compared against this label. This parameter is independent of control_label, which controls multiDE.",
+                    "fa_icon": "fas fa-retweet"
+                },
                 "fragpipe_manifest": {
                     "type": "string",
                     "description": "Path to the manifest file",
