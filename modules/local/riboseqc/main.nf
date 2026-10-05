@@ -31,6 +31,8 @@ process RIBOSEQC {
     Rscript --vanilla -e '
         library(RiboseQC)
         library(msa)
+        library(GenomeInfoDb)
+        library(pwalign)
 
         # Loading RiboseQC annotation
         load_annotation("${gtf_Rannot}")

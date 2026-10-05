@@ -31,7 +31,18 @@ process ORFDEX {
         library(GenomicFeatures)
         library(ORFik)
 
-        RiboseQC:::run_ORFDEX(
+        # RiboseQC 0.99.0 does not initialise the top-level ORFDEX result list
+        # before assigning to ORFDEX[[i]]. Patch a local copy of the function
+        # until the fix is available in the container image.
+        run_ORFDEX <- RiboseQC:::run_ORFDEX
+        run_ORFDEX_body <- as.list(body(run_ORFDEX))
+        body(run_ORFDEX) <- as.call(c(
+            run_ORFDEX_body[1],
+            list(quote(ORFDEX <- list())),
+            run_ORFDEX_body[-1]
+        ))
+
+        run_ORFDEX(
             ORFquant_res = "${orfquant_results}",
             file_matrix = "${table}",
             suffix = "${meta.id}",
