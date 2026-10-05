@@ -2,7 +2,7 @@ process ORFQUANT {
     tag "${meta.id}"
     label 'process_high','process_long','process_high_memory'
 
-    container "docker.io/nfdata/orfquant:v2.0.0"
+    container "docker.io/nfdata/orfquant:v2.1.0"
 
     input:
     tuple val(meta), path(combined_for_orfquant)
