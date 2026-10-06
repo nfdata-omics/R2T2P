@@ -36,7 +36,7 @@ process DIFF_PROTEOMICS {
         ${annotation_files}
 
     Rscript --vanilla -e '
-        library(RiboseQC)
+        library(ORFquant)
 
         # Writing package versions to versions.yml
         x = sessionInfo()
@@ -58,7 +58,7 @@ process DIFF_PROTEOMICS {
     """
 
     Rscript --vanilla -e '
-        library(RiboseQC)
+        library(ORFquant)
 
         # Writing package versions to versions.yml
         x = sessionInfo()
