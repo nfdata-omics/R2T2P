@@ -11,6 +11,8 @@
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 [![Launch on Seqera Platform](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Seqera%20Platform-%234256e7)](https://cloud.seqera.io/launch?pipeline=https://github.com/nfdata-omics/r2t2p)
 
+The R2T2P pipeline is currently **in beta and under active development**, with ongoing improvements and enhanced result visualization being continuously added.
+
 ## Introduction
 
 **nfdata-omics/r2t2p** is a modular pipeline for integrative, data-driven analyses from RNA to Protein. The pipeline comprises the following three independent but interoperable modules:
