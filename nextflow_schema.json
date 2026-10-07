@@ -34,6 +34,13 @@
                     "description": "Save FASTQ files with unaligned reads from STAR alignment to the output folder.",
                     "fa_icon": "fas fa-align-left"
                 },
+                "skip_transcript_discovery": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip two-pass RNA-seq alignment and transcriptome assembly.",
+                    "help_text": "Use the reference annotation directly for the final alignment instead of discovering and assembling transcripts from RNA-seq reads.",
+                    "fa_icon": "fas fa-forward"
+                },
                 "email": {
                     "type": "string",
                     "description": "Email address for completion summary.",

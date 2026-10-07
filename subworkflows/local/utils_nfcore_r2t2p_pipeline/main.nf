@@ -183,6 +183,10 @@ def validateInputParameters() {
         error("Please check input parameters -> GTF file was not provided. Please provide one.")
     }
 
+    if (params.skip_transcript_discovery && params.user_provided_annotation) {
+        log.warn("The --user_provided_annotation parameter will not be used because --skip_transcript_discovery is enabled.")
+    }
+
     // The requested control must be represented in the samplesheet before DE analyses are built.
     if (params.control_label) {
         def conditions = samplesheetToList(params.input, "${projectDir}/assets/schema_input.json")

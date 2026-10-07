@@ -75,11 +75,18 @@ workflow R2T2P {
         }
     .set { ch_reads_by_type }
 
+    // skip two-pass alignment and transcriptome assembly if skip_transcript_discovery is set to true
+    if ( params.skip_transcript_discovery ) {
+        ch_rna_reads = channel.empty()
+    } else {
+        ch_rna_reads = ch_reads_by_type.rna
+    }
+
     //
     // SUBWORKFLOW: Two-pass alignment with STAR
     //
     TWO_PASS_ALIGNMENT (
-        ch_reads_by_type.rna,
+        ch_rna_reads,
         PREPARE_REF.out.star_index,
         PREPARE_REF.out.gtf,
         PREPARE_REF.out.fasta,
