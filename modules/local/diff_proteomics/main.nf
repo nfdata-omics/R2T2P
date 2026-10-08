@@ -15,6 +15,10 @@ process DIFF_PROTEOMICS {
 
     output:
     path "*.RData", emit: results
+    path "*_peptide_coords.gtf", emit: peptide_coords_gtf
+    path "*_peptide_intensities.tsv", emit: peptide_intensities_tsv
+    path "*_peptide_log2FC_*_plus.bw", emit: plus_bw
+    path "*_peptide_log2FC_*_minus.bw", emit: minus_bw
     path "versions.yml", emit: versions
 
     when:
