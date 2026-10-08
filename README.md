@@ -17,7 +17,7 @@ The R2T2P pipeline is currently **in beta and under active development**, with o
 
 **nfdata-omics/r2t2p** is a modular pipeline for integrative, data-driven analyses from RNA to Protein. The pipeline comprises the following three independent but interoperable modules:
 
-1. The RNA module for _de novo_ transcriptome reconstruction with short-read data and merging between transcriptome annotations
+1. The RNA module for transcriptome reconstruction with short-read data and merging between transcriptome annotations
 2. The Translation module for _de novo_ isoform-level detection of translated ORFs with Ribo-seq data
 3. The Protein module for proteome characterization via searches using protein databases and experimental data (DDA TMT, DDA LFQ, or DIA data).
 
