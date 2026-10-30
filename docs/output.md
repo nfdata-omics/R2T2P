@@ -89,7 +89,7 @@ The [second alignment](#second-alignment) is performed by providing the aligner 
 `transcriptome_assembly/`
  - `combined_annotations_Rannot`: Rannot file of the output transcriptome annotation, which is obtained by combining annotations
  - `combined_annotations.gtf`: GTF file of the output transcriptome annotation, which is obtained by combining annotations
- - GFFCompare output files of the comparison to the reference annotation (`comp_denovo.annotated.gtf`, `comp_denovo.loci`, `comp_denovo.merged_bams.annotated_ok.gtf.refmap`, 
+ - *GFFCompare* output files of the comparison with the reference annotation (`comp_denovo.annotated.gtf`, `comp_denovo.loci`, `comp_denovo.merged_bams.annotated_ok.gtf.refmap`, 
    `comp_denovo.merged_bams.annotated_ok.gtf.tmap`, `comp_denovo.stats`, and `comp_denovo.tracking`). The .refmap and .tmap files are present only when the user-provided annotation 
    is not specified and used.
  - `comp_denovo.annotated_ok.gtf`: Filtered version of the GTF file `comp_denovo.annotated.gtf` (retaining only regions with known strand)
@@ -98,16 +98,16 @@ The [second alignment](#second-alignment) is performed by providing the aligner 
    - `merged_bams.gene.abundance.txt`: *StringTie3* output text file with gene abundances
    - `merged_bams.transcripts.gtf`: *StringTie3* output GTF file containing all the assembled transcripts
    - `merged_bams.annotated_ok.gtf`: Filtered version of the GTF file `merged_bams.transcripts.gtf` (retaining only regions with known strand)
-   - `merged_bams.ballgown/`: *StringTie3* output table files (*.ctab), which are required as input to Ballgown
+   - `merged_bams.ballgown/`: *StringTie3* output table files (.ctab files), which are required as input to *Ballgown*
  
  When the user-provided annotation is specified and used, the following files and directories are also present in `transcriptome_assembly`:
- - GFFCompare output files of the comparison to the reference annotation (`comp_denovo.comp_strg_user.merged_with_strg.gtf.refmap` and `comp_denovo.comp_strg_user.merged_with_strg.gtf.tmap`)
+ - *GFFCompare* output files of the comparison with the reference annotation (`comp_denovo.comp_strg_user.merged_with_strg.gtf.refmap` and `comp_denovo.comp_strg_user.merged_with_strg.gtf.tmap`)
  - `merge_with_user_provided/`
-  - GFFCompare output files of the comparison to the *StringTie3* annotation (`comp_strg_user.annotated.gtf`, `comp_strg_user.[user_gtf_filename].refmap`, `comp_strg_user.[user_gtf_filename].tmap`, 
+   - *GFFCompare* output files of the comparison with the *StringTie3* annotation (`comp_strg_user.annotated.gtf`, `comp_strg_user.[user_gtf_filename].refmap`, `comp_strg_user.[user_gtf_filename].tmap`, 
    `comp_strg_user.loci`, `comp_strg_user.stats`, `comp_strg_user.tracking`)
-  - `comp_strg_user.annotated_ok.gtf`: Filtered version of the GTF file `comp_strg_user.annotated.gtf` (retaining only regions with known strand)
-  - `comp_strg_user.merged_with_strg.gtf`: GTF file which is obtained by combining the *StringTie3* and the user-provided transcriptome annotations
-  - `gene_ID_pairs.tsv`: Text file with details on which original *StringTie3* and user gene IDs were combined when defining the unified gene identifiers.
+   - `comp_strg_user.annotated_ok.gtf`: Filtered version of the GTF file `comp_strg_user.annotated.gtf` (retaining only regions with known strand)
+   - `comp_strg_user.merged_with_strg.gtf`: GTF file which is obtained by combining the *StringTie3* and the user-provided transcriptome annotations
+   - `gene_ID_pairs.tsv`: Text file with details on which original *StringTie3* and user gene IDs were combined when defining the unified gene identifiers.
 
 </details>
   
