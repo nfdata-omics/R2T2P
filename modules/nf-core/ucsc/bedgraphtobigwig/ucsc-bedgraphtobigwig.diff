@@ -4,18 +4,21 @@ Changes in component 'nf-core/ucsc/bedgraphtobigwig'
 Changes in 'ucsc/bedgraphtobigwig/main.nf':
 --- modules/nf-core/ucsc/bedgraphtobigwig/main.nf
 +++ modules/nf-core/ucsc/bedgraphtobigwig/main.nf
-@@ -24,8 +24,10 @@
+@@ -24,9 +24,12 @@
      def prefix = task.ext.prefix ?: "${meta.id}"
      def VERSION = '469' // WARN: Version information not provided by tool on CLI. Please update this string when bumping container versions.
      """
 +    LC_ALL=C sort -k1,1 -k2,2n $bedgraph > ${prefix}.sorted.bedGraph
++    LC_ALL=C sort -k1,1 $sizes > chromosome.sorted.sizes
 +
      bedGraphToBigWig \\
 -        $bedgraph \\
+-        $sizes \\
 +        ${prefix}.sorted.bedGraph \\
-         $sizes \\
++        chromosome.sorted.sizes \\
          ${prefix}.bigWig
  
+     cat <<-END_VERSIONS > versions.yml
 
 'modules/nf-core/ucsc/bedgraphtobigwig/tests/main.nf.test.snap' is unchanged
 'modules/nf-core/ucsc/bedgraphtobigwig/tests/main.nf.test' is unchanged

@@ -25,10 +25,11 @@ process UCSC_BEDGRAPHTOBIGWIG {
     def VERSION = '469' // WARN: Version information not provided by tool on CLI. Please update this string when bumping container versions.
     """
     LC_ALL=C sort -k1,1 -k2,2n $bedgraph > ${prefix}.sorted.bedGraph
+    LC_ALL=C sort -k1,1 $sizes > chromosome.sorted.sizes
 
     bedGraphToBigWig \\
         ${prefix}.sorted.bedGraph \\
-        $sizes \\
+        chromosome.sorted.sizes \\
         ${prefix}.bigWig
 
     cat <<-END_VERSIONS > versions.yml
